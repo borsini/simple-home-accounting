@@ -1,0 +1,12 @@
+.vs/
+ledger/node_modules/
+*.dll
+.dll.config
+ledger/bin/ledger.dll.config
+*.pdb
+*.user
+ledger/web.Debug.config
+ledger/obj/Debug/ledger.csproj.FileListAbsolute.txt
+ledger/obj/
+ledger/app.js
+ledger/app.js.map

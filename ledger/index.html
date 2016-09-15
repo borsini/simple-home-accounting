@@ -1,0 +1,88 @@
+﻿<html content="text/html; charset=utf-8">
+
+<head>
+    <meta charset="UTF-8">
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+    <script type="text/javascript" src="http://requirejs.org/docs/release/2.3.1/minified/require.js"></script>
+    <script type="text/javascript" src="./app.js"></script>
+    <script type="text/javascript" src="./parser_ledger.js"></script>
+
+</head>
+
+<body>
+
+    <input id="file" type="file" />
+    <button onclick="javascript:loadTransactions();">Visualiser</button>
+    <br/>
+
+    <select multiple id="fromAccounts" style="height:150px;"></select>
+
+    <!--Div that will hold the pie chart-->
+    <div id="chart_div"></div>
+    <span id="nb_transactions"/>
+    <br/>
+    
+    <script>
+
+        var transactions = [];
+        let engine;
+
+        window.onload = function () {
+            // Load the Visualization API and the corechart package.
+            google.charts.load('current', { 'packages': ['corechart'] });
+
+            var fileInput = document.querySelector('#file');
+
+            fileInput.addEventListener('change', function () {
+
+                var reader = new FileReader();
+
+                reader.addEventListener('load', function () {
+                    //console.log("@" + reader.result + "@");
+                    transactions = PARSER.parse(reader.result);
+                  //  document.getElementById("nb_transactions").innerHTML = "Nb transaction : " + transactions.length;
+
+                    engine = new Engine(transactions);
+
+                    var x = document.getElementById("fromAccounts");
+                    for(account of engine.getAllAccounts()) {
+                        var option = document.createElement("option");
+                        option.text = account;
+                        x.add(option);
+                    }
+                });
+
+                reader.readAsText(fileInput.files[0]);
+
+            });
+
+            
+        }
+
+        function loadTransactions() {
+            var x = document.getElementById("fromAccounts");
+            var accounts = getSelectedValues(x);
+            console.log(accounts);
+            engine.analyzeTransactions(accounts);
+        }
+
+        function getSelectedValues(select) {
+            var result = [];
+            var options = select && select.options;
+            var opt;
+
+            for (var i = 0, iLen = options.length; i < iLen; i++) {
+                opt = options[i];
+
+                if (opt.selected) {
+                    result.push(opt.value || opt.text);
+                }
+            }
+            return result;
+        }
+    </script>
+</body>
+
+</html>
