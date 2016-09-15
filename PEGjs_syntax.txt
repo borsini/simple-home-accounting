@@ -1,0 +1,88 @@
+Start
+  = NewLineOrCommentBlock? 
+    trs:(
+      tr:Transaction Newline?
+        NewLineOrCommentBlock? {return tr}
+    )*
+    { return trs }
+
+NewLineOrCommentBlock = (Comment / Newline)*
+    
+Transaction
+  = fl:FirstLine
+    sls:(sl:SecondLine { return sl} )+
+    { return { header:fl, postings:sls }}
+
+FirstLine
+  = d:Date _* t:((tag:ClearingTag _)? t:Title { return t }  )? Newline
+  {
+    return { date:d, title:t }
+  }
+
+SecondLine
+  =
+  _+
+  ct:(ct:ClearingTag _ { return ct })?
+  a:Account _* cp:Currency2? cp2:Currency3? _* cm:Comment?
+  Newline?
+  {
+    return {
+      tag:ct, account:a, currency:cp || cp2 || { name: null, amount: null }, comment:cm
+    }
+  }
+
+Comment
+  = CommentStartChars _* cm:(!'\n' c:. { return c })* { return cm.join("") }
+
+CommentStartChars = [';']
+
+CurrencyName
+  = c:(!Comment !Newline c:[^0-9 ] { return c })+ { return c.join("") }
+
+Currency2 =
+  !CommentStartChars
+  sign:'-'?
+    _*
+    units:(units:[0-9]+ { return units.join("") })
+    decimals:('.' decimals:[0-9]*{ return decimals.join("") })?
+    _*
+    n:CurrencyName?
+    {
+    	var a = (sign || "") + units + (decimals ? "." + decimals : "");
+      return { name:n, amount:Number.parseFloat(a) }
+    }
+  
+Currency3 =
+  !CommentStartChars
+  sign:'-'?
+    _*
+    n:CurrencyName?
+    _*
+    units:(units:[0-9]+ { return units.join("") })
+    decimals:('.' decimals:[0-9]*{ return decimals.join("") })?
+    {
+      var a = (sign || "") + units + (decimals ? "." + decimals : "");
+      return { name:n, amount:Number.parseFloat(a) }
+    }
+    
+Date
+  = d:((d:[0-9]+ {return d.join("")})'/'(m:[0-9]+ { return m.join("") })'/'(y:[0-9]+ { return y.join("")} )) 
+  { return d.join("") }
+
+ClearingTag
+  = ['*','!']
+
+Title
+  = t:[^\n]+ { return t.join("") }
+
+Account
+  =  letters:(!"  " !"\t" !"\n" letter:. { return letter })* 
+  {
+    return letters.join("")
+  }
+
+_ "whitespace or tab"
+  = [' ', '\t']
+
+Newline
+ = ['\n', '\r', '\n\r']

@@ -50,7 +50,7 @@
 
         constructor(transactions: Array<any>) {
             this._sourceAccounts = [];
-            this._periods = this.createPeriods(moment("01/01/2015", "DD/MM/YYYY"), moment("01/01/2017", "DD/MM/YYYY"), PeriodGap.Month, 1);
+            this._periods = [];
             this._transactions = transactions;
 
             this.addMissingAmount();
@@ -119,10 +119,12 @@
             });
         }
 
-
-
-        analyzeTransactions(accounts: Array<string>) {
+        analyzeTransactions(accounts: Array<string>, startDate: string, endDate: string, groupy: GroupBy, statParam: StatParam, periodGap: PeriodGap, numPeriods: number) {
             this._sourceAccounts = accounts;
+            this._periods = this.createPeriods(moment(startDate, "DD/MM/YYYY"), moment(endDate, "DD/MM/YYYY"), periodGap, numPeriods);
+            this._grouping = groupy;
+            this._param = statParam;
+
             this._transactions.forEach(tr => this.analyzeTransaction(tr));
 
             if (this._periods.length == 1) {
@@ -154,10 +156,10 @@
                                     }
                                     else if (this._grouping == GroupBy.Semester) {
 
-                                        index = String(transactionDate.month() / 6);
+                                        index = String(Math.floor(transactionDate.month() / 6));
                                     }
                                     else if (this._grouping == GroupBy.Trimester) {
-                                        index = String(transactionDate.month() / 3);
+                                        index = String(Math.floor(transactionDate.month() / 3));
                                     }
                                     else if (this._grouping == GroupBy.Month) {
                                         index = String(transactionDate.month());
@@ -170,6 +172,10 @@
                                     }
 
                                     let amount: number = posting.currency.amount || 0;
+
+                                    if (amount < 0) {
+                                        console.log("Amount is negative for transaction " + tr.header.title);
+                                    }
 
                                     let stats: Map<string, number> = period.stats;
 

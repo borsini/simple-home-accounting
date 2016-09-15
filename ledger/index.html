@@ -16,8 +16,31 @@
     <input id="file" type="file" />
     <button onclick="javascript:loadTransactions();">Visualiser</button>
     <br/>
-
     <select multiple id="fromAccounts" style="height:150px;"></select>
+    <br/>
+    Date début: <input type="text" id="startDate" value="01/01/2016"/>
+    Date fin: <input type="text" id="endDate" value="31/12/2016"/>
+    Périodes : <select id="periodGap">
+        <option value="1">Aucune</option>
+        <option value="2">Année</option>
+                           <option value="3">Mois</option>
+                           <option value="4">Semaine</option>
+                           <option value="5">Jour</option>
+    </select>
+    x de périodes: <input type="text" id="numPeriods" value="2" />
+    Grouper par : <select id="groupBy">
+        <option value="1">Compte</option>
+        <option value="2">Année</option>
+        <option value="3">Semestre</option>
+        <option value="4">Trimestre</option>
+        <option value="5">Month</option>
+        <option value="6">Semaine</option>
+        <option value="7">Jour</option>
+    </select>
+    Calculer avec : <select id="statParam">
+        <option value="1">Somme</option>
+        <option value="2">Moyenne</option>
+    </select>
 
     <!--Div that will hold the pie chart-->
     <div id="chart_div"></div>
@@ -40,10 +63,12 @@
                 var reader = new FileReader();
 
                 reader.addEventListener('load', function () {
-                    //console.log("@" + reader.result + "@");
-                    transactions = PARSER.parse(reader.result);
-                  //  document.getElementById("nb_transactions").innerHTML = "Nb transaction : " + transactions.length;
+                    console.log("@" + reader.result + "@");
 
+                    transactions = PARSER.parse(reader.result);
+
+                    document.getElementById("nb_transactions").innerHTML = "Nb transactions : " + transactions.length;
+                    
                     engine = new Engine(transactions);
 
                     var x = document.getElementById("fromAccounts");
@@ -65,7 +90,22 @@
             var x = document.getElementById("fromAccounts");
             var accounts = getSelectedValues(x);
             console.log(accounts);
-            engine.analyzeTransactions(accounts);
+
+            startDate = document.getElementById("startDate").value;
+            endDate = document.getElementById("endDate").value;
+
+            eGroupBy = document.getElementById("groupBy");
+            groupBy = eGroupBy.options[eGroupBy.selectedIndex].value;
+            
+            eStatParam = document.getElementById("statParam");
+            statParam = eStatParam.options[eStatParam.selectedIndex].value;
+
+            ePeriodGap = document.getElementById("periodGap");
+            periodGap = ePeriodGap.options[ePeriodGap.selectedIndex].value;
+            
+            numPeriods = document.getElementById("numPeriods").value;
+
+            engine.analyzeTransactions(accounts, startDate, endDate, groupBy, statParam, periodGap, numPeriods);
         }
 
         function getSelectedValues(select) {
