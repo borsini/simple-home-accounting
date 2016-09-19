@@ -1,11 +1,5 @@
 ﻿///<reference path="typings/index.d.ts" />
 
-//import * as moment from 'moment';
-//import * as google from 'google';
-
-///import moment = require("moment");
-///import google = require("google"); 
-
     /**
     * @description determine if an array contains one or more items from another array.
     * @param {array} haystack the array to search.
@@ -37,18 +31,125 @@
         }
     }
 
+    interface Transaction {
+        header: Header;
+        postings: Array<Posting>;
+    }
+
+    interface Header {
+        date: string;
+        title: string;
+    }
+
+    interface Posting {
+        account: string;
+        currency: Currency;
+    }
+
+    interface Currency {
+        amount: number;
+    }
+
     enum GroupBy { Account = 1, Year, Semester, Trimester, Month, Week, Day }
     enum StatParam { Sum = 1, Average }
     enum PeriodGap { None = 1, Year, Month, Week, Day }
+    enum TransactionType { DEBT = 1, CREDIT, BOTH }
+
+    class GoogleChartsVisu {
+        drawPeriod(period: Period) {
+            // Create the data table.
+            let data = new google.visualization.DataTable();
+            data.addColumn('string', 'Compte');
+            data.addColumn('number', 'Total');
+
+            Object.keys(period.stats).forEach(k => {
+                let row: Array<google.visualization.ICell> = [];
+                row.push({ v: k, f: null, p: null });
+                row.push({ v: period.stats[k], f: null, p: null });
+
+                data.addRow(row);
+            });
+
+            /*
+            let title =
+                this._sourceAccounts + ", "
+                //      + fromDateInclusive + "-" + toDateInclusive
+                + ", " + this._grouping
+                + ", " + this._param;
+            */
+
+            // Set chart options
+
+            var options = {
+                /*'title': title,*/
+                'pieSliceText': 'value',
+                'width': 1000,
+                'height': 300
+            };
+
+
+            let wrapper = new google.visualization.ChartWrapper({
+                chartType: 'ColumnChart',
+                dataTable: data,
+                options: options,
+                containerId: 'chart_div'
+            });
+            wrapper.draw(document.getElementById('chart_div'));
+
+        }
+
+        drawPeriods(periods) {
+            var data = new google.visualization.DataTable();
+
+            var indexes = new Set();
+
+            periods.forEach(p => {
+                Object.keys(p.stats).forEach(k => {
+                    indexes.add(k);
+                });
+            });
+
+            data.addColumn('string', 'Période');
+
+            indexes.forEach(index => {
+                data.addColumn('number', index);
+            });
+
+            periods.forEach(p => {
+                let rowValues = [p.getName()].concat(Array.from(indexes).map(index => p.stats[index]));
+                data.addRow(rowValues);
+            });
+
+            var options = {
+                //isStacked: 'relative',
+                isStacked: true,
+                //interpolateNulls: true,
+                title: 'Company Performance',
+                hAxis: { title: 'Year', titleTextStyle: { color: '#333' } },
+                vAxis: { minValue: 0 },
+                pointsVisible: true
+            };
+
+            let wrapper = new google.visualization.ChartWrapper({
+                chartType: 'AreaChart',
+                dataTable: data,
+                options: options,
+                containerId: 'chart_div'
+            });
+            wrapper.draw();
+        }
+    }
 
     class Engine {
-        private _transactions: Array<any> = []
+        private _transactions: Array<Transaction> = []
         private _sourceAccounts: Array<string>; //Comptes sur lesquels on réalise les stats
         private _periods: Array<Period>;
         private _grouping = GroupBy.Account;
         private _param = StatParam.Sum;
+        private _visu: GoogleChartsVisu = new GoogleChartsVisu();
+        private _type: TransactionType;
 
-        constructor(transactions: Array<any>) {
+        constructor(transactions: Array<Transaction>) {
             this._sourceAccounts = [];
             this._periods = [];
             this._transactions = transactions;
@@ -119,23 +220,32 @@
             });
         }
 
-        analyzeTransactions(accounts: Array<string>, startDate: string, endDate: string, groupy: GroupBy, statParam: StatParam, periodGap: PeriodGap, numPeriods: number) {
+        analyzeTransactions(
+            accounts: Array<string>,
+            startDate: string,
+            endDate: string,
+            groupy: GroupBy,
+            statParam: StatParam,
+            periodGap: PeriodGap,
+            numPeriods: number,
+            transactionType: TransactionType) {
             this._sourceAccounts = accounts;
             this._periods = this.createPeriods(moment(startDate, "DD/MM/YYYY"), moment(endDate, "DD/MM/YYYY"), periodGap, numPeriods);
             this._grouping = groupy;
             this._param = statParam;
+            this._type = transactionType;
 
             this._transactions.forEach(tr => this.analyzeTransaction(tr));
 
             if (this._periods.length == 1) {
-                this.drawPeriod(this._periods[0]);
+                this._visu.drawPeriod(this._periods[0]);
             }
             else {
-                this.drawPeriods(this._periods);
+                this._visu.drawPeriods(this._periods);
             }
         }
 
-        analyzeTransaction(tr: any) {
+        analyzeTransaction(tr: Transaction) {
             this._periods.forEach(
                 period => {
                     let transactionDate: moment.Moment = moment(tr.header.date, "YYYY/MM/DD")
@@ -173,104 +283,24 @@
 
                                     let amount: number = posting.currency.amount || 0;
 
-                                    if (amount < 0) {
-                                        console.log("Amount is negative for transaction " + tr.header.title);
-                                    }
+                                    if (this._type == TransactionType.BOTH ||
+                                        (amount < 0 && this._type == TransactionType.DEBT) ||
+                                        (amount > 0 && this._type == TransactionType.CREDIT)) {
+                                        
+                                        let stats: Map<string, number> = period.stats;
 
-                                    let stats: Map<string, number> = period.stats;
-
-                                    if (this._param == StatParam.Sum) {
-                                        stats[index] = (stats[index] || 0) + amount;
-                                    }
-                                    else if (this._param == StatParam.Average) {
-                                        stats[index] = stats[index] ? (stats[index] + amount) / 2 : amount;
+                                        if (this._param == StatParam.Sum) {
+                                            stats[index] = (stats[index] || 0) + amount;
+                                        }
+                                        else if (this._param == StatParam.Average) {
+                                            stats[index] = stats[index] ? (stats[index] + amount) / 2 : amount;
+                                        }
                                     }
                                 }
                             });
                         }
                     }
                 });
-        }
-
-        drawPeriod(period: Period) {
-            // Create the data table.
-            let data = new google.visualization.DataTable();
-            data.addColumn('string', 'Compte');
-            data.addColumn('number', 'Total');
-
-            Object.keys(period.stats).forEach(k => {
-                let row: Array<google.visualization.ICell> = [];
-                row.push({ v: k, f: null, p: null });
-                row.push({ v: period.stats[k], f: null, p: null });
-
-                data.addRow(row);
-            });
-
-            let title =
-                this._sourceAccounts + ", "
-                //      + fromDateInclusive + "-" + toDateInclusive
-                + ", " + this._grouping
-                + ", " + this._param;
-
-            // Set chart options
-            
-            var options = {
-                'title': title,
-                'pieSliceText': 'value',
-                'width': 1000,
-                'height': 300
-            };
-
-            
-            let wrapper = new google.visualization.ChartWrapper({
-                chartType: 'PieChart',
-                dataTable: data,
-                options: options,
-                containerId: 'chart_div'
-            });
-            wrapper.draw(document.getElementById('chart_div'));
-           
-        }
-
-        drawPeriods(periods) {
-            var data = new google.visualization.DataTable();
-
-            var indexes = new Set();
-
-            periods.forEach(p => {
-                Object.keys(p.stats).forEach(k => {
-                    indexes.add(k);
-                });
-            });
-
-            data.addColumn('string', 'Période');
-
-            indexes.forEach(index => {
-                data.addColumn('number', index);
-            });
-
-            periods.forEach(p => {
-                let rowValues = [p.getName()].concat(Array.from(indexes).map(index => p.stats[index]));
-                data.addRow(rowValues);
-            });
-
-            var options = {
-                //isStacked: 'relative',
-                isStacked: true,
-                //interpolateNulls: true,
-                title: 'Company Performance',
-                hAxis: { title: 'Year', titleTextStyle: { color: '#333' } },
-                vAxis: { minValue: 0 },
-                pointsVisible: true
-            };
-
-            let wrapper = new google.visualization.ChartWrapper({
-                chartType: 'AreaChart',
-                dataTable: data,
-                options: options,
-                containerId: 'chart_div'
-            });
-            wrapper.draw();
         }
     }
 

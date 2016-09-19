@@ -18,7 +18,12 @@
     <br/>
     <select multiple id="fromAccounts" style="height:150px;"></select>
     <br/>
-    Date début: <input type="text" id="startDate" value="01/01/2016"/>
+    Type : <select id="type">
+        <option value="1">Débit</option>
+        <option value="2">Crédit</option>
+        <option value="3">Les deux</option>
+    </select>
+    Date début: <input type="text" id="startDate" value="01/01/2012"/>
     Date fin: <input type="text" id="endDate" value="31/12/2016"/>
     Périodes : <select id="periodGap">
         <option value="1">Aucune</option>
@@ -91,6 +96,9 @@
             var accounts = getSelectedValues(x);
             console.log(accounts);
 
+            eType = document.getElementById("type");
+            type = eType.options[eType.selectedIndex].value;
+
             startDate = document.getElementById("startDate").value;
             endDate = document.getElementById("endDate").value;
 
@@ -105,7 +113,15 @@
             
             numPeriods = document.getElementById("numPeriods").value;
 
-            engine.analyzeTransactions(accounts, startDate, endDate, groupBy, statParam, periodGap, numPeriods);
+            engine.analyzeTransactions(
+                accounts,
+                startDate,
+                endDate,
+                groupBy,
+                statParam,
+                periodGap,
+                numPeriods,
+                type);
         }
 
         function getSelectedValues(select) {
