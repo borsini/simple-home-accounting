@@ -2,7 +2,9 @@
     "compilerOptions": {
         "target": "es6",
         "module": "commonjs",
-        "sourceMap": true
+        "sourceMap": true,
+        "listFiles": true,
+        "pretty": true
     },
     "files": [
         "src/app.ts"
