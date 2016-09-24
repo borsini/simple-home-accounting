@@ -1,16 +1,4 @@
 ///<reference path="../typings/index.d.ts" />
-/**
-* @description determine if an array contains one or more items from another array.
-* @param {array} haystack the array to search.
-* @param {array} arr the array providing items to check for in the haystack.
-* @return {boolean} true|false if haystack contains at least one item from arr.
-*/
-function findOne(haystack, arr) {
-    return arr.some(function (v) {
-        return haystack.indexOf(v) >= 0;
-    });
-}
-;
 class Period {
     constructor(startDate, endDate) {
         this._startDate = startDate; //Start date is inclusive
@@ -54,39 +42,6 @@ var TransactionType;
     TransactionType[TransactionType["BOTH"] = 3] = "BOTH";
 })(TransactionType || (TransactionType = {}));
 class GoogleChartsVisu {
-    drawPeriod(period) {
-        // Create the data table.
-        let data = new google.visualization.DataTable();
-        data.addColumn('string', 'Compte');
-        data.addColumn('number', 'Total');
-        Object.keys(period.stats).forEach(k => {
-            let row = [];
-            row.push({ v: k, f: null, p: null });
-            row.push({ v: period.stats[k], f: null, p: null });
-            data.addRow(row);
-        });
-        /*
-        let title =
-            this._sourceAccounts + ", "
-            //      + fromDateInclusive + "-" + toDateInclusive
-            + ", " + this._grouping
-            + ", " + this._param;
-        */
-        // Set chart options
-        var options = {
-            /*'title': title,*/
-            'pieSliceText': 'value',
-            'width': 1000,
-            'height': 300
-        };
-        let wrapper = new google.visualization.ChartWrapper({
-            chartType: 'ColumnChart',
-            dataTable: data,
-            options: options,
-            containerId: 'chart_div'
-        });
-        wrapper.draw(document.getElementById('chart_div'));
-    }
     drawPeriods(periods) {
         var data = new google.visualization.DataTable();
         var indexes = new Set();
@@ -104,16 +59,13 @@ class GoogleChartsVisu {
             data.addRow(rowValues);
         });
         var options = {
-            //isStacked: 'relative',
             isStacked: true,
-            //interpolateNulls: true,
-            title: 'Company Performance',
-            hAxis: { title: 'Year', titleTextStyle: { color: '#333' } },
-            vAxis: { minValue: 0 },
-            pointsVisible: true
+            width: 1000,
+            legend: { position: 'top', maxLines: 3 },
+            height: 1000
         };
         let wrapper = new google.visualization.ChartWrapper({
-            chartType: 'AreaChart',
+            chartType: 'ColumnChart',
             dataTable: data,
             options: options,
             containerId: 'chart_div'
@@ -127,7 +79,6 @@ class Engine {
         this._grouping = GroupBy.Account;
         this._param = StatParam.Sum;
         this._visu = new GoogleChartsVisu();
-        this._sourceAccounts = [];
         this._periods = [];
         this._transactions = transactions;
         this.addMissingAmount();
@@ -157,11 +108,20 @@ class Engine {
         }
         return periods;
     }
+    getAllTransactions() {
+        return this._transactions;
+    }
     getAllAccounts() {
         let accounts = new Set();
         this._transactions.forEach(tr => {
             tr.postings.forEach(ps => {
                 accounts.add(ps.account);
+                let sum = "";
+                for (let entry of ps.account.split(":")) {
+                    sum += entry;
+                    accounts.add(sum);
+                    sum += ":";
+                }
             });
         });
         return Array.from(accounts).sort((a1, a2) => a1.localeCompare(a2));
@@ -183,32 +143,36 @@ class Engine {
             }
         });
     }
-    analyzeTransactions(accounts, startDate, endDate, groupy, statParam, periodGap, numPeriods, transactionType) {
-        this._sourceAccounts = accounts;
+    analyzeTransactions(sourceAccount, toAccount, startDate, endDate, groupy, statParam, periodGap, numPeriods, transactionType, maxDepth) {
+        this._sourceAccount = sourceAccount;
+        this._toAccount = toAccount;
         this._periods = this.createPeriods(moment(startDate, "DD/MM/YYYY"), moment(endDate, "DD/MM/YYYY"), periodGap, numPeriods);
         this._grouping = groupy;
         this._param = statParam;
         this._type = transactionType;
+        this._maxDepth = maxDepth;
         this._transactions.forEach(tr => this.analyzeTransaction(tr));
-        if (this._periods.length == 1) {
-            this._visu.drawPeriod(this._periods[0]);
-        }
-        else {
-            this._visu.drawPeriods(this._periods);
-        }
+        this._visu.drawPeriods(this._periods);
+    }
+    isAccountEligible(account) {
+        return !this._toAccount || account.indexOf(this._toAccount) >= 0;
     }
     analyzeTransaction(tr) {
         this._periods.forEach(period => {
             let transactionDate = moment(tr.header.date, "YYYY/MM/DD");
             if (transactionDate >= period.startDate && transactionDate < period.endDate) {
                 let accountNames = tr.postings.map(p => p.account);
-                if (findOne(this._sourceAccounts, accountNames)) {
-                    this._sourceAccounts.forEach(a => {
-                        let posting = tr.postings.find(p => p.account == a);
-                        if (posting) {
+                let source = this._sourceAccount;
+                let to = this._toAccount;
+                let posting = tr.postings.find(function (p) {
+                    return p.account.indexOf(source) >= 0;
+                });
+                if (posting) {
+                    for (let p of tr.postings) {
+                        if (p != posting && this.isAccountEligible(p.account)) {
                             let index;
                             if (this._grouping == GroupBy.Account) {
-                                index = a;
+                                index = p.account.split(":", this._maxDepth).join(":");
                             }
                             else if (this._grouping == GroupBy.Year) {
                                 index = String(transactionDate.year());
@@ -233,18 +197,21 @@ class Engine {
                                 (amount < 0 && this._type == TransactionType.DEBT) ||
                                 (amount > 0 && this._type == TransactionType.CREDIT)) {
                                 let stats = period.stats;
-                                if (this._param == StatParam.Sum) {
-                                    stats[index] = (stats[index] || 0) + amount;
-                                }
-                                else if (this._param == StatParam.Average) {
-                                    stats[index] = stats[index] ? (stats[index] + amount) / 2 : amount;
-                                }
+                                this.addStat(index, amount, stats);
                             }
                         }
-                    });
+                    }
                 }
             }
         });
+    }
+    addStat(index, amount, stats) {
+        if (this._param == StatParam.Sum) {
+            stats[index] = (stats[index] || 0) + amount;
+        }
+        else if (this._param == StatParam.Average) {
+            stats[index] = stats[index] ? (stats[index] + amount) / 2 : amount;
+        }
     }
 }
 window.onload = () => {

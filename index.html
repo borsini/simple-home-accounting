@@ -3,60 +3,130 @@
   <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
-    <!--Load the AJAX API-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/skeleton.css">
+
+    <!-- Insert this line above script imports  -->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+<!-- normal script imports etc  -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
-    <script type="text/javascript" src="http://requirejs.org/docs/release/2.3.1/minified/require.js"></script>
+  
     <script type="text/javascript" src="src/app.js"></script>
     <script type="text/javascript" src="src/parser_ledger.js"></script>
 
+<!-- Insert this line after script imports -->
+<script>if (window.module) module = window.module;</script>
+
+
   </head>
   <body>
-    <input id="file" type="file" />
-    <button onclick="javascript:loadTransactions();">Visualiser</button>
-    <br/>
-    <select multiple id="fromAccounts" style="height:150px;"></select>
-    <br/>
-    Type : <select id="type">
-        <option value="1">Débit</option>
-        <option value="2">Crédit</option>
-        <option value="3">Les deux</option>
-    </select>
-    Date début: <input type="text" id="startDate" value="01/01/2012"/>
-    Date fin: <input type="text" id="endDate" value="31/12/2016"/>
-    Périodes : <select id="periodGap">
-        <option value="1">Aucune</option>
-        <option value="2">Année</option>
-                           <option value="3">Mois</option>
-                           <option value="4">Semaine</option>
-                           <option value="5">Jour</option>
-    </select>
-    x de périodes: <input type="text" id="numPeriods" value="2" />
-    Grouper par : <select id="groupBy">
-        <option value="1">Compte</option>
-        <option value="2">Année</option>
-        <option value="3">Semestre</option>
-        <option value="4">Trimestre</option>
-        <option value="5">Month</option>
-        <option value="6">Semaine</option>
-        <option value="7">Jour</option>
-    </select>
-    Calculer avec : <select id="statParam">
-        <option value="1">Somme</option>
-        <option value="2">Moyenne</option>
-    </select>
 
-    <!--Div that will hold the pie chart-->
-    <div id="chart_div"></div>
-    <span id="nb_transactions"/>
-    <br/>
+    <div class="container">
+        <div class="row">
+             <div class="twelve columns">
+                <h4>Ledger charts</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="eight columns">
+                <p>Pour commencer veuillez sélectionner un fichier .ledger</p>
+                <p id="nb_transactions"/>
+            </div>
+
+            <div class="four columns">
+                <input id="file" type="file" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="four columns">
+               <select id="fromAccount">
+                </select>
+            </div>
+            <div class="four columns">
+                <select id="toAccount"></select>
+            </div>
+            <div class="four columns">
+                <label><input type="text" id="maxDepth" value="1" />Profondeur</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="four columns">
+                Type : <select id="type">
+                    <option value="1">Débit</option>
+                    <option value="2">Crédit</option>
+                    <option value="3">Les deux</option>
+                </select>
+            </div>
+            <div class="four columns">
+                Date début: <input type="text" id="startDate" value="01/01/2012"/>
+            </div>
+            <div class="four columns">
+                 Date fin: <input type="text" id="endDate" value="31/12/2016"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="six columns">
+                Grouper par : <select id="groupBy">
+                    <option value="1">Compte</option>
+                    <option value="2">Année</option>
+                    <option value="3">Semestre</option>
+                    <option value="4">Trimestre</option>
+                    <option value="5">Month</option>
+                    <option value="6">Semaine</option>
+                    <option value="7">Jour</option>
+                </select>
+            </div>
+            <div class="six columns">
+                 Calculer avec : <select id="statParam">
+                    <option value="1">Somme</option>
+                    <option value="2">Moyenne</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="six columns">
+              Périodes : <select id="periodGap">
+                    <option value="1">Aucune</option>
+                    <option value="2">Année</option>
+                                    <option value="3">Mois</option>
+                                    <option value="4">Semaine</option>
+                                    <option value="5">Jour</option>
+                </select>
+            </div>
+            <div class="six columns">
+                x de périodes: <input type="text" id="numPeriods" value="1" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="twelve columns">
+                 <input type="button" class="button-primary" value="Visualiser" onclick="javascript:loadTransactions();"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="twelve columns" id="chart_div"/>
+        </div>
+
+        <ul id="transactions">
+        </ul>
+
+    </div>
   </body>
 
   <script>
     
-    // You can also require other files to run in this process
-    require('./renderer.js')
-  
     var transactions = [];
         let engine;
 
@@ -79,11 +149,24 @@
                     
                     engine = new Engine(transactions);
 
-                    var x = document.getElementById("fromAccounts");
+                    var x = document.getElementById("fromAccount");
+                    var y = document.getElementById("toAccount");
                     for(account of engine.getAllAccounts()) {
-                        var option = document.createElement("option");
-                        option.text = account;
-                        x.add(option);
+                        var option1 = document.createElement("option");
+                        option1.text = account;
+                        x.add(option1);
+
+                        var option2 = document.createElement("option");
+                        option2.text = account;
+                        y.add(option2);
+                    }
+
+                    var ul = document.getElementById("transactions");
+
+                    for(tr of engine.getAllTransactions()){
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(tr.header.title));
+                        ul.appendChild(li);
                     }
                 });
 
@@ -95,9 +178,11 @@
         }
 
         function loadTransactions() {
-            var x = document.getElementById("fromAccounts");
-            var accounts = getSelectedValues(x);
-            console.log(accounts);
+            var x = document.getElementById("fromAccount");
+            var fromAccount = x.options[x.selectedIndex].value;
+
+            var y = document.getElementById("toAccount");
+            var toAccount = y.options[y.selectedIndex].value;
 
             eType = document.getElementById("type");
             type = eType.options[eType.selectedIndex].value;
@@ -116,30 +201,19 @@
             
             numPeriods = document.getElementById("numPeriods").value;
 
+            maxDepth = document.getElementById("maxDepth").value;
+
             engine.analyzeTransactions(
-                accounts,
+                fromAccount,
+                toAccount,
                 startDate,
                 endDate,
                 groupBy,
                 statParam,
                 periodGap,
                 numPeriods,
-                type);
-        }
-
-        function getSelectedValues(select) {
-            var result = [];
-            var options = select && select.options;
-            var opt;
-
-            for (var i = 0, iLen = options.length; i < iLen; i++) {
-                opt = options[i];
-
-                if (opt.selected) {
-                    result.push(opt.value || opt.text);
-                }
-            }
-            return result;
+                type,
+                maxDepth);
         }
   </script>
 </html>
