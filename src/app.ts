@@ -1,4 +1,4 @@
-﻿///<reference path="typings/index.d.ts" />
+﻿///<reference path="../typings/index.d.ts" />
 
     /**
     * @description determine if an array contains one or more items from another array.
