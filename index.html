@@ -166,6 +166,12 @@
                     for(tr of engine.getAllTransactions()){
                         var li = document.createElement("li");
                         li.appendChild(document.createTextNode(tr.header.title));
+
+                        for(p of tr.postings){
+                            li.appendChild(document.createElement("br"));
+                            li.appendChild(document.createTextNode(p.account + " " + p.currency.amount + " " + p.comment));
+                        }
+
                         ul.appendChild(li);
                     }
                 });
