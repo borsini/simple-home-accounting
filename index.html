@@ -14,6 +14,7 @@
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 
 <!-- normal script imports etc  -->
+     <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
   
@@ -23,25 +24,47 @@
 <!-- Insert this line after script imports -->
 <script>if (window.module) module = window.module;</script>
 
+    <style>
 
+        #header {
+
+            background-color:#888888;
+        }
+
+        label {
+            pointer: cursor;
+            /* Style as you please, it will become the visible UI component. */
+        }
+
+        #upload-ledger {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+        </style>
   </head>
   <body>
 
-    <div class="container">
-        <div class="row">
+    <div class="container u-full-width u-max-full-width">
+        <div class="row" id="header">
              <div class="twelve columns">
                 <h4>Ledger charts</h4>
             </div>
         </div>
 
         <div class="row">
-            <div class="eight columns">
+            <div class="four columns">
                 <p>Pour commencer veuillez sélectionner un fichier .ledger</p>
-                <p id="nb_transactions"/>
             </div>
 
             <div class="four columns">
-                <input id="file" type="file" />
+                <label id="filename" for="upload-ledger">Choisir un fichier .ledger</label>
+                <input type="file" id="upload-ledger" />
+            </div>
+
+            <div class="four columns">
+                <ul id="infos">
+                </ul>
             </div>
         </div>
 
@@ -134,7 +157,7 @@
             // Load the Visualization API and the corechart package.
             google.charts.load('current', { 'packages': ['corechart'] });
 
-            var fileInput = document.querySelector('#file');
+            var fileInput = $('#upload-ledger').get(0);
 
             fileInput.addEventListener('change', function () {
 
@@ -145,25 +168,31 @@
 
                     transactions = PARSER.parse(reader.result);
 
-                    document.getElementById("nb_transactions").innerHTML = "Nb transactions : " + transactions.length;
-                    
                     engine = new Engine(transactions);
+
+                     $.each(engine.stats, function(index, value){
+                        $("#infos").append('<li>' + value + '</li>')
+                     }); 
 
                     var x = document.getElementById("fromAccount");
                     var y = document.getElementById("toAccount");
-                    for(account of engine.getAllAccounts()) {
+                    for(account of engine.allAccounts) {
+                        accountName = account[0] + " / " + account[1].toFixed(2);
+
                         var option1 = document.createElement("option");
-                        option1.text = account;
+                        option1.text = accountName;
+                        option1.value = account[0];
                         x.add(option1);
 
                         var option2 = document.createElement("option");
-                        option2.text = account;
+                        option2.text = accountName;
+                        option2.value = account[0];
                         y.add(option2);
                     }
 
                     var ul = document.getElementById("transactions");
 
-                    for(tr of engine.getAllTransactions()){
+                    for(tr of engine.transactions){
                         var li = document.createElement("li");
                         li.appendChild(document.createTextNode(tr.header.title));
 
@@ -176,6 +205,7 @@
                     }
                 });
 
+                $('#filename').html(fileInput.value.replace(/.*[\/\\]/, ''));
                 reader.readAsText(fileInput.files[0]);
 
             });

@@ -36,6 +36,7 @@
 
     interface Currency {
         amount: number;
+        name: string;
     }
 
     enum GroupBy { Account = 1, Year, Semester, Trimester, Month, Week, Day }
@@ -94,12 +95,18 @@
         private _visu: GoogleChartsVisu = new GoogleChartsVisu();
         private _type: TransactionType;
         private _maxDepth : number;
+        private _allAccounts: Map<string, number>;
+        private _minDate: moment.Moment;
+        private _maxDate: moment.Moment;
+        private _currencies: Set<string>;
 
         constructor(transactions: Array<Transaction>) {
             this._periods = [];
             this._transactions = transactions;
+            this._currencies = new Set();
 
             this.addMissingAmount();
+            this.computeStats();
         }
 
         createPeriods(startDate, endDate, gap, gapMultiple) {
@@ -132,29 +139,63 @@
             return periods;
         }
 
-        getAllTransactions(): Array<Transaction> {
-            return this._transactions;
-        }
-
-        getAllAccounts(): Array<string> {
-            let accounts: Set<string> = new Set();
-
+        computeStats() {
+            this._allAccounts = new Map();
             this._transactions.forEach(tr => {
+
+                let transactionDate = moment(tr.header.date, "YYYY/MM/DD");
+
+                this._minDate =  this._minDate ? moment.min( this._minDate, transactionDate) : transactionDate;
+                 this._maxDate =  this._maxDate ? moment.max( this._maxDate, transactionDate) : transactionDate;
+
                 tr.postings.forEach(ps => {
-                    accounts.add(ps.account);
-
-                    let sum: string = "";
-                    for (let entry of ps.account.split(":")) {
-                        sum += entry;
-
-                        accounts.add(sum);
-
-                        sum += ":";
+                    if(ps.currency.name){
+                        this._currencies.add(ps.currency.name);
                     }
+
+                    let accountsToAddAmount : Array<string> = [];
+
+                    if(ps.account.indexOf(":") > 0){
+                        let sum: string = "";
+                        for (let entry of ps.account.split(":")) {
+                            sum += entry;
+                            accountsToAddAmount.push(sum);
+                            sum += ":";
+                        }
+                    }
+                    else{
+                        accountsToAddAmount.push(ps.account);
+                    }
+                    
+                    accountsToAddAmount.forEach(a => {
+                        let lastAmount = this._allAccounts.get(a) || 0;
+                        this._allAccounts.set(a, lastAmount + ps.currency.amount);
+                    });
                 });
             });
 
-            return Array.from(accounts).sort((a1, a2) => a1.localeCompare(a2));
+            //this._allAccounts = Array.from(accounts).sort((a1, a2) => a1.localeCompare(a2));
+        }
+
+        get stats():Array<string>{
+            return [
+                this._transactions.length + " transactions sur " + this._allAccounts.size + " comptes " + " avec " + this._currencies.size + " monnaies",
+                "entre le " + this._minDate.format("DD/MM/YYYY") + " et " + this._maxDate.format("DD/MM/YYYY"),
+            ];
+        }
+
+        get transactions():Array<Transaction> {
+            return this._transactions;
+        }
+
+        get accountsWithBalance() : Array<{ account: string, balance: number }> {
+            let a : Array<{ account: string, balance: number }> = new Array();
+            
+            return a;
+        }
+
+        get allAccounts():Map<string, number> {
+            return this._allAccounts;
         }
 
         addMissingAmount() {
