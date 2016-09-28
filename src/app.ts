@@ -32,6 +32,7 @@
     interface Posting {
         account: string;
         currency: Currency;
+        comment: string;
     }
 
     interface Currency {
@@ -244,6 +245,25 @@
 
         isAccountEligible(account: string) : boolean {
             return !this._toAccount || account.indexOf(this._toAccount) >= 0;
+        }
+
+        getOutString(): string {
+            let out : string = "";
+
+            this._transactions.forEach( tr => {
+                out += tr.header.date + " " + tr.header.title + "\n";
+                
+                tr.postings.forEach( p => {
+                    out += "    ";
+                    out += p.account + "    " + p.currency.name + " " + p.currency.amount;
+                    out += p.comment ? " ; " + p.comment : "";
+                    out += "\n";
+                });
+
+                out += "\n";
+            });
+
+            return out;
         }
 
         analyzeTransaction(tr: Transaction) {

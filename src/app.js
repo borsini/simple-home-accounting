@@ -187,6 +187,20 @@ class Engine {
     isAccountEligible(account) {
         return !this._toAccount || account.indexOf(this._toAccount) >= 0;
     }
+    getOutString() {
+        let out = "";
+        this._transactions.forEach(tr => {
+            out += tr.header.date + " " + tr.header.title + "\n";
+            tr.postings.forEach(p => {
+                out += "    ";
+                out += p.account + "    " + p.currency.name + " " + p.currency.amount;
+                out += p.comment ? " ; " + p.comment : "";
+                out += "\n";
+            });
+            out += "\n";
+        });
+        return out;
+    }
     analyzeTransaction(tr) {
         this._periods.forEach(period => {
             let transactionDate = moment(tr.header.date, "YYYY/MM/DD");

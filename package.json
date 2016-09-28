@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "watch-tsc": "tsc --p . -w",
-    "compile-tsc": "tsc --p ."
+    "tscw": "tsc --p . -w",
+    "tsc": "tsc --p ."
   },
   "repository": {
     "type": "git",
