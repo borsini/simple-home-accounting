@@ -1,0 +1,24 @@
+<div>
+
+<div >
+      <a href="">{{ account }}</a>
+</div>
+
+<table>
+    <template ngFor let-tr [ngForOf]="transactions">
+       <tr>
+            <td>{{tr.header.date}}</td>
+            <td>{{tr.header.title}}</td>
+            <td>
+                <div *ngFor="let p of tr.postings">
+                    <a href="">{{p.account}}</a>
+                    <span *ngIf="p.currency">{{p.currency.amount}} {{p.currency.name}}</span>
+                    <span *ngIf="p.comment">({{p.comment}})</span>
+                    <br/>
+                </div>
+            </td>
+        </tr>
+    </template>
+</table>
+
+</div>

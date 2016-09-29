@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
   <link rel="stylesheet" type="text/css" href="css/skeleton.css">
+<link rel="stylesheet" type="text/css" href="css/app.css">
 
     <!-- Insert this line above script imports  -->
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
@@ -18,134 +19,29 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
   
-    <script type="text/javascript" src="src/app.js"></script>
-    <script type="text/javascript" src="src/parser_ledger.js"></script>
+    <script type="text/javascript" src="app/app.js"></script>
+    <script type="text/javascript" src="app/parser_ledger.js"></script>
+
+    <!-- 1. Load libraries -->
+     <!-- Polyfill(s) for older browsers -->
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <!-- 2. Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <script>
+      System.import('app').catch(function(err){ console.error(err); });
+    </script>
+
 
 <!-- Insert this line after script imports -->
 <script>if (window.module) module = window.module;</script>
 
-    <style>
-
-        #header {
-
-            background-color:#888888;
-        }
-
-        label {
-            pointer: cursor;
-            /* Style as you please, it will become the visible UI component. */
-        }
-
-        #upload-ledger {
-            opacity: 0;
-            position: absolute;
-            z-index: -1;
-        }
-        </style>
   </head>
   <body>
 
-    <div class="container u-full-width u-max-full-width">
-        <div class="row" id="header">
-             <div class="twelve columns">
-                <h4>Ledger charts</h4>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="four columns">
-                <p>Pour commencer veuillez sélectionner un fichier .ledger</p>
-            </div>
-
-            <div class="four columns">
-                <label id="filename" for="upload-ledger">Choisir un fichier .ledger</label>
-                <input type="file" id="upload-ledger" />
-            </div>
-
-            <div class="four columns">
-                <ul id="infos">
-                </ul>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="four columns">
-               <select id="fromAccount">
-                </select>
-            </div>
-            <div class="four columns">
-                <select id="toAccount"></select>
-            </div>
-            <div class="four columns">
-                <label><input type="text" id="maxDepth" value="1" />Profondeur</label>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="four columns">
-                Type : <select id="type">
-                    <option value="1">Débit</option>
-                    <option value="2">Crédit</option>
-                    <option value="3">Les deux</option>
-                </select>
-            </div>
-            <div class="four columns">
-                Date début: <input type="text" id="startDate" value="01/01/2012"/>
-            </div>
-            <div class="four columns">
-                 Date fin: <input type="text" id="endDate" value="31/12/2016"/>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="six columns">
-                Grouper par : <select id="groupBy">
-                    <option value="1">Compte</option>
-                    <option value="2">Année</option>
-                    <option value="3">Semestre</option>
-                    <option value="4">Trimestre</option>
-                    <option value="5">Month</option>
-                    <option value="6">Semaine</option>
-                    <option value="7">Jour</option>
-                </select>
-            </div>
-            <div class="six columns">
-                 Calculer avec : <select id="statParam">
-                    <option value="1">Somme</option>
-                    <option value="2">Moyenne</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="six columns">
-              Périodes : <select id="periodGap">
-                    <option value="1">Aucune</option>
-                    <option value="2">Année</option>
-                                    <option value="3">Mois</option>
-                                    <option value="4">Semaine</option>
-                                    <option value="5">Jour</option>
-                </select>
-            </div>
-            <div class="six columns">
-                x de périodes: <input type="text" id="numPeriods" value="1" />
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="twelve columns">
-                 <input type="button" class="button-primary" value="Visualiser" onclick="javascript:loadTransactions();"/>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="twelve columns" id="chart_div"/>
-        </div>
-
-        <ul id="transactions">
-        </ul>
-
-    </div>
+    <my-app>Loading...</my-app>
   </body>
 
   <script>

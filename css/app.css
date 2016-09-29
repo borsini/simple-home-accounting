@@ -1,0 +1,53 @@
+html, body {
+    height: 100%;
+}
+body {
+    margin: 0;
+}
+
+
+#container {
+    height: 100%;
+}
+
+#header {
+    width: 100%;
+}
+
+#left
+{
+    overflow: scroll;
+    background-color:green;
+    height: 100%;
+    width: 300px;
+    float: left;
+}
+
+#right
+{
+    overflow: scroll;
+    background-color:darkcyan;
+    height: 100%;
+    margin-left: 300px; /* Change this to whatever the width of your left column is*/
+}
+
+.clear
+{
+    clear: both;
+}
+
+#header {
+
+    background-color:#888888;
+}
+
+label {
+    pointer: cursor;
+    /* Style as you please, it will become the visible UI component. */
+}
+
+#upload-ledger {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+}
