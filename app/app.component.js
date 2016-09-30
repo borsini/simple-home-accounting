@@ -11,64 +11,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 const core_1 = require('@angular/core');
 const ledgerservice_1 = require('./ledgerservice');
-let HeaderComponent = class HeaderComponent {
+let AppComponent = class AppComponent {
     constructor(ledger) {
+        this.accounts = [];
+        this.transactions = [];
         this.ledger = ledger;
     }
     onChange(event) {
         var files = event.srcElement.files;
         console.log(files);
         this.filename = files[0].name;
-        this.ledger.openFile(files[0], tr => {
-            console.log(tr);
+        this.ledger.openFile(files[0], () => {
+            this.accounts = this.ledger.allAccounts;
+            this.transactions = this.ledger.transactions;
         });
     }
-};
-HeaderComponent = __decorate([
-    core_1.Component({
-        selector: 'app-header',
-        templateUrl: './templates/header.html'
-    }), 
-    __metadata('design:paramtypes', [ledgerservice_1.LedgerService])
-], HeaderComponent);
-exports.HeaderComponent = HeaderComponent;
-let ContentComponent = class ContentComponent {
-    constructor(ledger) {
-        this.transactions = [];
-        this.transactions = ledger.transactions;
-    }
-};
-ContentComponent = __decorate([
-    core_1.Component({
-        selector: 'app-content',
-        templateUrl: './templates/content.html'
-    }), 
-    __metadata('design:paramtypes', [ledgerservice_1.LedgerService])
-], ContentComponent);
-exports.ContentComponent = ContentComponent;
-let MenuComponent = class MenuComponent {
-    constructor(ledger) {
-        this.accounts = [];
-        this.accounts = ledger.accounts;
-    }
-};
-MenuComponent = __decorate([
-    core_1.Component({
-        selector: 'app-menu',
-        templateUrl: './templates/menu.html',
-        providers: [ledgerservice_1.LedgerService]
-    }), 
-    __metadata('design:paramtypes', [ledgerservice_1.LedgerService])
-], MenuComponent);
-exports.MenuComponent = MenuComponent;
-let AppComponent = class AppComponent {
 };
 AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
         templateUrl: './templates/app.html'
     }), 
-    __metadata('design:paramtypes', [])
+    __metadata('design:paramtypes', [ledgerservice_1.LedgerService])
 ], AppComponent);
 exports.AppComponent = AppComponent;
 //# sourceMappingURL=app.component.js.map

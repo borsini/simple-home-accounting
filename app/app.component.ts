@@ -4,13 +4,14 @@ import { Component } from '@angular/core';
 import { LedgerService }        from './ledgerservice';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './templates/header.html'
+  selector: 'my-app',
+  templateUrl: './templates/app.html'
 })
-export class HeaderComponent { 
-
+export class AppComponent { 
   filename : string;
   ledger: LedgerService;
+  accounts : Account[] = [];
+  transactions : Transaction[] = [];
 
   constructor(ledger: LedgerService) {
     this.ledger = ledger;
@@ -22,40 +23,10 @@ export class HeaderComponent {
 
     this.filename = files[0].name;
 
-    this.ledger.openFile(files[0],
-      tr => {
-        console.log(tr);
+    this.ledger.openFile(files[0], 
+      () => {
+        this.accounts = this.ledger.allAccounts;
+        this.transactions = this.ledger.transactions;
       });
   }
 } 
-
-@Component({
-  selector: 'app-content',
-  templateUrl: './templates/content.html'
-})
-export class ContentComponent { 
-  transactions : Transaction[] = [];
-
-  constructor(ledger: LedgerService) {
-    this.transactions = ledger.transactions;
-  }
-} 
-
-@Component({
-  selector: 'app-menu',
-  templateUrl: './templates/menu.html',
-  providers:  [ LedgerService ]
-})
-export class MenuComponent { 
-  accounts : string[] = [];
-  constructor(ledger: LedgerService) {
-    this.accounts = ledger.accounts;
-  }
-
-} 
-
-@Component({
-  selector: 'my-app',
-  templateUrl: './templates/app.html'
-})
-export class AppComponent { } 

@@ -23,7 +23,7 @@
     "typescript": "^2.0.2"
   },
   "dependencies": {
-    "@types/moment": "2.13.0",
+    "@types/moment": "2.13.0", 
     "@angular/common": "2.0.0",
     "@angular/compiler": "2.0.0",
     "@angular/core": "2.0.0",

@@ -1,14 +1,41 @@
 <div id="container">
     <div id="header">
-        <app-header></app-header>
+        <h1>Ledger charts</h1>
+        <br/>
+                    
+        <label id="filename" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
+        <input type="file" id="upload-ledger" (change)="onChange($event)" />
     </div>
     
     <div id="left">
-        <app-menu></app-menu>
+        <ul>
+            <li *ngFor="let account of accounts">
+            <a href="">{{ account.name }} - {{ account.balance }}</a>
+            </li>
+        </ul>
     </div>
     
     <div id="right">
-        <app-content></app-content>
+        <div >
+            <a href="">{{ account }}</a>
+        </div>
+
+        <table>
+            <template ngFor let-tr [ngForOf]="transactions">
+            <tr>
+                    <td>{{tr.header.date}}</td>
+                    <td>{{tr.header.title}}</td>
+                    <td>
+                        <div *ngFor="let p of tr.postings">
+                            <a href="">{{p.account}}</a>
+                            <span *ngIf="p.currency">{{p.currency.amount}} {{p.currency.name}}</span>
+                            <span *ngIf="p.comment">({{p.comment}})</span>
+                            <br/>
+                        </div>
+                    </td>
+                </tr>
+            </template>
+        </table>
     </div>
     
     <div class="clear"></div>
