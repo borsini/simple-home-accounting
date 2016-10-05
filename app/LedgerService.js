@@ -57,7 +57,16 @@ let LedgerService = class LedgerService {
         var reader = new FileReader();
         let me = this;
         reader.addEventListener('load', function () {
-            me._transactions = PARSER.parse(reader.result);
+            me._transactions = PARSER.parse(reader.result).sort((tr1, tr2) => {
+                let d1 = me.getTransactionDate(tr1);
+                let d2 = me.getTransactionDate(tr2);
+                if (d2 > d1)
+                    return 1;
+                else if (d2 < d1)
+                    return -1;
+                else
+                    return 0;
+            });
             me.computeStats();
             callback();
         });
@@ -88,10 +97,13 @@ let LedgerService = class LedgerService {
         }
         return periods;
     }
+    getTransactionDate(tr) {
+        return moment(tr.header.date, "YYYY/MM/DD");
+    }
     computeStats() {
         let accountsAndBalance = new Map();
         this._transactions.forEach(tr => {
-            let transactionDate = moment(tr.header.date, "YYYY/MM/DD");
+            let transactionDate = this.getTransactionDate(tr);
             this._minDate = this._minDate ? moment.min(this._minDate, transactionDate) : transactionDate;
             this._maxDate = this._maxDate ? moment.max(this._maxDate, transactionDate) : transactionDate;
             tr.postings.forEach(ps => {
@@ -134,6 +146,22 @@ let LedgerService = class LedgerService {
     }
     get allAccounts() {
         return this._allAccounts;
+    }
+    filterTransactions(account, startDate, endDate) {
+        return this._transactions.filter(tr => {
+            let isValid = true;
+            let trDate = this.getTransactionDate(tr);
+            if (startDate) {
+                isValid = isValid && trDate.isSameOrAfter(startDate);
+            }
+            if (endDate) {
+                isValid = isValid && trDate.isSameOrBefore(endDate);
+            }
+            if (account) {
+                isValid = isValid && (tr.postings.find(p => p.account == account) != null);
+            }
+            return isValid;
+        });
     }
     addMissingAmount() {
         this._transactions.forEach(tr => {
@@ -182,7 +210,7 @@ let LedgerService = class LedgerService {
     }
     analyzeTransaction(tr) {
         this._periods.forEach(period => {
-            let transactionDate = moment(tr.header.date, "YYYY/MM/DD");
+            let transactionDate = this.getTransactionDate(tr);
             if (transactionDate >= period.startDate && transactionDate < period.endDate) {
                 let accountNames = tr.postings.map(p => p.account);
                 let source = this._sourceAccount;

@@ -1,11 +1,11 @@
 import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppComponent }   from './app.component';
+import { AppComponent, NumberToArray }   from './app.component';
 import { LedgerService }        from './ledgerservice';
 
 @NgModule({
   imports:      [ BrowserModule ],
-  declarations: [ AppComponent ],
+  declarations: [ AppComponent, NumberToArray ],
   bootstrap:    [ AppComponent ],
   providers:    [ LedgerService ]
 })

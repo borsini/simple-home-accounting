@@ -10,24 +10,30 @@
     <div id="left">
         <ul>
             <li *ngFor="let account of accounts">
-            <a href="">{{ account.name }} - {{ account.balance }}</a>
+            <a (click)="onAccountChanged(account.name)">{{ account.name }} - {{ account.balance }}</a>
             </li>
         </ul>
     </div>
     
     <div id="right">
-        <div >
-            <a href="">{{ account }}</a>
-        </div>
+        <h2>{{ selectedAccount }}</h2>
+        <br/>
+        Entre le <input type="date" (change)="startDateChanged($event)"/> et le <input type="date" (change)="endDateChanged($event)"/>
+        <br/>
+        <span>{{transactions.length}} transactions</span>
+        <br/>
+        <ul>
+        <span *ngFor='let pageIndex of nbPage | numberToArray'><a (click)="onPageChanged(pageIndex)">{{pageIndex}}</a> </span>
+        </ul>
 
         <table>
-            <template ngFor let-tr [ngForOf]="transactions">
+            <template ngFor let-tr [ngForOf]="transactions | slice:sliceStart:sliceEnd">
             <tr>
                     <td>{{tr.header.date}}</td>
                     <td>{{tr.header.title}}</td>
                     <td>
                         <div *ngFor="let p of tr.postings">
-                            <a href="">{{p.account}}</a>
+                            <a (click)="onAccountChanged(p.account)">{{p.account}}</a>
                             <span *ngIf="p.currency">{{p.currency.amount}} {{p.currency.name}}</span>
                             <span *ngIf="p.comment">({{p.comment}})</span>
                             <br/>
