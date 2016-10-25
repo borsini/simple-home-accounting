@@ -4,13 +4,20 @@
         <br/>
                     
         <label id="filename" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
-        <input type="file" id="upload-ledger" (change)="onChange($event)" />
+        <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
+
+        <label id="filename2" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
+        <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
     </div>
     
     <div id="left">
         <ul>
+            <li *ngIf="accounts.length > 0">
+                <a (click)="onAccountChanged()">Tous</a>
+            </li>
+
             <li *ngFor="let account of accounts">
-            <a (click)="onAccountChanged(account.name)">{{ account.name }} - {{ account.balance }}</a>
+            <a (click)="onAccountChanged(account.name)">{{ account.name }} / {{ account.balance | number : '1.2-2' }}</a>
             </li>
         </ul>
     </div>
@@ -19,6 +26,12 @@
         <h2>{{ selectedAccount }}</h2>
         <br/>
         Entre le <input type="date" (change)="startDateChanged($event)"/> et le <input type="date" (change)="endDateChanged($event)"/>
+        Statut
+        <select (change)="onStatusChanged($event)">
+                <option value="">Tous</option>
+                <option value="*">*</option>
+                <option value="!">!</option>
+        </select>
         <br/>
         <span>{{transactions.length}} transactions</span>
         <br/>
@@ -30,7 +43,8 @@
             <template ngFor let-tr [ngForOf]="transactions | slice:sliceStart:sliceEnd">
             <tr>
                     <td>{{tr.header.date}}</td>
-                    <td>{{tr.header.title}}</td>
+                    <td>{{tr.header.tag}}</td>
+                    <td contenteditable="true">{{tr.header.title}}</td>
                     <td>
                         <div *ngFor="let p of tr.postings">
                             <a (click)="onAccountChanged(p.account)">{{p.account}}</a>

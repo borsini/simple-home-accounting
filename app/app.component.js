@@ -29,6 +29,7 @@ let AppComponent = class AppComponent {
     constructor(ledger) {
         this.accounts = [];
         this.transactions = [];
+        this.tagFilter = "";
         this.sliceStart = 0;
         this.sliceEnd = 5;
         this.nbPage = 0;
@@ -44,11 +45,21 @@ let AppComponent = class AppComponent {
         this.endDate = moment(event.target.value, "YYYY-MM-DD");
         this.refreshTransactions();
     }
-    onChange(event) {
+    uploadLedgerOnChange(event) {
         var files = event.srcElement.files;
         console.log(files);
         this.filename = files[0].name;
-        this.ledger.openFile(files[0], () => {
+        this.ledger.openLedgerFile(files[0], () => {
+            this.accounts = this.ledger.allAccounts;
+            this.refreshTransactions();
+        });
+    }
+    uploadOfxOnChange(event) {
+        var files = event.srcElement.files;
+        console.log(files);
+        this.filename2 = files[0].name;
+        this.ledger.openOfxFile(files[0], () => {
+            console.log('ofx loaded');
             this.accounts = this.ledger.allAccounts;
             this.refreshTransactions();
         });
@@ -61,9 +72,13 @@ let AppComponent = class AppComponent {
         this.currentPage = page;
         this.refreshSlices();
     }
+    onStatusChanged(e) {
+        this.tagFilter = e.target.selectedOptions[0].value;
+        this.refreshTransactions();
+    }
     refreshTransactions() {
         var t0 = performance.now();
-        this.transactions = this.ledger.filterTransactions(this.selectedAccount, this.startDate, this.endDate);
+        this.transactions = this.ledger.filterTransactions(this.selectedAccount, this.startDate, this.endDate, this.tagFilter);
         var t1 = performance.now();
         console.log("Call to getTransactions took " + (t1 - t0) + " milliseconds.");
         this.currentPage = 1;

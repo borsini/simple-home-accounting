@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 const core_1 = require('@angular/core');
 './parser_ledger.js';
+const LEDGER_DATE_FORMAT = "DD/MM/YYYY";
 class GoogleChartsVisu {
     drawPeriods(periods) {
         var data = new google.visualization.DataTable();
@@ -51,13 +52,106 @@ let LedgerService = class LedgerService {
         this._periods = [];
         this._transactions = [];
         this._currencies = new Set();
-        this.addMissingAmount();
     }
-    openFile(name, callback) {
+    // Changes XML to JSON
+    xmlToJson(xml) {
+        // Create the return object
+        var obj = {};
+        if (xml.nodeType == 1) {
+            // do attributes
+            if (xml.attributes.length > 0) {
+                obj["@attributes"] = {};
+                for (var j = 0; j < xml.attributes.length; j++) {
+                    var attribute = xml.attributes.item(j);
+                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                }
+            }
+        }
+        else if (xml.nodeType == 3) {
+            obj = xml.nodeValue;
+        }
+        // do children
+        if (xml.hasChildNodes()) {
+            for (var i = 0; i < xml.childNodes.length; i++) {
+                var item = xml.childNodes.item(i);
+                var nodeName = item.nodeName;
+                if (typeof (obj[nodeName]) == "undefined") {
+                    obj[nodeName] = this.xmlToJson(item);
+                }
+                else {
+                    if (typeof (obj[nodeName].push) == "undefined") {
+                        var old = obj[nodeName];
+                        obj[nodeName] = [];
+                        obj[nodeName].push(old);
+                    }
+                    obj[nodeName].push(this.xmlToJson(item));
+                }
+            }
+        }
+        return obj;
+    }
+    ;
+    openOfxFile(name, callback) {
         var reader = new FileReader();
         let me = this;
         reader.addEventListener('load', function () {
-            me._transactions = PARSER.parse(reader.result).sort((tr1, tr2) => {
+            let xmlOfx = reader.result
+                .replace(/>\s+</g, '><')
+                .replace(/\s+</g, '<')
+                .replace(/>\s+/g, '>')
+                .replace(/<([A-Z0-9_]*)+\.+([A-Z0-9_]*)>([^<]+)(<\/\1\.\2>)?/g, '<\$1\$2>\$3')
+                .replace(/<(\w+?)>([^<]+)/g, '<\$1>\$2</<added>\$1>')
+                .replace(/<\/<added>(\w+?)>(<\/\1>)?/g, '</\$1>');
+            //console.log(xmlOfx);
+            let jsOfx = me.xmlToJson(new DOMParser().parseFromString(xmlOfx, "text/xml"));
+            console.log(jsOfx);
+            jsOfx.OFX.BANKMSGSRSV1.STMTTRNRS.forEach(trList => {
+                let c = trList.STMTRS.CURDEF['#text'];
+                let acc = trList.STMTRS.BANKACCTFROM.ACCTID['#text'];
+                trList.STMTRS.BANKTRANLIST.STMTTRN.forEach(tr => {
+                    let d = moment(tr.DTPOSTED['#text'], "YYYYMMDD");
+                    let a = tr.TRNAMT['#text'];
+                    let n = tr.NAME['#text'];
+                    let m = tr.MEMO['#text'];
+                    let t = {
+                        header: {
+                            date: d.format(LEDGER_DATE_FORMAT),
+                            title: n
+                        },
+                        postings: [
+                            {
+                                account: acc,
+                                currency: {
+                                    amount: parseFloat(a),
+                                    name: c
+                                },
+                                comment: m
+                            },
+                            {
+                                account: "Inconnu",
+                                currency: {
+                                    amount: null,
+                                    name: null
+                                },
+                                comment: null
+                            }
+                        ]
+                    };
+                    me._transactions.push(t);
+                });
+            });
+            me.addMissingAmount();
+            me.computeStats();
+            callback();
+        });
+        reader.readAsText(name);
+    }
+    openLedgerFile(name, callback) {
+        var reader = new FileReader();
+        let me = this;
+        reader.addEventListener('load', function () {
+            me._transactions.push.apply(me._transactions, PARSER.parse(reader.result));
+            me._transactions.sort((tr1, tr2) => {
                 let d1 = me.getTransactionDate(tr1);
                 let d2 = me.getTransactionDate(tr2);
                 if (d2 > d1)
@@ -67,6 +161,7 @@ let LedgerService = class LedgerService {
                 else
                     return 0;
             });
+            me.addMissingAmount();
             me.computeStats();
             callback();
         });
@@ -138,7 +233,7 @@ let LedgerService = class LedgerService {
     get stats() {
         return [
             this._transactions.length + " transactions sur " + this._allAccounts.length + " comptes " + " avec " + this._currencies.size + " monnaies",
-            "entre le " + this._minDate.format("DD/MM/YYYY") + " et " + this._maxDate.format("DD/MM/YYYY"),
+            "entre le " + this._minDate.format(LEDGER_DATE_FORMAT) + " et " + this._maxDate.format(LEDGER_DATE_FORMAT),
         ];
     }
     get transactions() {
@@ -147,7 +242,7 @@ let LedgerService = class LedgerService {
     get allAccounts() {
         return this._allAccounts;
     }
-    filterTransactions(account, startDate, endDate) {
+    filterTransactions(account, startDate, endDate, tag) {
         return this._transactions.filter(tr => {
             let isValid = true;
             let trDate = this.getTransactionDate(tr);
@@ -160,6 +255,9 @@ let LedgerService = class LedgerService {
             if (account) {
                 isValid = isValid && (tr.postings.find(p => p.account == account) != null);
             }
+            if (tag && tag.length > 0) {
+                isValid = isValid && tr.header.tag == tag;
+            }
             return isValid;
         });
     }
@@ -167,9 +265,11 @@ let LedgerService = class LedgerService {
         this._transactions.forEach(tr => {
             let totalSum = 0;
             let incompletePosting;
+            let lastCurrency;
             tr.postings.forEach(ps => {
                 if (ps.currency.amount) {
                     totalSum += ps.currency.amount;
+                    lastCurrency = ps.currency.name;
                 }
                 else {
                     incompletePosting = ps;
@@ -177,13 +277,14 @@ let LedgerService = class LedgerService {
             });
             if (incompletePosting) {
                 incompletePosting.currency.amount = -totalSum;
+                incompletePosting.currency.name = lastCurrency;
             }
         });
     }
     analyzeTransactions(sourceAccount, toAccount, startDate, endDate, groupy, statParam, periodGap, numPeriods, transactionType, maxDepth) {
         this._sourceAccount = sourceAccount;
         this._toAccount = toAccount;
-        this._periods = this.createPeriods(moment(startDate, "DD/MM/YYYY"), moment(endDate, "DD/MM/YYYY"), periodGap, numPeriods);
+        this._periods = this.createPeriods(moment(startDate, LEDGER_DATE_FORMAT), moment(endDate, LEDGER_DATE_FORMAT), periodGap, numPeriods);
         this._grouping = groupy;
         this._param = statParam;
         this._type = transactionType;

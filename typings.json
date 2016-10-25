@@ -1,9 +1,12 @@
 {
   "globalDependencies": {
-    "google-apps-script/google-apps-script.charts": "registry:dt/google-apps-script/google-apps-script.charts#0.0.0+20160316171810",
-    "moment": "registry:dt/moment#2.11.1+20160829143156",
     "core-js": "registry:dt/core-js#0.0.0+20160725163759",
+    "google-apps-script/google-apps-script.charts": "registry:dt/google-apps-script/google-apps-script.charts#0.0.0+20160316171810",
     "jasmine": "registry:dt/jasmine#2.2.0+20160621224255",
-    "node": "registry:dt/node#6.0.0+20160909174046"
+    "moment": "registry:dt/moment#2.11.1+20160829143156",
+    "node": "registry:dt/node#6.0.0+20160909174046",
+    "xml2js": "registry:dt/xml2js#0.0.0+20160317120654"
+  },
+  "dependencies": {
   }
 }

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import * as xa from "moment";
 import from './parser_ledger.js';
 
+const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
 
 class GoogleChartsVisu {
 
@@ -65,24 +67,134 @@ export class LedgerService {
         this._periods = [];
         this._transactions = [];
         this._currencies = new Set();
-        this.addMissingAmount();
     }
 
-    openFile(name: Blob, callback: () => any){
+    // Changes XML to JSON
+    xmlToJson(xml) : any {
+        // Create the return object
+        var obj = {};
+
+        if (xml.nodeType == 1) { // element
+            // do attributes
+            if (xml.attributes.length > 0) {
+            obj["@attributes"] = {};
+                for (var j = 0; j < xml.attributes.length; j++) {
+                    var attribute = xml.attributes.item(j);
+                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                }
+            }
+        } else if (xml.nodeType == 3) { // text
+            obj = xml.nodeValue;
+        }
+
+        // do children
+        if (xml.hasChildNodes()) {
+            for(var i = 0; i < xml.childNodes.length; i++) {
+                var item = xml.childNodes.item(i);
+                var nodeName = item.nodeName;
+                if (typeof(obj[nodeName]) == "undefined") {
+                    obj[nodeName] = this.xmlToJson(item);
+                } else {
+                    if (typeof(obj[nodeName].push) == "undefined") {
+                        var old = obj[nodeName];
+                        obj[nodeName] = [];
+                        obj[nodeName].push(old);
+                    }
+                    obj[nodeName].push(this.xmlToJson(item));
+                }
+            }
+        }
+        return obj;
+    };
+
+    openOfxFile(name: Blob, callback: () => any){
+        var reader = new FileReader();
+        
+        let me = this;
+        reader.addEventListener('load', function () {
+            let xmlOfx = reader.result
+                        // Remove empty spaces and line breaks between tags
+                        .replace(/>\s+</g, '><')
+                        // Remove empty spaces and line breaks before tags content
+                        .replace(/\s+</g, '<')
+                        // Remove empty spaces and line breaks after tags content
+                        .replace(/>\s+/g, '>')
+                        // Remove dots in start-tags names and remove end-tags with dots
+                        .replace(/<([A-Z0-9_]*)+\.+([A-Z0-9_]*)>([^<]+)(<\/\1\.\2>)?/g, '<\$1\$2>\$3' )
+                        // Add a new end-tags for the ofx elements
+                        .replace(/<(\w+?)>([^<]+)/g, '<\$1>\$2</<added>\$1>')
+                        // Remove duplicate end-tags
+                        .replace(/<\/<added>(\w+?)>(<\/\1>)?/g, '</\$1>');
+
+            //console.log(xmlOfx);
+            let jsOfx = me.xmlToJson(new DOMParser().parseFromString(xmlOfx, "text/xml"));
+            console.log(jsOfx);
+
+            jsOfx.OFX.BANKMSGSRSV1.STMTTRNRS.forEach(trList => {
+
+                let c = trList.STMTRS.CURDEF['#text']
+                let acc = trList.STMTRS.BANKACCTFROM.ACCTID['#text']
+
+                trList.STMTRS.BANKTRANLIST.STMTTRN.forEach(tr => {
+
+                    let d = moment(tr.DTPOSTED['#text'], "YYYYMMDD")
+                    let a = tr.TRNAMT['#text']
+                    let n = tr.NAME['#text']
+                    let m = tr.MEMO['#text']
+
+                    let t: Transaction = {
+                        header: {
+                            date: d.format(LEDGER_DATE_FORMAT),
+                            title: n
+                        },
+                        postings: [
+                            {
+                                account: acc,
+                                currency: {
+                                    amount: parseFloat(a),
+                                    name: c
+                                },
+                                comment: m
+                            },
+                            {
+                                account: "Inconnu",
+                                currency: {
+                                    amount: null,
+                                    name: null
+                                },
+                                comment: null
+                            }
+                        ]
+                    }
+                    me._transactions.push(t)
+                })
+            })
+            me.addMissingAmount();
+            me.computeStats();
+            callback();
+        });
+
+        reader.readAsText(name);
+    }
+
+    openLedgerFile(name: Blob, callback: () => any){
         var reader = new FileReader();
 
         let me = this;
-                reader.addEventListener('load', function () {
-                    me._transactions = PARSER.parse(reader.result).sort( (tr1: Transaction, tr2: Transaction) => {
-                        let d1 = me.getTransactionDate(tr1);
-                         let d2 = me.getTransactionDate(tr2);
-                         if (d2 > d1) return 1;
-                         else if (d2 < d1) return -1;
-                         else return 0;
-                    });
-                    me.computeStats();
-                    callback();
-                });
+        reader.addEventListener('load', function () {
+            me._transactions.push.apply(me._transactions, PARSER.parse(reader.result));
+            me._transactions.sort( (tr1: Transaction, tr2: Transaction) => {
+                let d1 = me.getTransactionDate(tr1);
+                    let d2 = me.getTransactionDate(tr2);
+                    if (d2 > d1) return 1;
+                    else if (d2 < d1) return -1;
+                    else return 0;
+            });
+
+            me.addMissingAmount();
+            me.computeStats();
+            callback();
+        });
 
         reader.readAsText(name);
     }
@@ -167,7 +279,7 @@ export class LedgerService {
     get stats():Array<string>{
         return [
             this._transactions.length + " transactions sur " + this._allAccounts.length + " comptes " + " avec " + this._currencies.size + " monnaies",
-            "entre le " + this._minDate.format("DD/MM/YYYY") + " et " + this._maxDate.format("DD/MM/YYYY"),
+            "entre le " + this._minDate.format(LEDGER_DATE_FORMAT) + " et " + this._maxDate.format(LEDGER_DATE_FORMAT),
         ];
     }
 
@@ -179,7 +291,7 @@ export class LedgerService {
         return this._allAccounts;
     }
 
-    filterTransactions(account: string, startDate: moment.Moment, endDate: moment.Moment){
+    filterTransactions(account: string, startDate: moment.Moment, endDate: moment.Moment, tag: string){
         return this._transactions.filter( tr => {
             let isValid: boolean = true;
 
@@ -196,6 +308,10 @@ export class LedgerService {
                 isValid = isValid && (tr.postings.find( p => p.account == account) != null);
             }
 
+            if(tag && tag.length > 0){
+                isValid = isValid && tr.header.tag == tag;
+            }
+
             return isValid;
         });
     }
@@ -204,11 +320,13 @@ export class LedgerService {
         this._transactions.forEach(tr => {
 
             let totalSum: number = 0;
-            let incompletePosting;
+            let incompletePosting : Posting;
+            let lastCurrency : string;
 
             tr.postings.forEach(ps => {
                 if (ps.currency.amount) {
                     totalSum += ps.currency.amount;
+                    lastCurrency = ps.currency.name;
                 }
                 else {
                     incompletePosting = ps;
@@ -217,6 +335,7 @@ export class LedgerService {
 
             if (incompletePosting) {
                 incompletePosting.currency.amount = - totalSum;
+                incompletePosting.currency.name = lastCurrency;
             }
         });
     }
@@ -234,7 +353,7 @@ export class LedgerService {
         maxDepth: number) {
         this._sourceAccount = sourceAccount;
         this._toAccount = toAccount;
-        this._periods = this.createPeriods(moment(startDate, "DD/MM/YYYY"), moment(endDate, "DD/MM/YYYY"), periodGap, numPeriods);
+        this._periods = this.createPeriods(moment(startDate, LEDGER_DATE_FORMAT), moment(endDate, LEDGER_DATE_FORMAT), periodGap, numPeriods);
         this._grouping = groupy;
         this._param = statParam;
         this._type = transactionType;

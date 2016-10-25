@@ -14,9 +14,9 @@ Transaction
     { return { header:fl, postings:sls }}
 
 FirstLine
-  = d:Date _* t:((tag:ClearingTag _)? t:Title { return t }  )? Newline
+  = d:Date _* tg:(tag:ClearingTag _ { return tag })? t:(t:Title { return t })? Newline
   {
-    return { date:d, title:t }
+    return { date:d, title:t, tag:tg }
   }
 
 SecondLine

@@ -19,13 +19,15 @@ export class NumberToArray implements PipeTransform {
   templateUrl: './templates/app.html'
 })
 export class AppComponent { 
-  filename : string;
-  ledger: LedgerService;
-  accounts : Account[] = [];
-  transactions : Transaction[] = [];
-  selectedAccount: string;
-  startDate: moment.Moment; 
-  endDate: moment.Moment;
+  filename : string
+  filename2 : string
+  ledger: LedgerService
+  accounts : Account[] = []
+  transactions : Transaction[] = []
+  selectedAccount: string
+  startDate: moment.Moment
+  endDate: moment.Moment
+  tagFilter = ""
 
   sliceStart: number = 0;
   sliceEnd: number = 5;
@@ -48,14 +50,28 @@ export class AppComponent {
     this.refreshTransactions();
   }
 
-  onChange(event) {
+  uploadLedgerOnChange(event) {
     var files = event.srcElement.files;
     console.log(files);
 
     this.filename = files[0].name;
 
-    this.ledger.openFile(files[0], 
+    this.ledger.openLedgerFile(files[0], 
       () => {
+        this.accounts = this.ledger.allAccounts;
+        this.refreshTransactions();
+      });
+  }
+
+  uploadOfxOnChange(event) {
+    var files = event.srcElement.files;
+    console.log(files);
+
+    this.filename2 = files[0].name;
+
+    this.ledger.openOfxFile(files[0], 
+      () => {
+        console.log('ofx loaded');
         this.accounts = this.ledger.allAccounts;
         this.refreshTransactions();
       });
@@ -71,9 +87,14 @@ export class AppComponent {
     this.refreshSlices();
   }
 
+  onStatusChanged(e: Event){
+    this.tagFilter = e.target.selectedOptions[0].value
+    this.refreshTransactions()
+  }
+
   refreshTransactions(){
     var t0 = performance.now();
-    this.transactions = this.ledger.filterTransactions(this.selectedAccount, this.startDate, this.endDate);
+    this.transactions = this.ledger.filterTransactions(this.selectedAccount, this.startDate, this.endDate, this.tagFilter);
     var t1 = performance.now();
     console.log("Call to getTransactions took " + (t1 - t0) + " milliseconds.");
 
