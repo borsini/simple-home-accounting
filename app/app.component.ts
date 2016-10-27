@@ -2,6 +2,7 @@
 
 import { Pipe, PipeTransform, Component } from '@angular/core';
 import { LedgerService }        from './ledgerservice';
+declare var saveAs:any;
 
 @Pipe({name: 'numberToArray'})
 export class NumberToArray implements PipeTransform {
@@ -90,6 +91,12 @@ export class AppComponent {
   onStatusChanged(e: Event){
     this.tagFilter = e.target.selectedOptions[0].value
     this.refreshTransactions()
+  }
+
+  onSaveClicked() {
+    
+    var blob = new Blob([this.ledger.getOutString()], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "accounts.ledger");
   }
 
   refreshTransactions(){

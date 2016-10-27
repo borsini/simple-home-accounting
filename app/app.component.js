@@ -76,6 +76,10 @@ let AppComponent = class AppComponent {
         this.tagFilter = e.target.selectedOptions[0].value;
         this.refreshTransactions();
     }
+    onSaveClicked() {
+        var blob = new Blob([this.ledger.getOutString()], { type: "text/plain;charset=utf-8" });
+        saveAs(blob, "accounts.ledger");
+    }
     refreshTransactions() {
         var t0 = performance.now();
         this.transactions = this.ledger.filterTransactions(this.selectedAccount, this.startDate, this.endDate, this.tagFilter);

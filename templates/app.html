@@ -8,6 +8,8 @@
 
         <label id="filename2" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
         <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
+
+        <input type="button" name="Sauvegarder" value="Sauvegarder" (click)="onSaveClicked()"/>
     </div>
     
     <div id="left">
