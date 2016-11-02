@@ -1,63 +1,67 @@
 <div id="container">
     
     <div id="left">
-        <ul>
-            <li *ngIf="accounts.length > 0">
-                <a (click)="onAccountChanged()">Tous</a>
-            </li>
+        <div id="left_content">
+            <ul>
+                <li *ngIf="accounts.length > 0">
+                    <a (click)="onAccountChanged()">Tous</a>
+                </li>
 
-            <li *ngFor="let account of accounts">
-            <a (click)="onAccountChanged(account.name)">{{ account.name }} / {{ account.balance | number : '1.2-2' }}</a>
-            </li>
-        </ul>
+                <li *ngFor="let account of accounts">
+                <a (click)="onAccountChanged(account.name)">{{ account.name }} / {{ account.balance | number : '1.2-2' }}</a>
+                </li>
+            </ul>
+        </div>
     </div>
     
     <div id="right">
+        <div id="right_content">
+            <label id="filename" class="action_btn" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
+            
+            <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
 
-        <h1>Ledger charts</h1>
-        <br/>
-                    
-        <label id="filename" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
-        <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
+            <label id="filename2" class="action_btn" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
 
-        <label id="filename2" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
-        <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
+            <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
 
-        <input type="button" name="Sauvegarder" value="Sauvegarder" (click)="onSaveClicked()"/>
-        
-        <h2>{{ selectedAccount }}</h2>
-        <br/>
-        Entre le <input type="date" (change)="startDateChanged($event)"/> et le <input type="date" (change)="endDateChanged($event)"/>
-        Statut
-        <select (change)="onStatusChanged($event)">
-                <option value="">Tous</option>
-                <option value="*">*</option>
-                <option value="!">!</option>
-        </select>
-        <br/>
-        <span>{{transactions.length}} transactions</span>
-        <br/>
-        <ul>
-        <span *ngFor='let pageIndex of nbPage | numberToArray'><a (click)="onPageChanged(pageIndex)">{{pageIndex}}</a> </span>
-        </ul>
+            <label class="action_btn" (click)="onSaveClicked()">Sauvegarder</label>
+            
+            <h2>{{ selectedAccount }}</h2>
+            <br/>
+            Entre le <input type="date" (change)="startDateChanged($event)"/> et le <input type="date" (change)="endDateChanged($event)"/>
+            Statut
+            <select (change)="onStatusChanged($event)">
+                    <option value="">Tous</option>
+                    <option value="*">*</option>
+                    <option value="!">!</option>
+            </select>
+            <br/>
+            <span>{{transactions.length}} transactions</span>
+            <br/>
+            <ul class="pagination">
+                <li *ngFor='let pageIndex of nbPage | numberToArray' [class.currentPage] = "pageIndex == currentPage">
+                    <a (click)="onPageChanged(pageIndex)">{{pageIndex}}</a>
+                </li>
+            </ul>
 
-        <table>
-            <template ngFor let-tr [ngForOf]="transactions | slice:sliceStart:sliceEnd">
-            <tr>
-                    <td>{{tr.header.date}}</td>
-                    <td>{{tr.header.tag}}</td>
-                    <td contenteditable="true">{{tr.header.title}}</td>
-                    <td>
-                        <div *ngFor="let p of tr.postings">
-                            <a (click)="onAccountChanged(p.account)">{{p.account}}</a>
-                            <span *ngIf="p.currency">{{p.currency.amount}} {{p.currency.name}}</span>
-                            <span *ngIf="p.comment">({{p.comment}})</span>
-                            <br/>
-                        </div>
-                    </td>
-                </tr>
-            </template>
-        </table>
+            <table>
+                <template ngFor let-tr [ngForOf]="transactions | slice:sliceStart:sliceEnd" let-isOdd="odd" let-isEven="even">
+                    <tr [class.rowOdd]="isOdd" [class.rowEven]="isEven" class="row" >
+                        <td>{{tr.header.date}}</td>
+                        <td>{{tr.header.tag}}</td>
+                        <td contenteditable="true">{{tr.header.title}}</td>
+                        <td>
+                            <div *ngFor="let p of tr.postings">
+                                <a (click)="onAccountChanged(p.account)">{{p.account}}</a>
+                                <span *ngIf="p.currency">{{p.currency.amount}} {{p.currency.name}}</span>
+                                <span *ngIf="p.comment">({{p.comment}})</span>
+                                <br/>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+            </table>
+        </div>
     </div>
     
     <div class="clear"></div>

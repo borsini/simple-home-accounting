@@ -10,7 +10,7 @@
     "tscw": "tsc --p . -w",
     "tsc": "tsc --p .",
     "startangular": "tsc && concurrently \"npm run-script tscw\" \"npm run lite\" ",
-    "lite": "lite-server"
+    "lite": "lite-server -w \"src/**/*.css # #reloadcss \""
   },
   "repository": {
     "type": "git",

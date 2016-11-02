@@ -29,26 +29,37 @@ A700#DD2C00
 */
 
 $COLOR_50: #E8F5E9;
+$COLOR_400: #66BB6A;
 $COLOR_500: #4CAF50;
+$COLOR_600: #43A047;
 $COLOR_700: #388E3C;
 $COLOR_800: #2E7D32;
+
+$VIBRANT_500: #FF5722;
 
 $SPACING: 10px;
 $MENU_WIDTH: 300px;
 
+* {
+//    outline : 1px solid red; 
+}
 
 html, body {
     height: 100%;
-}
-body {
+    min-height: 100%;
     margin: 0;
+    font-size: 11pt;
     color: white;
     font-family: 'Roboto', sans-serif;
     font-weight: 200;
 }
 
+input, select {
+    color: black;
+}
 
 #container {
+
     height: 100%;
 }
 
@@ -58,22 +69,90 @@ body {
 
 #left
 {
-    overflow: scroll;
+    overflow: auto;
     background-color:$COLOR_800;
     height: 100%;
-    width: $MENU_WIDTH;
+    width: $MENU_WIDTH; 
     float: left;
-    padding: $SPACING;
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            margin: 0 0 5px 0;
+            min-width: 15px;
+        }
+
+        a {
+
+        }
+    }
 }
 
-#right
+#left_content {
+    padding: $SPACING;  
+}
+
+#right 
 {
-    overflow: scroll;
+    overflow: auto;
     background-color:$COLOR_500;
     height: 100%;
-    padding: $SPACING;
+    max-height: 100%;
+    min-height: 100%;
     margin-left: $MENU_WIDTH;
+
+    #right_content {
+        padding: $SPACING;
+    
+        .pagination {
+            list-style-type : none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                display : inline;
+                margin : 0 3px 0 0;
+                background-color: $VIBRANT_500;
+
+                a {
+                    margin : 3px;
+                    min-width: 20px;
+                }
+            }
+
+            .currentPage {
+                font-weight: 600;
+                padding-top : 3px;
+                padding-bottom : 3px;
+            }
+        }
+
+        table {
+            width:100%;
+
+            .row > td {
+                padding: 5px;
+            }
+
+            .rowEven {
+                background-color: $COLOR_500;
+            }
+
+            .rowOdd {
+                background-color: $COLOR_400;
+            }
+
+            td {
+                vertical-align:top;
+            }
+        }
+    }
 }
+
+
 
 .clear
 {
@@ -85,7 +164,13 @@ a {
     cursor: pointer;
 }
 
-#upload-ledger {
+.action_btn {
+    margin-right: 10px;
+    padding: 10px;
+    background-color: $VIBRANT_500;  
+}
+
+#upload-ledger, #upload-ofx {
     opacity: 0;
     position: absolute;
     z-index: -1;
