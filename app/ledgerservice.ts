@@ -125,7 +125,7 @@ export class LedgerService {
                         .replace(/<(\w+?)>([^<]+)/g, '<\$1>\$2</<added>\$1>')
                         // Remove duplicate end-tags
                         .replace(/<\/<added>(\w+?)>(<\/\1>)?/g, '</\$1>');
-
+ 
             //console.log(xmlOfx);
             let jsOfx = me.xmlToJson(new DOMParser().parseFromString(xmlOfx, "text/xml"));
             console.log(jsOfx);

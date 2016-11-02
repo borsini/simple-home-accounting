@@ -1,53 +1,70 @@
-html, body {
-    height: 100%;
-}
-body {
-    margin: 0;
-}
+/*
+Green palette
+50#E8F5E9
+100#C8E6C9
+200#A5D6A7
+300#81C784
+400#66BB6A
+500#4CAF50
+600#43A047
+700#388E3C
+800#2E7D32
+900#1B5E20
 
+Deep orange palette
+50#FBE9E7
+100#FFCCBC
+200#FFAB91
+300#FF8A65
+400#FF7043
+500#FF5722
+600#F4511E
+700#E64A19
+800#D84315
+900#BF360C
+A100#FF9E80
+A200#FF6E40
+A400#FF3D00
+A700#DD2C00
+*/
+html, body {
+  height: 100%; }
+
+body {
+  margin: 0;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 200; }
 
 #container {
-    height: 100%;
-}
+  height: 100%; }
 
 #header {
-    width: 100%;
-}
+  width: 100%; }
 
-#left
-{
-    overflow: scroll;
-    background-color:green;
-    height: 100%;
-    width: 300px;
-    float: left;
-}
+#left {
+  overflow: scroll;
+  background-color: #2E7D32;
+  height: 100%;
+  width: 300px;
+  float: left;
+  padding: 10px; }
 
-#right
-{
-    overflow: scroll;
-    background-color:darkcyan;
-    height: 100%;
-    margin-left: 300px; /* Change this to whatever the width of your left column is*/
-}
+#right {
+  overflow: scroll;
+  background-color: #4CAF50;
+  height: 100%;
+  padding: 10px;
+  margin-left: 300px; }
 
-.clear
-{
-    clear: both;
-}
+.clear {
+  clear: both; }
 
-#header {
-
-    background-color:#888888;
-}
-
-label {
-    pointer: cursor;
-    /* Style as you please, it will become the visible UI component. */
-}
+a {
+  text-decoration: underline;
+  cursor: pointer; }
 
 #upload-ledger {
-    opacity: 0;
-    position: absolute;
-    z-index: -1;
-}
+  opacity: 0;
+  position: absolute;
+  z-index: -1; }

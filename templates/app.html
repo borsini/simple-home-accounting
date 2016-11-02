@@ -1,16 +1,4 @@
 <div id="container">
-    <div id="header">
-        <h1>Ledger charts</h1>
-        <br/>
-                    
-        <label id="filename" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
-        <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
-
-        <label id="filename2" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
-        <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
-
-        <input type="button" name="Sauvegarder" value="Sauvegarder" (click)="onSaveClicked()"/>
-    </div>
     
     <div id="left">
         <ul>
@@ -25,6 +13,18 @@
     </div>
     
     <div id="right">
+
+        <h1>Ledger charts</h1>
+        <br/>
+                    
+        <label id="filename" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
+        <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
+
+        <label id="filename2" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
+        <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
+
+        <input type="button" name="Sauvegarder" value="Sauvegarder" (click)="onSaveClicked()"/>
+        
         <h2>{{ selectedAccount }}</h2>
         <br/>
         Entre le <input type="date" (change)="startDateChanged($event)"/> et le <input type="date" (change)="endDateChanged($event)"/>
