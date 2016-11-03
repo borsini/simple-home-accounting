@@ -1,0 +1,24 @@
+<div class="cell">
+    <span (click)="editDate = true" *ngIf="!editDate">{{transaction.header.date}}</span>
+    <input type="text" (click)="editDate = false" *ngIf="editDate" value="{{transaction.header.date}}"/>
+</div>
+
+<div class="cell">
+    <span (click)="editTag = true" *ngIf="!editTag">{{transaction.header.tag || 'Vide'}}</span>
+    <select (click)="editTag = false" *ngIf="editTag">
+        <option>Vide</option>
+        <option>*</option>
+        <option>!</option>
+    </select>
+</div>
+
+<div class="cell">
+    <span (click)="editTitle = true" *ngIf="!editTitle">{{transaction.header.title}}</span>
+    <input type="text" (click)="editTitle = false" *ngIf="editTitle" value="{{transaction.header.title}}"/>
+</div>
+
+<div class="cell cell50">
+    <div *ngFor="let p of transaction.postings" class="row">
+        <posting [posting]=p></posting>
+    </div>
+</div>
