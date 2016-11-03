@@ -1,6 +1,6 @@
 /// <reference path="app.ts"/>
 
-import { Pipe, PipeTransform, Component } from '@angular/core';
+import { Pipe, PipeTransform, Component, Input } from '@angular/core';
 import { LedgerService }        from './ledgerservice';
 declare var saveAs:any;
 
@@ -114,4 +114,22 @@ export class AppComponent {
     this.sliceStart = (this.currentPage - 1) * this.perPage;
     this.sliceEnd = this.sliceStart + this.perPage;
   }
+}
+
+@Component({
+  selector: 'transaction',
+  templateUrl: './templates/transaction.html'
+})
+export class TransactionComponent {
+  @Input()
+  transaction: Transaction;
+}
+
+@Component({
+  selector: 'posting',
+  templateUrl: './templates/posting.html'
+})
+export class PostingComponent {
+  @Input()
+  posting: Posting;
 }

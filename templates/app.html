@@ -56,23 +56,11 @@
                 </li>
             </ul>
 
-            <table>
+            <div class="transactions">
                 <template ngFor let-tr [ngForOf]="transactions | slice:sliceStart:sliceEnd" let-isOdd="odd" let-isEven="even">
-                    <tr [class.rowOdd]="isOdd" [class.rowEven]="isEven" class="row" >
-                        <td>{{tr.header.date}}</td>
-                        <td>{{tr.header.tag}}</td>
-                        <td contenteditable="true">{{tr.header.title}}</td>
-                        <td>
-                            <div *ngFor="let p of tr.postings">
-                                <a (click)="onAccountNameChanged(p.account)">{{p.account}}</a>
-                                <span *ngIf="p.currency">{{p.amount}} {{p.currency}}</span>
-                                <span *ngIf="p.comment">({{p.comment}})</span>
-                                <br/>
-                            </div>
-                        </td>
-                    </tr>
+                    <transaction [transaction]="tr" [class.rowOdd]="isOdd" [class.rowEven]="isEven" class="row"></transaction>
                 </template>
-            </table>
+            </div>
         </div>
     </div>
     

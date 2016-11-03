@@ -131,24 +131,27 @@ input, select {
             }
         }
 
-        table {
+        .table {
+            display: table;
+            table-layout: fixed;
             width:100%;
+        }
 
-            .row > td {
-                padding: 5px;
-            }
+        .row {
+            display: table-row;
+        }
 
-            .rowEven {
-                background-color: $COLOR_500;
-            }
+        .cell {
+            padding: 5px;
+            display: table-cell;
+        }
 
-            .rowOdd {
-                background-color: $COLOR_400;
-            }
+        .rowEven {
+            background-color: $COLOR_500;
+        }
 
-            td {
-                vertical-align:top;
-            }
+        .rowOdd {
+            background-color: $COLOR_400;
         }
     }
 }
