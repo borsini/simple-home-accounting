@@ -23,11 +23,15 @@ SecondLine
   =
   _+
   ct:(ct:ClearingTag _ { return ct })?
-  a:Account _* cp:Currency2? cp2:Currency3? _* cm:Comment?
+  a:Account _* a1:AmountAndCurrency1? a2:AmountAndCurrency2? _* cm:Comment?
   Newline?
   {
+    let amountType = a1 || a2;
+    let amount = amountType ? amountType.amount : null;
+    let currency = amountType ? amountType.currency : null;
     return {
-      tag:ct, account:a, currency:cp || cp2 || { name: null, amount: null }, comment:cm
+      
+      tag:ct, account:a, amount:amount, currency:currency, comment:cm
     }
   }
 
@@ -39,7 +43,7 @@ CommentStartChars = [';']
 CurrencyName
   = c:(!Comment !Newline c:[^0-9 ] { return c })+ { return c.join("") }
 
-Currency2 =
+AmountAndCurrency1 =
   !CommentStartChars
   sign:'-'?
     _*
@@ -49,10 +53,10 @@ Currency2 =
     n:CurrencyName?
     {
     	var a = (sign || "") + units + (decimals ? "." + decimals : "");
-      return { name:n, amount:Number.parseFloat(a) }
+      return { currency:n, amount:Number.parseFloat(a) }
     }
   
-Currency3 =
+AmountAndCurrency2 =
   !CommentStartChars
   sign:'-'?
     _*
@@ -62,7 +66,7 @@ Currency3 =
     decimals:('.' decimals:[0-9]*{ return decimals.join("") })?
     {
       var a = (sign || "") + units + (decimals ? "." + decimals : "");
-      return { name:n, amount:Number.parseFloat(a) }
+      return { currency:n, amount:Number.parseFloat(a) }
     }
     
 Date

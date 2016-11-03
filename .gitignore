@@ -1,3 +1,6 @@
 node_modules
 *.map
 css/app.css
+app/ledgerservice.js
+app/app.component.js
+app/app.js

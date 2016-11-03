@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as xa from "moment";
-import from './parser_ledger.js';
+declare var PARSER:any; //PEG parser inclusion
 
 const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
 
@@ -49,7 +49,7 @@ class GoogleChartsVisu {
 export class LedgerService {
 
     private _transactions: Array<Transaction> = [];
-    private _allAccounts: Array<Account>;
+    private _allAccounts: Map<String, AccountStat>;
 
     private _sourceAccount: string; //Compte sur lesquel on réalise les stats
     private _toAccount: string;
@@ -144,24 +144,23 @@ export class LedgerService {
 
                     let t: Transaction = {
                         header: {
+                            tag: null,
                             date: d.format(LEDGER_DATE_FORMAT),
                             title: n
                         },
                         postings: [
                             {
+                                tag: null,
                                 account: acc,
-                                currency: {
-                                    amount: parseFloat(a),
-                                    name: c
-                                },
+                                amount: parseFloat(a),
+                                currency: c,
                                 comment: m
                             },
                             {
+                                tag: null,
                                 account: "Inconnu",
-                                currency: {
-                                    amount: null,
-                                    name: null
-                                },
+                                amount: null,
+                                currency: null,
                                 comment: null
                             }
                         ]
@@ -234,7 +233,9 @@ export class LedgerService {
     }
 
     computeStats() {
-        let accountsAndBalance = new Map<string, number>();
+        this._allAccounts = new Map();
+        //let accountsAndBalance = new Map<string, number>();
+        
         this._transactions.forEach(tr => {
 
             let transactionDate = this.getTransactionDate(tr);
@@ -243,52 +244,46 @@ export class LedgerService {
                 this._maxDate =  this._maxDate ? moment.max( this._maxDate, transactionDate) : transactionDate;
 
             tr.postings.forEach(ps => {
-                if(ps.currency.name){
-                    this._currencies.add(ps.currency.name);
+                if(ps.currency){
+                    this._currencies.add(ps.currency);
                 }
 
-                let accountsToAddAmount : Array<string> = [];
-
+                this.addAmountToStat(ps.account, ps.amount, false);
                 if(ps.account.indexOf(":") > 0){
                     let sum: string = "";
-                    for (let entry of ps.account.split(":")) {
+                    let a = ps.account.split(":");
+                    a.pop();
+                    for (let entry of a) {
                         sum += entry;
-                        accountsToAddAmount.push(sum);
+                        this.addAmountToStat(sum, ps.amount, true);
                         sum += ":";
                     }
                 }
-                else{
-                    accountsToAddAmount.push(ps.account);
-                }
-                
-                accountsToAddAmount.forEach(a => {
-                    let lastAmount = accountsAndBalance.get(a) || 0;
-                    accountsAndBalance.set(a, lastAmount + ps.currency.amount);
-                });
             });
         });
-
-        this._allAccounts = Array.from(accountsAndBalance).map( e => {
-            return {
-                name : e[0],
-                balance : e[1]
-            }
-        }).sort( (a1, a2) => a1.name.localeCompare(a2.name) );
     }
 
-    get stats():Array<string>{
-        return [
-            this._transactions.length + " transactions sur " + this._allAccounts.length + " comptes " + " avec " + this._currencies.size + " monnaies",
-            "entre le " + this._minDate.format(LEDGER_DATE_FORMAT) + " et " + this._maxDate.format(LEDGER_DATE_FORMAT),
-        ];
+    private addAmountToStat(accountName: string, amount: number, isCumul: boolean) {
+        let stat = this._allAccounts.get(accountName) || new AccountStat(accountName);
+
+        if(isCumul){
+            stat.cumulativeBalance += amount;
+        }
+        else{
+            stat.balance += amount;
+        }
+
+        stat.nbTransactions++
+
+        this._allAccounts.set(accountName, stat);
     }
 
     get transactions():Array<Transaction> {
         return this._transactions;
     }
 
-    get allAccounts(): Account[] {
-        return this._allAccounts;
+    get stats(): Array<AccountStat> {
+        return Array.from(this._allAccounts.values()).sort( (a1, a2) => a1.name.localeCompare(a2.name) )
     }
 
     filterTransactions(account: string, startDate: moment.Moment, endDate: moment.Moment, tag: string){
@@ -324,9 +319,9 @@ export class LedgerService {
             let lastCurrency : string;
 
             tr.postings.forEach(ps => {
-                if (ps.currency.amount) {
-                    totalSum += ps.currency.amount;
-                    lastCurrency = ps.currency.name;
+                if (ps.amount) {
+                    totalSum += ps.amount;
+                    lastCurrency = ps.currency;
                 }
                 else {
                     incompletePosting = ps;
@@ -334,8 +329,8 @@ export class LedgerService {
             });
 
             if (incompletePosting) {
-                incompletePosting.currency.amount = - totalSum;
-                incompletePosting.currency.name = lastCurrency;
+                incompletePosting.amount = - totalSum;
+                incompletePosting.currency = lastCurrency;
             }
         });
     }
@@ -375,7 +370,7 @@ export class LedgerService {
             
             tr.postings.forEach( p => {
                 out += "    ";
-                out += p.account + "    " + p.currency.name + " " + p.currency.amount;
+                out += p.account + "    " + p.currency + " " + p.amount;
                 out += p.comment ? " ; " + p.comment : "";
                 out += "\n";
             });
@@ -425,7 +420,7 @@ export class LedgerService {
                                     index = String(transactionDate.weekday());
                                 }
 
-                                let amount: number = posting.currency.amount || 0;
+                                let amount: number = posting.amount || 0;
 
                                 if (this._type == TransactionType.BOTH ||
                                     (amount < 0 && this._type == TransactionType.DEBT) ||

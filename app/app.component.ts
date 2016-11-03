@@ -7,7 +7,7 @@ declare var saveAs:any;
 @Pipe({name: 'numberToArray'})
 export class NumberToArray implements PipeTransform {
   transform(value, args:string[]) : any {
-    let res = [];
+    let res : number[] = [];
     for (let i = 1; i <= value; i++) {
         res.push(i);
       }
@@ -23,9 +23,9 @@ export class AppComponent {
   filename : string
   filename2 : string
   ledger: LedgerService
-  accounts : Account[] = []
+  accounts : AccountStat[] = []
   transactions : Transaction[] = []
-  selectedAccount: string
+  selectedAccount: AccountStat
   startDate: moment.Moment
   endDate: moment.Moment
   tagFilter = ""
@@ -41,14 +41,14 @@ export class AppComponent {
     this.ledger = ledger;
   }
 
-  startDateChanged(event){
+  startDateChanged(event){ 
     this.startDate = moment(event.target.value, "YYYY-MM-DD");
     this.refreshTransactions();
   }
 
   endDateChanged(event){
     this.endDate = moment(event.target.value, "YYYY-MM-DD");
-    this.refreshTransactions();
+    this.refreshTransactions(); 
   }
 
   uploadLedgerOnChange(event) {
@@ -59,7 +59,7 @@ export class AppComponent {
 
     this.ledger.openLedgerFile(files[0], 
       () => {
-        this.accounts = this.ledger.allAccounts;
+        this.accounts = this.ledger.stats;
         this.refreshTransactions();
       });
   }
@@ -73,12 +73,12 @@ export class AppComponent {
     this.ledger.openOfxFile(files[0], 
       () => {
         console.log('ofx loaded');
-        this.accounts = this.ledger.allAccounts;
+        this.accounts = this.ledger.stats;
         this.refreshTransactions();
       });
   }
 
-  onAccountChanged(account: string){
+  onAccountChanged(account: AccountStat){
     this.selectedAccount = account;
     this.refreshTransactions();
   }
@@ -101,7 +101,7 @@ export class AppComponent {
 
   refreshTransactions(){
     var t0 = performance.now();
-    this.transactions = this.ledger.filterTransactions(this.selectedAccount, this.startDate, this.endDate, this.tagFilter);
+    this.transactions = this.ledger.filterTransactions(this.selectedAccount ? this.selectedAccount.name : "", this.startDate, this.endDate, this.tagFilter);
     var t1 = performance.now();
     console.log("Call to getTransactions took " + (t1 - t0) + " milliseconds.");
 

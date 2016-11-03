@@ -2,13 +2,26 @@
     
     <div id="left">
         <div id="left_content">
+            <label id="filename" class="action_btn" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
+            <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
+            
+            <label id="filename2" class="action_btn" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
+            <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
+
+            <label class="action_btn" (click)="onSaveClicked()">Sauvegarder</label>
+
             <ul>
                 <li *ngIf="accounts.length > 0">
                     <a (click)="onAccountChanged()">Tous</a>
                 </li>
 
-                <li *ngFor="let account of accounts">
-                <a (click)="onAccountChanged(account.name)">{{ account.name }} / {{ account.balance | number : '1.2-2' }}</a>
+                <li *ngFor="let account of accounts" [class.currentAccount] = "account == selectedAccount">
+                    <a (click)="onAccountChanged(account)">
+                        {{ account.name }} / C : 
+                        {{ account.cumulativeBalance | number : '1.2-2' }} / 
+                        {{ account.balance | number : '1.2-2' }} / 
+                        {{ account.nbTransactions }}
+                    </a>
                 </li>
             </ul>
         </div>
@@ -16,17 +29,16 @@
     
     <div id="right">
         <div id="right_content">
-            <label id="filename" class="action_btn" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
-            
-            <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
+            <div *ngIf="selectedAccount">
+                <h2>{{ selectedAccount.name }} 
+                </h2>
+                <h3>
+                    {{ selectedAccount.cumulativeBalance | number : '1.2-2' }} / 
+                    {{ selectedAccount.balance | number : '1.2-2' }} / 
+                    {{ selectedAccount.nbTransactions }}
+                </h3>
+            </div>
 
-            <label id="filename2" class="action_btn" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
-
-            <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
-
-            <label class="action_btn" (click)="onSaveClicked()">Sauvegarder</label>
-            
-            <h2>{{ selectedAccount }}</h2>
             <br/>
             Entre le <input type="date" (change)="startDateChanged($event)"/> et le <input type="date" (change)="endDateChanged($event)"/>
             Statut
@@ -52,8 +64,8 @@
                         <td contenteditable="true">{{tr.header.title}}</td>
                         <td>
                             <div *ngFor="let p of tr.postings">
-                                <a (click)="onAccountChanged(p.account)">{{p.account}}</a>
-                                <span *ngIf="p.currency">{{p.currency.amount}} {{p.currency.name}}</span>
+                                <a (click)="onAccountNameChanged(p.account)">{{p.account}}</a>
+                                <span *ngIf="p.currency">{{p.amount}} {{p.currency}}</span>
                                 <span *ngIf="p.comment">({{p.comment}})</span>
                                 <br/>
                             </div>

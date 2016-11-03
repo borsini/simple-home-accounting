@@ -85,8 +85,9 @@ input, select {
             min-width: 15px;
         }
 
-        a {
-
+        .currentAccount {
+            font-weight: 600;
+            background-color: $VIBRANT_500;
         }
     }
 }
@@ -165,9 +166,10 @@ a {
 }
 
 .action_btn {
-    margin-right: 10px;
     padding: 10px;
+    margin-bottom: $SPACING;
     background-color: $VIBRANT_500;  
+    display: block;
 }
 
 #upload-ledger, #upload-ofx {
