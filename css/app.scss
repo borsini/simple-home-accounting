@@ -36,6 +36,7 @@ $COLOR_700: #388E3C;
 $COLOR_800: #2E7D32;
 
 $VIBRANT_500: #FF5722;
+$VIBRANT_200: #FFAB91;
 
 $SPACING: 10px;
 $MENU_WIDTH: 300px;
@@ -129,6 +130,10 @@ input, select {
                 padding-top : 3px;
                 padding-bottom : 3px;
             }
+        }
+
+        #newTransaction {
+            background-color: $VIBRANT_200;
         }
 
         .table {

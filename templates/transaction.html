@@ -13,7 +13,7 @@
 </div>
 
 <div class="cell">
-    <span (click)="editTitle = true" *ngIf="!editTitle">{{transaction.header.title}}</span>
+    <span (click)="editTitle = true" *ngIf="!editTitle">{{transaction.header.title || 'Ajouter un titre'}}</span>
     <input type="text" (click)="editTitle = false" *ngIf="editTitle" value="{{transaction.header.title}}"/>
 </div>
 

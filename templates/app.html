@@ -57,6 +57,9 @@
             </ul>
 
             <div class="transactions">
+
+                <transaction [transaction]="transactionToAdd" class="row" id="newTransaction"></transaction>
+
                 <template ngFor let-tr [ngForOf]="transactions | slice:sliceStart:sliceEnd" let-isOdd="odd" let-isEven="even">
                     <transaction [transaction]="tr" [class.rowOdd]="isOdd" [class.rowEven]="isEven" class="row"></transaction>
                 </template>

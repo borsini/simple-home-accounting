@@ -29,6 +29,7 @@ export class AppComponent {
   startDate: moment.Moment
   endDate: moment.Moment
   tagFilter = ""
+  transactionToAdd : Transaction;
 
   sliceStart: number = 0;
   sliceEnd: number = 5;
@@ -39,6 +40,22 @@ export class AppComponent {
 
   constructor(ledger: LedgerService) {
     this.ledger = ledger;
+    this.transactionToAdd = {
+      header : {
+        date: moment().format("YYYY/MM/DD"),
+        tag: null,
+        title: null
+      },
+      postings : [
+        {
+          account: null,
+          amount: 0,
+          comment: null,
+          currency: null,
+          tag: null
+        }
+      ]
+    }
   }
 
   startDateChanged(event){ 

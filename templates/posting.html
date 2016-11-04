@@ -1,5 +1,6 @@
-<a (click)="editAccount = true" *ngIf="!editAccount" class="cell" (click)="onAccountNameChanged(posting.account)">{{posting.account}}</a>
+<span (click)="editAccount = true" *ngIf="!editAccount" class="cell">{{posting.account || 'Ajouter un compte'}}</span>
 <input type="text" (click)="editAccount = false" *ngIf="editAccount" value="{{posting.account}}"/>
 
-<span class="cell" *ngIf="posting.currency">{{posting.amount}} {{posting.currency}}</span>
-<span class="cell" *ngIf="posting.comment">({{posting.comment}})</span>
+<span class="cell">{{posting.amount || 'Ajouter un montant'}}</span>
+<span class="cell">{{posting.currency || 'Ajouter une monnaie'}}</span>
+<span class="cell">({{posting.comment || 'Ajouter un commentaire'}})</span>
