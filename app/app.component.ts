@@ -68,26 +68,16 @@ export class AppComponent {
     this.refreshTransactions(); 
   }
 
-  uploadLedgerOnChange(event) {
-    var files = event.srcElement.files;
-    console.log(files);
-
-    this.filename = files[0].name;
-
-    this.ledger.openLedgerFile(files[0], 
+  uploadLedgerOnChange(files: FileList) {
+    this.ledger.openLedgerFile(files.item(0), 
       () => {
         this.accounts = this.ledger.stats;
         this.refreshTransactions();
       });
   }
 
-  uploadOfxOnChange(event) {
-    var files = event.srcElement.files;
-    console.log(files);
-
-    this.filename2 = files[0].name;
-
-    this.ledger.openOfxFile(files[0], 
+  uploadOfxOnChange(files: FileList) {
+    this.ledger.openOfxFile(files.item(0), 
       () => {
         console.log('ofx loaded');
         this.accounts = this.ledger.stats;

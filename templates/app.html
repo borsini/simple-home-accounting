@@ -3,10 +3,10 @@
     <div id="left">
         <div id="left_content">
             <label id="filename" class="action_btn" for="upload-ledger">{{filename ? filename : 'Choisir un fichier .ledger'}} </label>
-            <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event)" />
+            <input type="file" id="upload-ledger" (change)="uploadLedgerOnChange($event.target.files)" />
             
             <label id="filename2" class="action_btn" for="upload-ofx">{{filename2 ? filename2 : 'Choisir un fichier .ofx'}} </label>
-            <input type="file" id="upload-ofx" (change)="uploadOfxOnChange($event)" />
+            <input type="file" id="upload-ofx" #ofx (change)="uploadOfxOnChange($event.target.files)" />
 
             <label class="action_btn" (click)="onSaveClicked()">Sauvegarder</label>
 
