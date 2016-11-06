@@ -17,7 +17,7 @@ let AppModule = class AppModule {
 AppModule = __decorate([
     core_1.NgModule({
         imports: [platform_browser_1.BrowserModule],
-        declarations: [app_component_1.AppComponent, app_component_1.TransactionComponent, app_component_1.PostingComponent, app_component_1.NumberToArray],
+        declarations: [app_component_1.AppComponent, app_component_1.TransactionComponent, app_component_1.PostingComponent, app_component_1.AccountTreeComponent, app_component_1.NumberToArray],
         bootstrap: [app_component_1.AppComponent],
         providers: [ledgerservice_1.LedgerService]
     }), 

@@ -76,19 +76,20 @@ input, select {
     width: $MENU_WIDTH; 
     float: left;
 
+    .currentAccount {
+        font-weight: 600;
+        background-color: $VIBRANT_500;
+    }
+
     ul {
         list-style-type: none;
         padding: 0;
         margin: 0;
 
         li {
-            margin: 0 0 5px 0;
-            min-width: 15px;
-        }
-
-        .currentAccount {
-            font-weight: 600;
-            background-color: $VIBRANT_500;
+            padding-left: 10px;
+            //margin: 0 0 5px 0;
+            min-width: 20px;
         }
     }
 }
@@ -132,23 +133,16 @@ input, select {
             }
         }
 
+        #transactions {
+            width: 100%;
+
+            td {
+                padding: 5px;
+            }
+        }
+
         #newTransaction {
             background-color: $VIBRANT_200;
-        }
-
-        .table {
-            display: table;
-            table-layout: fixed;
-            width:100%;
-        }
-
-        .row {
-            display: table-row;
-        }
-
-        .cell {
-            padding: 5px;
-            display: table-cell;
         }
 
         .rowEven {

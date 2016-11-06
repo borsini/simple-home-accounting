@@ -33,23 +33,24 @@ interface Header {
 interface Posting {
     tag: string
     account: string
-    accountStat?: AccountStat
     amount: number
     currency: string
     comment: string
 }
 
-class AccountStat {
+class Account {
     name: string
     balance: number
-    cumulativeBalance: number
+    childrenBalance: number
     nbTransactions: number
+    children: Set<Account>;
 
     constructor(n: string) {
         this.name = n;
         this.balance = 0
-        this.cumulativeBalance = 0
+        this.childrenBalance = 0
         this.nbTransactions = 0
+        this.children = new Set()
     }
 }
 

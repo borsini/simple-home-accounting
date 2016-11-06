@@ -11,18 +11,10 @@
             <label class="action_btn" (click)="onSaveClicked()">Sauvegarder</label>
 
             <ul>
-                <li *ngIf="accounts.length > 0">
-                    <a (click)="onAccountChanged()">Tous</a>
-                </li>
-
-                <li *ngFor="let account of accounts" [class.currentAccount] = "account == selectedAccount">
-                    <a (click)="onAccountChanged(account)">
-                        {{ account.name }} / C : 
-                        {{ account.cumulativeBalance | number : '1.2-2' }} / 
-                        {{ account.balance | number : '1.2-2' }} / 
-                        {{ account.nbTransactions }}
-                    </a>
-                </li>
+                <account-tree 
+                    [account]="rootAccount"
+                     [selectedAccount]="selectedAccount" 
+                     (accountSelected)="onAccountSelected($event)"></account-tree>
             </ul>
         </div>
     </div>
@@ -50,20 +42,20 @@
             <br/>
             <span>{{transactions.length}} transactions</span>
             <br/>
+
             <ul class="pagination">
                 <li *ngFor='let pageIndex of nbPage | numberToArray' [class.currentPage] = "pageIndex == currentPage">
                     <a (click)="onPageChanged(pageIndex)">{{pageIndex}}</a>
                 </li>
             </ul>
 
-            <div class="transactions">
-
-                <transaction [transaction]="transactionToAdd" class="row" id="newTransaction"></transaction>
+            <table id="transactions">
+                <tr transaction [transaction]="transactionToAdd" class="row" id="newTransaction"></tr>
 
                 <template ngFor let-tr [ngForOf]="transactions | slice:sliceStart:sliceEnd" let-isOdd="odd" let-isEven="even">
-                    <transaction [transaction]="tr" [class.rowOdd]="isOdd" [class.rowEven]="isEven" class="row"></transaction>
+                    <tr transaction [transaction]="tr" [class.rowOdd]="isOdd" [class.rowEven]="isEven" class="row"></tr>
                 </template>
-            </div>
+            </table>
         </div>
     </div>
     

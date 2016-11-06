@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as xa from "moment";
+import * as moment from "moment";
 declare var PARSER:any; //PEG parser inclusion
 
 const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
@@ -49,7 +49,7 @@ class GoogleChartsVisu {
 export class LedgerService {
 
     private _transactions: Array<Transaction> = [];
-    private _allAccounts: Map<String, AccountStat>;
+    private _allAccountsByName: Map<String, Account>;
 
     private _sourceAccount: string; //Compte sur lesquel on réalise les stats
     private _toAccount: string;
@@ -233,7 +233,7 @@ export class LedgerService {
     }
 
     computeStats() {
-        this._allAccounts = new Map();
+        this._allAccountsByName = new Map();
         //let accountsAndBalance = new Map<string, number>();
         
         this._transactions.forEach(tr => {
@@ -248,42 +248,52 @@ export class LedgerService {
                     this._currencies.add(ps.currency);
                 }
 
-                this.addAmountToStat(ps.account, ps.amount, false);
-                if(ps.account.indexOf(":") > 0){
-                    let sum: string = "";
-                    let a = ps.account.split(":");
-                    a.pop();
-                    for (let entry of a) {
-                        sum += entry;
-                        this.addAmountToStat(sum, ps.amount, true);
-                        sum += ":";
+                let accountParts = ps.account.split(":");
+                let lastParent: Account;
+                let currentAccountName: string = "";
+                for (let part of accountParts) {
+                    currentAccountName += part;
+                    let account = this.getOrCreateAccount(currentAccountName);
+                    this.addAmountToAccount(account, ps.amount, currentAccountName == ps.account);
+                    
+                    if(lastParent){
+                        lastParent.children.add(account);
                     }
+
+                    lastParent = account;
+                    currentAccountName += ":";
                 }
             });
         });
     }
 
-    private addAmountToStat(accountName: string, amount: number, isCumul: boolean) {
-        let stat = this._allAccounts.get(accountName) || new AccountStat(accountName);
+    private getOrCreateAccount(name : string) : Account {
+        let stat = this._allAccountsByName.get(name);
+        
+        if(!stat){
+            stat = new Account(name);
+            this._allAccountsByName.set(name, stat);
+        }
 
-        if(isCumul){
-            stat.cumulativeBalance += amount;
+        return stat;           
+    }
+
+    private addAmountToAccount(a: Account, amount: number, isFinalAccount: boolean) {
+        if(!isFinalAccount){
+            a.childrenBalance += amount;
         }
         else{
-            stat.balance += amount;
+            a.balance += amount;
         }
-
-        stat.nbTransactions++
-
-        this._allAccounts.set(accountName, stat);
+        a.nbTransactions++
     }
 
     get transactions():Array<Transaction> {
         return this._transactions;
     }
 
-    get stats(): Array<AccountStat> {
-        return Array.from(this._allAccounts.values()).sort( (a1, a2) => a1.name.localeCompare(a2.name) )
+    get topAccounts(): Array<Account> {
+        return Array.from(this._allAccountsByName.values()).filter( a => a.name.indexOf(':') == -1).sort( (a1, a2) => a1.name.localeCompare(a2.name) )
     }
 
     filterTransactions(account: string, startDate: moment.Moment, endDate: moment.Moment, tag: string){

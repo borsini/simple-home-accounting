@@ -1,8 +1,9 @@
 /// <reference path="app.ts"/>
 
-import { Pipe, PipeTransform, Component, Input } from '@angular/core';
+import { Pipe, PipeTransform, Component, Input, Output, EventEmitter } from '@angular/core';
 import { LedgerService }        from './ledgerservice';
-declare var saveAs:any;
+import * as saveAs from 'file-saver';
+import * as moment from "moment";
 
 @Pipe({name: 'numberToArray'})
 export class NumberToArray implements PipeTransform {
@@ -23,9 +24,9 @@ export class AppComponent {
   filename : string
   filename2 : string
   ledger: LedgerService
-  accounts : AccountStat[] = []
+  rootAccount : Account;
   transactions : Transaction[] = []
-  selectedAccount: AccountStat
+  selectedAccount: Account
   startDate: moment.Moment
   endDate: moment.Moment
   tagFilter = ""
@@ -40,6 +41,7 @@ export class AppComponent {
 
   constructor(ledger: LedgerService) {
     this.ledger = ledger;
+    this.rootAccount = new Account("Tous");
     this.transactionToAdd = {
       header : {
         date: moment().format("YYYY/MM/DD"),
@@ -71,7 +73,7 @@ export class AppComponent {
   uploadLedgerOnChange(files: FileList) {
     this.ledger.openLedgerFile(files.item(0), 
       () => {
-        this.accounts = this.ledger.stats;
+        this.rootAccount.children = new Set(this.ledger.topAccounts);
         this.refreshTransactions();
       });
   }
@@ -80,12 +82,12 @@ export class AppComponent {
     this.ledger.openOfxFile(files.item(0), 
       () => {
         console.log('ofx loaded');
-        this.accounts = this.ledger.stats;
+        this.rootAccount.children = new Set(this.ledger.topAccounts);
         this.refreshTransactions();
       });
   }
 
-  onAccountChanged(account: AccountStat){
+  onAccountSelected(account: Account){
     this.selectedAccount = account;
     this.refreshTransactions();
   }
@@ -101,7 +103,6 @@ export class AppComponent {
   }
 
   onSaveClicked() {
-    
     var blob = new Blob([this.ledger.getOutString()], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "accounts.ledger");
   }
@@ -124,7 +125,7 @@ export class AppComponent {
 }
 
 @Component({
-  selector: 'transaction',
+  selector: '[transaction]',
   templateUrl: './templates/transaction.html'
 })
 export class TransactionComponent {
@@ -139,4 +140,40 @@ export class TransactionComponent {
 export class PostingComponent {
   @Input()
   posting: Posting;
+}
+
+@Component({
+  selector: 'account-tree',
+  templateUrl: './templates/account_tree.html'
+})
+export class AccountTreeComponent {
+  @Input()
+  account: Account;
+
+  @Input()
+  selectedAccount: Account;
+
+  isCollapsed: boolean = false;
+  
+  @Input()
+  isChecked: boolean;
+
+  @Output()
+  accountSelected = new EventEmitter<Account>();
+
+  onAccountSelected(account: Account){
+    this.accountSelected.emit(account);
+  }
+
+onAccountChecked(chk : boolean){
+  this.isChecked = chk
+}
+
+  onChildSelected(account: Account){
+    this.accountSelected.emit(account);
+  }
+
+  toggle(){
+    this.isCollapsed = !this.isCollapsed;
+  }
 }

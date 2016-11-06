@@ -1,0 +1,18 @@
+<li>
+    <input #check type="checkbox" [attr.checked]="isChecked ? true : null" (change)="onAccountChecked(check.checked)"/>
+
+    <a (click)="toggle()">{{ isCollapsed ? '+' : '-' }} </a>
+    
+    <a [class.currentAccount] = "account == selectedAccount" (click)="onAccountSelected(account)">
+        {{ account.name.split(':').pop() }}
+    </a>
+
+    <ul *ngFor="let account of account.children">
+        <account-tree 
+            *ngIf="!isCollapsed" 
+            [account]='account' 
+            [selectedAccount]="selectedAccount"
+            [isChecked]="isChecked" 
+            (accountSelected)="onChildSelected($event)"></account-tree>
+    </ul>
+</li>
