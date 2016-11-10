@@ -110,6 +110,12 @@ input, select {
     #right_content {
         padding: $SPACING;
     
+        #chart_div {
+            width:100%;
+            min-height: 100px;
+            background-color: blue;
+        }
+
         .pagination {
             list-style-type : none;
             padding: 0;

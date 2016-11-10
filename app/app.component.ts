@@ -42,6 +42,8 @@ export class AppComponent {
   constructor(ledger: LedgerService) {
     this.ledger = ledger;
     this.rootAccount = new Account("Tous");
+    this.startDate = moment().subtract(2, 'years')
+    this.endDate = moment()
     this.transactionToAdd = {
       header : {
         date: moment().format("YYYY/MM/DD"),
@@ -116,6 +118,30 @@ export class AppComponent {
     this.currentPage = 1;
     this.nbPage = Math.ceil(this.transactions.length / this.perPage);
     this.refreshSlices();
+    this.refreshStats();
+  }
+
+  refreshStats(){
+    let periods = this.ledger.analyzeTransactions(
+      this.selectedAccount,
+      null,
+      this.startDate,
+      this.endDate,
+      GroupBy.Account,
+      StatParam.Sum,
+      PeriodGap.None,
+      1,
+      TransactionType.BOTH,
+      2
+    );
+
+    periods.forEach(period => {
+      console.log(period.startDate + " " + period.endDate);
+
+      period.stats.forEach((value, key) => {
+        console.log(key + " -> " + value)
+      })
+    })
   }
 
   refreshSlices(){

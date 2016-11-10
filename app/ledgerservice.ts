@@ -6,7 +6,7 @@ const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
 
 class GoogleChartsVisu {
 
-        drawPeriods(periods) {
+        drawPeriods(periods: Array<Period>) {
             var data = new google.visualization.DataTable();
 
             var indexes = new Set();
@@ -51,8 +51,8 @@ export class LedgerService {
     private _transactions: Array<Transaction> = [];
     private _allAccountsByName: Map<String, Account>;
 
-    private _sourceAccount: string; //Compte sur lesquel on réalise les stats
-    private _toAccount: string;
+    private _sourceAccount: Account; //Compte sur lesquel on réalise les stats
+    private _toAccount: Account;
     private _periods: Array<Period>;
     private _grouping = GroupBy.Account;
     private _param = StatParam.Sum;
@@ -346,30 +346,32 @@ export class LedgerService {
     }
 
     analyzeTransactions(
-        sourceAccount: string,
-        toAccount: string,
-        startDate: string,
-        endDate: string,
+        sourceAccount: Account,
+        toAccount: Account,
+        startDate: moment.Moment,
+        endDate: moment.Moment,
         groupy: GroupBy,
         statParam: StatParam,
         periodGap: PeriodGap,
         numPeriods: number,
         transactionType: TransactionType,
-        maxDepth: number) {
+        maxDepth: number) : Array<Period>{
         this._sourceAccount = sourceAccount;
         this._toAccount = toAccount;
-        this._periods = this.createPeriods(moment(startDate, LEDGER_DATE_FORMAT), moment(endDate, LEDGER_DATE_FORMAT), periodGap, numPeriods);
+        this._periods = this.createPeriods(startDate, endDate, periodGap, numPeriods);
         this._grouping = groupy;
         this._param = statParam;
         this._type = transactionType;
         this._maxDepth = maxDepth;
 
         this._transactions.forEach(tr => this.analyzeTransaction(tr));
-        this._visu.drawPeriods(this._periods);
+
+        return this._periods;
+        //this._visu.drawPeriods(this._periods);
     }
 
     isAccountEligible(account: string) : boolean {
-        return !this._toAccount || account.indexOf(this._toAccount) >= 0;
+        return !this._toAccount || account.indexOf(this._toAccount.name) >= 0;
     }
 
     getOutString(): string {
@@ -400,7 +402,7 @@ export class LedgerService {
                     let source = this._sourceAccount;
                     let to = this._toAccount;
                     let posting =  tr.postings.find(function (p) {
-                        return p.account.indexOf(source) >= 0;
+                        return p.account.indexOf(source.name) >= 0;
                     });
 
                     if(posting){
@@ -436,7 +438,7 @@ export class LedgerService {
                                     (amount < 0 && this._type == TransactionType.DEBT) ||
                                     (amount > 0 && this._type == TransactionType.CREDIT)) {
                                     
-                                    let stats: Map<string, number> = period.stats;
+                                    let stats = period.stats;
                                     this.addStat(index, amount, stats);
                                 }
                             }
@@ -448,10 +450,10 @@ export class LedgerService {
 
     addStat(index: string, amount: number, stats: Map<string, number>){
         if (this._param == StatParam.Sum) {
-            stats[index] = (stats[index] || 0) + amount;
+            stats.set(index, (stats.get(index) || 0) + amount);
         }
         else if (this._param == StatParam.Average) {
-            stats[index] = stats[index] ? (stats[index] + amount) / 2 : amount;
+            stats.set(index, stats.has(index) ? (stats.get(index) + amount) / 2 : amount);
         }
     }
 }

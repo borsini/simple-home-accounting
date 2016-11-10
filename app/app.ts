@@ -3,7 +3,7 @@
 class Period {
     private _startDate: moment.Moment
     private _endDate: moment.Moment
-    private _stats: any
+    private _stats: Map<string, number>
 
     constructor(startDate: moment.Moment, endDate: moment.Moment) {
         this._startDate = startDate //Start date is inclusive

@@ -32,7 +32,9 @@
             </div>
 
             <br/>
-            Entre le <input type="date" (change)="startDateChanged($event)"/> et le <input type="date" (change)="endDateChanged($event)"/>
+            Entre le <input type="date" value="{{startDate.format('YYYY-MM-DD')}}" (change)="startDateChanged($event)"/>
+            et le
+            <input type="date" value="{{endDate.format('YYYY-MM-DD')}}" (change)="endDateChanged($event)"/>
             Statut
             <select (change)="onStatusChanged($event)">
                     <option value="">Tous</option>
@@ -42,6 +44,8 @@
             <br/>
             <span>{{transactions.length}} transactions</span>
             <br/>
+
+            <div id="chart_div"></div>
 
             <ul class="pagination">
                 <li *ngFor='let pageIndex of nbPage | numberToArray' [class.currentPage] = "pageIndex == currentPage">
