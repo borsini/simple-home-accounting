@@ -1,5 +1,8 @@
 <span (click)="editAccount = true" *ngIf="!editAccount" class="cell">{{posting.account || 'Ajouter un compte'}}</span>
-<input type="text" (click)="editAccount = false" *ngIf="editAccount" value="{{posting.account}}"/>
+<input type="text" list="team_list" *ngIf="editAccount" value="{{posting.account}}"/>
+<datalist id="team_list" *ngIf="editAccount">
+  <option *ngFor="let a of allAccounts">{{ a }}</option>
+</datalist>
 
 <span class="cell">{{posting.amount || 'Ajouter un montant'}}</span>
 <span class="cell">{{posting.currency || 'Ajouter une monnaie'}}</span>

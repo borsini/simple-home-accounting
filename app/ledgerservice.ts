@@ -1,62 +1,263 @@
 import { Injectable } from '@angular/core';
 import * as moment from "moment";
+
 declare var PARSER:any; //PEG parser inclusion
 
 const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
 
-class GoogleChartsVisu {
 
-        drawPeriods(periods: Array<Period>) {
-            var data = new google.visualization.DataTable();
+class Bayes {
 
-            var indexes = new Set();
-
-            periods.forEach(p => {
-                Object.keys(p.stats).forEach(k => {
-                    indexes.add(k);
-                });
-            });
-
-            data.addColumn('string', 'Période');
-
-            indexes.forEach(index => {
-                data.addColumn('number', index);
-            });
-
-            periods.forEach(p => {
-                let rowValues = [p.getName()].concat(Array.from(indexes).map(index => p.stats[index]));
-                data.addRow(rowValues);
-            });
-
-            var options = {
-                isStacked: true,
-                width: 1000,
-                legend: { position: 'top', maxLines: 3 },
-                height: 1000
-            };
-
-            let wrapper = new google.visualization.ChartWrapper({
-                chartType: 'ColumnChart',
-                dataTable: data,
-                options: options,
-                containerId: 'chart_div'
-            });
-            wrapper.draw();
+    options: any;
+    tokenizer: any;
+    vocabulary: any;
+    vocabularySize: number;
+    totalDocuments: number;
+    docCount: any;
+    wordCount: any;
+    wordFrequencyCount: any;
+    categories: any;
+    /**
+     * Naive-Bayes Classifier
+     *
+     * This is a naive-bayes classifier that uses Laplace Smoothing.
+     *
+     * Takes an (optional) options object containing:
+     *   - `tokenizer`  => custom tokenization function
+     *
+     */
+    constructor(options?) {
+    // set options object
+    this.options = {}
+    if (typeof options !== 'undefined') {
+        if (!options || typeof options !== 'object' || Array.isArray(options)) {
+        throw TypeError('NaiveBayes got invalid `options`: `' + options + '`. Pass in an object.')
         }
+        this.options = options
     }
+
+    this.tokenizer = this.options.tokenizer || this.defaultTokenizer
+
+    //initialize our vocabulary and its size
+    this.vocabulary = {}
+    this.vocabularySize = 0
+
+    //number of documents we have learned from
+    this.totalDocuments = 0
+
+    //document frequency table for each of our categories
+    //=> for each category, how often were documents mapped to it
+    this.docCount = {}
+
+    //for each category, how many words total were mapped to it
+    this.wordCount = {}
+
+    //word frequency table for each category
+    //=> for each category, how frequent was a given word mapped to it
+    this.wordFrequencyCount = {}
+
+    //hashmap of our category names
+    this.categories = {}
+    }
+
+/**
+ * train our naive-bayes classifier by telling it what `category`
+ * the `text` corresponds to.
+ *
+ * @param  {String} text
+ * @param  {String} class
+ */
+    learn (text: string, category: string) {
+
+    //initialize category data structures if we've never seen this category
+    this.initializeCategory(category)
+
+    //update our count of how many documents mapped to this category
+    this.docCount[category]++
+
+    //update the total number of documents we have learned from
+    this.totalDocuments++
+
+    //normalize the text into a word array
+    var tokens = this.tokenizer(text)
+
+    //get a frequency count for each token in the text
+    var frequencyTable = this.frequencyTable(tokens)
+
+    /*
+        Update our vocabulary and our word frequency count for this category
+    */
+
+    let self = this;
+    Object
+    .keys(frequencyTable)
+    .forEach(function (token) {
+        //add this word to our vocabulary if not already existing
+        if (!self.vocabulary[token]) {
+        self.vocabulary[token] = true
+        self.vocabularySize++
+        }
+
+        var frequencyInText = frequencyTable[token]
+
+        //update the frequency information for this word in this category
+        if (!self.wordFrequencyCount[category][token])
+        self.wordFrequencyCount[category][token] = frequencyInText
+        else
+        self.wordFrequencyCount[category][token] += frequencyInText
+
+        //update the count of all words we have seen mapped to this category
+        self.wordCount[category] += frequencyInText
+    })
+}
+
+/**
+ * Initialize each of our data structure entries for this new category
+ *
+ * @param  {String} categoryName
+ */
+initializeCategory (categoryName: string) {
+  if (!this.categories[categoryName]) {
+    this.docCount[categoryName] = 0
+    this.wordCount[categoryName] = 0
+    this.wordFrequencyCount[categoryName] = {}
+    this.categories[categoryName] = true
+  }
+}
+
+/**
+ * Build a frequency hashmap where
+ * - the keys are the entries in `tokens`
+ * - the values are the frequency of each entry in `tokens`
+ *
+ * @param  {Array} tokens  Normalized word array
+ * @return {Object}
+ */
+frequencyTable (tokens: string[]) {
+  var frequencyTable = Object.create(null)
+
+  tokens.forEach(function (token) {
+    if (!frequencyTable[token])
+      frequencyTable[token] = 1
+    else
+      frequencyTable[token]++
+  })
+
+  return frequencyTable
+}
+
+/**
+ * Given an input string, tokenize it into an array of word tokens.
+ * This is the default tokenization function used if user does not provide one in `options`.
+ *
+ * @param  {String} text
+ * @return {Array}
+ */
+defaultTokenizer (text) : Array<any> {
+  //remove punctuation from text - remove anything that isn't a word char or a space
+  var rgxPunctuation = /[^(a-zA-ZA-Яa-я0-9_)+\s]/g
+
+  var sanitized = text.replace(rgxPunctuation, ' ')
+
+  return sanitized.split(/\s+/)
+}
+
+/**
+ * Determine what category `text` belongs to.
+ *
+ * @param  {String} text
+ * @return {String} category
+ */
+categorize (text: string) : string {
+  var self = this
+    , maxProbability = -Infinity
+    , chosenCategory = null
+
+  var tokens = self.tokenizer(text)
+  var frequencyTable = self.frequencyTable(tokens)
+
+  //iterate thru our categories to find the one with max probability for this text
+  Object
+  .keys(self.categories)
+  .forEach(function (category) {
+
+    //start by calculating the overall probability of this category
+    //=>  out of all documents we've ever looked at, how many were
+    //    mapped to this category
+    var categoryProbability = self.docCount[category] / self.totalDocuments
+
+    //take the log to avoid underflow
+    var logProbability = Math.log(categoryProbability)
+
+    //now determine P( w | c ) for each word `w` in the text
+    Object
+    .keys(frequencyTable)
+    .forEach(function (token) {
+      var frequencyInText = frequencyTable[token]
+      var tokenProbability = self.tokenProbability(token, category)
+
+      // console.log('token: %s category: `%s` tokenProbability: %d', token, category, tokenProbability)
+
+      //determine the log of the P( w | c ) for this word
+      logProbability += frequencyInText * Math.log(tokenProbability)
+    })
+
+    if (logProbability > maxProbability) {
+      maxProbability = logProbability
+      chosenCategory = category
+    }
+  })
+
+  return chosenCategory
+}
+
+/**
+ * Calculate probability that a `token` belongs to a `category`
+ *
+ * @param  {String} token
+ * @param  {String} category
+ * @return {Number} probability
+ */
+tokenProbability (token: string, category: string) : number {
+  //how many times this word has occurred in documents mapped to this category
+  var wordFrequencyCount = this.wordFrequencyCount[category][token] || 0
+
+  //what is the count of all words that have ever been mapped to this category
+  var wordCount = this.wordCount[category]
+
+  //use laplace Add-1 Smoothing equation
+  return ( wordFrequencyCount + 1 ) / ( wordCount + this.vocabularySize )
+}
+
+toJson() : string{
+    return JSON.stringify(
+        [
+             {"categories": this.categories},
+             {"docCount": this.docCount},
+             {"totalDocuments": this.totalDocuments},
+             {"vocabulary": this.vocabulary},
+             {"vocabularySize": this.vocabularySize},
+             {"wordCount": this.wordCount},
+             {"wordFrequencyCount": this.wordFrequencyCount}
+        ]
+    )
+}
+
+}
 
 @Injectable()
 export class LedgerService {
 
+    private _debitClassifier = new Bayes();
+    private _creditClassifier = new Bayes();
+
     private _transactions: Array<Transaction> = [];
     private _allAccountsByName: Map<String, Account>;
-
     private _sourceAccount: Account; //Compte sur lesquel on réalise les stats
     private _toAccount: Account;
     private _periods: Array<Period>;
     private _grouping = GroupBy.Account;
     private _param = StatParam.Sum;
-    private _visu: GoogleChartsVisu = new GoogleChartsVisu();
     private _type: TransactionType;
     private _maxDepth : number;
     private _minDate: moment.Moment;
@@ -67,6 +268,7 @@ export class LedgerService {
         this._periods = [];
         this._transactions = [];
         this._currencies = new Set();
+        this._allAccountsByName = new Map();
     }
 
     // Changes XML to JSON
@@ -170,6 +372,7 @@ export class LedgerService {
             })
             me.addMissingAmount();
             me.computeStats();
+            me.learnBayes();
             callback();
         });
 
@@ -192,13 +395,36 @@ export class LedgerService {
 
             me.addMissingAmount();
             me.computeStats();
+            me.learnBayes();
             callback();
         });
 
         reader.readAsText(name);
     }
 
-    createPeriods(startDate, endDate, gap, gapMultiple) {
+    learnBayes(){
+        this._transactions.forEach(t => {
+            t.postings.forEach(p => {
+                if(p.account && p.account != "Inconnu"){
+                    let input = [t.header.title, p.comment].join(' ')
+                    let classifier = p.amount > 0 ? this._creditClassifier : this._debitClassifier
+                    classifier.learn(input, p.account)
+                }
+            })
+        })
+
+        //console.log(this._bayes.toJson())
+    }
+
+    categorize(p: Posting, t: Transaction): Account{
+        let input = [t.header.title, p.comment].join(' ')
+        let classifier = p.amount > 0 ? this._creditClassifier : this._debitClassifier
+        let account = classifier.categorize(input)
+        console.log(account)
+        return this._allAccountsByName.get(account)
+    }
+
+    createPeriods(startDate: moment.Moment, endDate: moment.Moment, gap: PeriodGap, gapMultiple: number) {
         let from = startDate.clone();
         let periods = [];
 
@@ -234,7 +460,6 @@ export class LedgerService {
 
     computeStats() {
         this._allAccountsByName = new Map();
-        //let accountsAndBalance = new Map<string, number>();
         
         this._transactions.forEach(tr => {
 
@@ -292,11 +517,15 @@ export class LedgerService {
         return this._transactions;
     }
 
-    get topAccounts(): Array<Account> {
+    get flatAccounts(): Account[] {
+        return Array.from(this._allAccountsByName.values());
+    }
+
+    get topAccounts(): Account[] {
         return Array.from(this._allAccountsByName.values()).filter( a => a.name.indexOf(':') == -1).sort( (a1, a2) => a1.name.localeCompare(a2.name) )
     }
 
-    filterTransactions(account: string, startDate: moment.Moment, endDate: moment.Moment, tag: string){
+    filterTransactions(account: string, startDate: moment.Moment, endDate: moment.Moment, tag: string, type: TransactionType){
         return this._transactions.filter( tr => {
             let isValid: boolean = true;
 
@@ -309,9 +538,13 @@ export class LedgerService {
                 isValid = isValid && trDate.isSameOrBefore(endDate);
             }
 
-            if(account){
-                isValid = isValid && (tr.postings.find( p => p.account == account) != null);
-            }
+            let postingMatchingAccountAndType = tr.postings.filter( p => p.account == account).find( p => 
+                    type == TransactionType.BOTH ||
+                    p.amount >= 0 && type == TransactionType.CREDIT ||
+                    p.amount <= 0 && type == TransactionType.DEBT 
+            )
+
+            isValid = isValid && (postingMatchingAccountAndType != null);
 
             if(tag && tag.length > 0){
                 isValid = isValid && tr.header.tag == tag;
@@ -367,7 +600,6 @@ export class LedgerService {
         this._transactions.forEach(tr => this.analyzeTransaction(tr));
 
         return this._periods;
-        //this._visu.drawPeriods(this._periods);
     }
 
     isAccountEligible(account: string) : boolean {

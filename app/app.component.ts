@@ -16,6 +16,22 @@ export class NumberToArray implements PipeTransform {
   }
 }
 
+@Pipe({name: 'keys'})
+export class KeysPipe implements PipeTransform {
+  transform(value, args:string[]) : any {
+    let keys = [];
+    for (var enumMember in value) {
+      var isValueProperty = parseInt(enumMember, 10) >= 0
+      if (isValueProperty) {
+        keys.push({key: enumMember, value: value[enumMember]});
+        // Uncomment if you want log
+        // console.log("enum member: ", value[enumMember]);
+      } 
+    }
+    return keys;
+  }
+}
+
 @Component({
   selector: 'my-app',
   templateUrl: './templates/app.html'
@@ -38,6 +54,16 @@ export class AppComponent {
   nbPage: number = 0;
   currentPage: number = 0;
   perPage: number = 100;
+  types = TransactionType;
+  currentType = TransactionType.BOTH;
+
+  //Stats
+  maxDepth: number = 1;
+  currentDepth = 1;
+  params = StatParam
+  currentParam = StatParam.Sum
+  
+  chart: any;
 
   constructor(ledger: LedgerService) {
     this.ledger = ledger;
@@ -104,6 +130,22 @@ export class AppComponent {
     this.refreshTransactions()
   }
 
+  onDepthChanged(depth: number){
+    this.currentDepth = depth
+    this.refreshStats()
+  }
+
+  onTypeChanged(type: string){
+    this.currentType = Number(type)
+    this.refreshTransactions()
+    this.refreshStats()
+  }
+
+  onParamChanged(type: string){
+    this.currentParam = Number(type)
+    this.refreshStats()
+  }
+
   onSaveClicked() {
     var blob = new Blob([this.ledger.getOutString()], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "accounts.ledger");
@@ -111,37 +153,120 @@ export class AppComponent {
 
   refreshTransactions(){
     var t0 = performance.now();
-    this.transactions = this.ledger.filterTransactions(this.selectedAccount ? this.selectedAccount.name : "", this.startDate, this.endDate, this.tagFilter);
+    this.transactions = this.ledger.filterTransactions(this.selectedAccount ? this.selectedAccount.name : "", this.startDate, this.endDate, this.tagFilter, this.currentType);
     var t1 = performance.now();
-    console.log("Call to getTransactions took " + (t1 - t0) + " milliseconds.");
+    console.log("Call to filterTransactions took " + (t1 - t0) + " milliseconds.");
 
     this.currentPage = 1;
     this.nbPage = Math.ceil(this.transactions.length / this.perPage);
     this.refreshSlices();
+    var t2 = performance.now()
     this.refreshStats();
+    var t3 = performance.now()
+    console.log("Call to refreshStats took " + (t3 - t2) + " milliseconds.");
+    
+    this.transactions.forEach(t => {
+      t.postings.forEach(p => {
+        if(!p.account || "Inconnu" == p.account){
+          console.log("categorizing posting for transaction " + t.header.title)
+          this.ledger.categorize(p, t)
+        }
+      })
+      
+    })
   }
 
   refreshStats(){
+    
+    let maxDepth = 1;
+    this.ledger.flatAccounts.forEach( a => {
+      maxDepth = Math.max(a.name.split(':').length, maxDepth)
+    })
+
+    this.maxDepth = maxDepth
+
     let periods = this.ledger.analyzeTransactions(
       this.selectedAccount,
       null,
       this.startDate,
       this.endDate,
       GroupBy.Account,
-      StatParam.Sum,
+      this.currentParam,
       PeriodGap.None,
       1,
-      TransactionType.BOTH,
-      2
+      this.currentType,
+      this.currentDepth
     );
 
-    periods.forEach(period => {
-      console.log(period.startDate + " " + period.endDate);
+    this.drawPeriods(periods);
 
-      period.stats.forEach((value, key) => {
-        console.log(key + " -> " + value)
+  }
+
+  hashCode(str) { // java String#hashCode
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+  } 
+
+  intToRGB(i){
+    var c = (i & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+
+    return "00000".substring(0, 6 - c.length) + c;
+  }
+
+  drawPeriods(periods: Array<Period>) {
+
+    var indexes = new Set<string>();
+    periods.forEach(p => {
+      p.stats.forEach( (k, v) => {
+        indexes.add(v);
       })
+    });
+                
+    var ctx = document.getElementById("myChart");
+
+    let labels = Array.from(indexes.values())
+    let datasets : any[] = [];
+
+    labels.forEach((label, index) => {
+      datasets.push(
+        {
+          label: label,
+          data: periods.map( p => p.stats.get(label)),
+          borderWidth: 1,
+          backgroundColor: '#' + this.intToRGB(this.hashCode(label)),
+        }
+      )
     })
+
+    let data = {
+        labels: periods.map(p => p.getName()),
+        datasets: datasets
+    }
+
+    if(this.chart){
+      this.chart.destroy(
+      )
+    }
+
+    this.chart = new Chart(ctx, {
+        type: "bar",
+        data: data,
+        options: {
+            scales: {
+                xAxes: [{
+                    stacked: true
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
   }
 
   refreshSlices(){
@@ -165,7 +290,16 @@ export class TransactionComponent {
 })
 export class PostingComponent {
   @Input()
-  posting: Posting;
+  posting: Posting
+
+  _ledger: LedgerService;
+
+  allAccounts: string[]
+
+  constructor(ledger: LedgerService){
+    this._ledger = ledger;
+    this.allAccounts = ledger.flatAccounts.map( a => a.name)
+  }
 }
 
 @Component({

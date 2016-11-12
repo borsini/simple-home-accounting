@@ -4,3 +4,4 @@ css/app.css
 app/ledgerservice.js
 app/app.component.js
 app/app.js
+app/app.module.js
