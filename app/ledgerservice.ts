@@ -5,6 +5,17 @@ declare var PARSER:any; //PEG parser inclusion
 
 const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
 
+export interface StatsParam {
+    from: Account
+    groupy: GroupBy
+    statParam: StatParam
+    periodGap: PeriodGap;
+    numPeriods: number
+    transactionType: TransactionType
+    maxDepth: number
+    startDate: moment.Moment
+    endDate: moment.Moment
+}
 
 class Bayes {
 
@@ -253,19 +264,12 @@ export class LedgerService {
 
     private _transactions: Array<Transaction> = [];
     private _allAccountsByName: Map<String, Account>;
-    private _sourceAccount: Account; //Compte sur lesquel on réalise les stats
-    private _toAccount: Account;
-    private _periods: Array<Period>;
-    private _grouping = GroupBy.Account;
-    private _param = StatParam.Sum;
-    private _type: TransactionType;
-    private _maxDepth : number;
+    
     private _minDate: moment.Moment;
     private _maxDate: moment.Moment;
     private _currencies: Set<string>;
 
     constructor() {
-        this._periods = [];
         this._transactions = [];
         this._currencies = new Set();
         this._allAccountsByName = new Map();
@@ -412,8 +416,6 @@ export class LedgerService {
                 }
             })
         })
-
-        //console.log(this._bayes.toJson())
     }
 
     categorize(p: Posting, t: Transaction): Account{
@@ -424,29 +426,29 @@ export class LedgerService {
         return this._allAccountsByName.get(account)
     }
 
-    createPeriods(startDate: moment.Moment, endDate: moment.Moment, gap: PeriodGap, gapMultiple: number) {
-        let from = startDate.clone();
+    createPeriods(params: StatsParam) {
+        let from = params.startDate.clone();
         let periods = [];
 
-        while (from < endDate) {
+        while (from < params.endDate) {
             let to;
 
-            if (gap == PeriodGap.Year) {
-                to = from.clone().add(gapMultiple, 'year');
+            if (params.periodGap == PeriodGap.Year) {
+                to = from.clone().add(params.numPeriods, 'year');
             }
-            else if (gap == PeriodGap.Month) {
-                to = from.clone().add(gapMultiple, 'month');
+            else if (params.periodGap == PeriodGap.Month) {
+                to = from.clone().add(params.numPeriods, 'month');
             }
-            else if (gap == PeriodGap.Week) {
-                to = from.clone().add(gapMultiple, 'week');
+            else if (params.periodGap == PeriodGap.Week) {
+                to = from.clone().add(params.numPeriods, 'week');
             }
-            else if (gap == PeriodGap.Day) {
-                to = from.clone().add(gapMultiple, 'day');
+            else if (params.periodGap == PeriodGap.Day) {
+                to = from.clone().add(params.numPeriods, 'day');
             }
             else {
-                to = endDate;
+                to = params.endDate;
             }
-            periods.push(new Period(from, moment.min(to, endDate)));
+            periods.push(new Period(from, moment.min(to, params.endDate)));
 
             from = to.clone();
         }
@@ -579,31 +581,13 @@ export class LedgerService {
     }
 
     analyzeTransactions(
-        sourceAccount: Account,
-        toAccount: Account,
-        startDate: moment.Moment,
-        endDate: moment.Moment,
-        groupy: GroupBy,
-        statParam: StatParam,
-        periodGap: PeriodGap,
-        numPeriods: number,
-        transactionType: TransactionType,
-        maxDepth: number) : Array<Period>{
-        this._sourceAccount = sourceAccount;
-        this._toAccount = toAccount;
-        this._periods = this.createPeriods(startDate, endDate, periodGap, numPeriods);
-        this._grouping = groupy;
-        this._param = statParam;
-        this._type = transactionType;
-        this._maxDepth = maxDepth;
-
-        this._transactions.forEach(tr => this.analyzeTransaction(tr));
-
-        return this._periods;
-    }
-
-    isAccountEligible(account: string) : boolean {
-        return !this._toAccount || account.indexOf(this._toAccount.name) >= 0;
+        transactions: Transaction[],
+        params: StatsParam) : Array<Period>{
+       
+        let periods = this.createPeriods(params);
+        
+        transactions.forEach(tr => this.analyzeTransaction(tr, periods, params));
+        return periods;
     }
 
     getOutString(): string {
@@ -625,53 +609,55 @@ export class LedgerService {
         return out;
     }
 
-    analyzeTransaction(tr: Transaction) {
-        this._periods.forEach(
+    analyzeTransaction(
+        tr: Transaction,
+        periods: Period[],
+        params: StatsParam) {
+
+        periods.forEach(
             period => {
                 let transactionDate: moment.Moment = this.getTransactionDate(tr);
                 if (transactionDate >= period.startDate && transactionDate < period.endDate) {
                     let accountNames: Array<any> = tr.postings.map(p => p.account);
-                    let source = this._sourceAccount;
-                    let to = this._toAccount;
                     let posting =  tr.postings.find(function (p) {
-                        return p.account.indexOf(source.name) >= 0;
+                        return p.account.indexOf(params.from.name) >= 0;
                     });
 
                     if(posting){
                         for(let p of tr.postings){
-                            if( p != posting && this.isAccountEligible(p.account)){
+                            if( p != posting){
                                 let index: string;
-                                if (this._grouping == GroupBy.Account) {
-                                    index = p.account.split(":", this._maxDepth).join(":");
+                                if (params.groupy == GroupBy.Account) {
+                                    index = p.account.split(":", params.maxDepth).join(":");
                                 }
-                                else if (this._grouping == GroupBy.Year) {
+                                else if (params.groupy == GroupBy.Year) {
                                     index = String(transactionDate.year());
                                 }
-                                else if (this._grouping == GroupBy.Semester) {
+                                else if (params.groupy == GroupBy.Semester) {
 
                                     index = String(Math.floor(transactionDate.month() / 6));
                                 }
-                                else if (this._grouping == GroupBy.Trimester) {
+                                else if (params.groupy == GroupBy.Trimester) {
                                     index = String(Math.floor(transactionDate.month() / 3));
                                 }
-                                else if (this._grouping == GroupBy.Month) {
+                                else if (params.groupy == GroupBy.Month) {
                                     index = String(transactionDate.month());
                                 }
-                                else if (this._grouping == GroupBy.Week) {
+                                else if (params.groupy == GroupBy.Week) {
                                     index = String(transactionDate.week());
                                 }
-                                else if (this._grouping == GroupBy.Day) {
+                                else if (params.groupy == GroupBy.Day) {
                                     index = String(transactionDate.weekday());
                                 }
 
                                 let amount: number = posting.amount || 0;
 
-                                if (this._type == TransactionType.BOTH ||
-                                    (amount < 0 && this._type == TransactionType.DEBT) ||
-                                    (amount > 0 && this._type == TransactionType.CREDIT)) {
+                                if (params.transactionType == TransactionType.BOTH ||
+                                    (amount < 0 && params.transactionType == TransactionType.DEBT) ||
+                                    (amount > 0 && params.transactionType == TransactionType.CREDIT)) {
                                     
                                     let stats = period.stats;
-                                    this.addStat(index, amount, stats);
+                                    this.addStat(index, amount, period, params.statParam);
                                 }
                             }
                         }
@@ -680,11 +666,12 @@ export class LedgerService {
             });
     }
 
-    addStat(index: string, amount: number, stats: Map<string, number>){
-        if (this._param == StatParam.Sum) {
+    addStat(index: string, amount: number, period: Period, param: StatParam){
+        let stats = period.stats;
+        if (param == StatParam.Sum) {
             stats.set(index, (stats.get(index) || 0) + amount);
         }
-        else if (this._param == StatParam.Average) {
+        else if (param == StatParam.Average) {
             stats.set(index, stats.has(index) ? (stats.get(index) + amount) / 2 : amount);
         }
     }

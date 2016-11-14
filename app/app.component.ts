@@ -1,7 +1,7 @@
 /// <reference path="app.ts"/>
 
 import { Pipe, PipeTransform, Component, Input, Output, EventEmitter } from '@angular/core';
-import { LedgerService }        from './ledgerservice';
+import { LedgerService, StatsParam }        from './ledgerservice';
 import * as saveAs from 'file-saver';
 import * as moment from "moment";
 
@@ -185,20 +185,23 @@ export class AppComponent {
 
     this.maxDepth = maxDepth
 
-    let periods = this.ledger.analyzeTransactions(
-      this.selectedAccount,
-      null,
-      this.startDate,
-      this.endDate,
-      GroupBy.Account,
-      this.currentParam,
-      PeriodGap.None,
-      1,
-      this.currentType,
-      this.currentDepth
-    );
+    let params : StatsParam = {
+      from: this.selectedAccount,
+      startDate: this.startDate,
+      endDate: this.endDate,
+      groupy: GroupBy.Account,
+      maxDepth: this.currentDepth,
+      numPeriods: 1,
+      periodGap: PeriodGap.None,
+      transactionType: this.currentType,
+      statParam: this.currentParam
+    }
 
-    this.drawPeriods(periods);
+    let periods = this.ledger.analyzeTransactions(
+      this.transactions,
+      params);
+
+    this.drawPeriodAsPie(periods[0]);
 
   }
 
@@ -218,7 +221,42 @@ export class AppComponent {
     return "00000".substring(0, 6 - c.length) + c;
   }
 
-  drawPeriods(periods: Array<Period>) {
+  drawPeriodAsPie(period: Period){
+    var indexes = new Set<string>();
+    
+    period.stats.forEach( (k, v) => {
+      indexes.add(v);
+    })
+                
+    var ctx = document.getElementById("myChart");
+
+    let labels = Array.from(indexes.values())
+    let dataset = {
+          data: labels.map( l => Math.abs(period.stats.get(l))),
+          borderWidth: 1,
+          backgroundColor: labels.map( l => '#' + this.intToRGB(this.hashCode(l)))
+        }
+
+    let data = {
+        labels: labels,
+        datasets: [dataset]
+    }
+
+    if(this.chart){
+      this.chart.destroy(
+      )
+    }
+
+    this.chart = new Chart(ctx, {
+        type: "pie",
+        data: data,
+        options: {
+          cutoutPercentage: 50
+        }
+    });
+  }
+
+  drawPeriodsAsBar(periods: Array<Period>) {
 
     var indexes = new Set<string>();
     periods.forEach(p => {
