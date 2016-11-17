@@ -6,7 +6,7 @@ declare var PARSER:any; //PEG parser inclusion
 const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
 
 export interface StatsParam {
-    from: Account
+    from: Account[]
     groupy: GroupBy
     statParam: StatParam
     periodGap: PeriodGap;
@@ -507,12 +507,13 @@ export class LedgerService {
 
     private addAmountToAccount(a: Account, amount: number, isFinalAccount: boolean) {
         if(!isFinalAccount){
-            a.childrenBalance += amount;
+            a.childrenBalance += amount
+            a.nbChildrenTransactions ++
         }
         else{
-            a.balance += amount;
+            a.balance += amount
+            a.nbTransactions++
         }
-        a.nbTransactions++
     }
 
     get transactions():Array<Transaction> {
@@ -527,7 +528,9 @@ export class LedgerService {
         return Array.from(this._allAccountsByName.values()).filter( a => a.name.indexOf(':') == -1).sort( (a1, a2) => a1.name.localeCompare(a2.name) )
     }
 
-    filterTransactions(account: string, startDate: moment.Moment, endDate: moment.Moment, tag: string, type: TransactionType){
+    filterTransactions(accounts: Account[], startDate: moment.Moment, endDate: moment.Moment, tag: string, type: TransactionType){
+        let accountsNames = accounts.map(a => a.name)
+
         return this._transactions.filter( tr => {
             let isValid: boolean = true;
 
@@ -540,7 +543,7 @@ export class LedgerService {
                 isValid = isValid && trDate.isSameOrBefore(endDate);
             }
 
-            let postingMatchingAccountAndType = tr.postings.filter( p => p.account == account).find( p => 
+            let postingMatchingAccountAndType = tr.postings.filter( p => accountsNames.indexOf(p.account) != -1).find( p => 
                     type == TransactionType.BOTH ||
                     p.amount >= 0 && type == TransactionType.CREDIT ||
                     p.amount <= 0 && type == TransactionType.DEBT 
@@ -618,48 +621,44 @@ export class LedgerService {
             period => {
                 let transactionDate: moment.Moment = this.getTransactionDate(tr);
                 if (transactionDate >= period.startDate && transactionDate < period.endDate) {
-                    let accountNames: Array<any> = tr.postings.map(p => p.account);
-                    let posting =  tr.postings.find(function (p) {
-                        return p.account.indexOf(params.from.name) >= 0;
+                    let accountNames = tr.postings.map(p => p.account);
+                    let postingsThatAreNotFromAccounts =  tr.postings.filter(function (p) {
+                        return params.from.map(a => a.name).indexOf(p.account) == -1;
                     });
 
-                    if(posting){
-                        for(let p of tr.postings){
-                            if( p != posting){
-                                let index: string;
-                                if (params.groupy == GroupBy.Account) {
-                                    index = p.account.split(":", params.maxDepth).join(":");
-                                }
-                                else if (params.groupy == GroupBy.Year) {
-                                    index = String(transactionDate.year());
-                                }
-                                else if (params.groupy == GroupBy.Semester) {
+                    for(let p of postingsThatAreNotFromAccounts){
+                        let index: string;
+                        if (params.groupy == GroupBy.Account) {
+                            index = p.account.split(":", params.maxDepth).join(":");
+                        }
+                        else if (params.groupy == GroupBy.Year) {
+                            index = String(transactionDate.year());
+                        }
+                        else if (params.groupy == GroupBy.Semester) {
 
-                                    index = String(Math.floor(transactionDate.month() / 6));
-                                }
-                                else if (params.groupy == GroupBy.Trimester) {
-                                    index = String(Math.floor(transactionDate.month() / 3));
-                                }
-                                else if (params.groupy == GroupBy.Month) {
-                                    index = String(transactionDate.month());
-                                }
-                                else if (params.groupy == GroupBy.Week) {
-                                    index = String(transactionDate.week());
-                                }
-                                else if (params.groupy == GroupBy.Day) {
-                                    index = String(transactionDate.weekday());
-                                }
+                            index = String(Math.floor(transactionDate.month() / 6));
+                        }
+                        else if (params.groupy == GroupBy.Trimester) {
+                            index = String(Math.floor(transactionDate.month() / 3));
+                        }
+                        else if (params.groupy == GroupBy.Month) {
+                            index = String(transactionDate.month());
+                        }
+                        else if (params.groupy == GroupBy.Week) {
+                            index = String(transactionDate.week());
+                        }
+                        else if (params.groupy == GroupBy.Day) {
+                            index = String(transactionDate.weekday());
+                        }
 
-                                let amount: number = posting.amount || 0;
+                        let amount: number = p.amount || 0;
 
-                                if (params.transactionType == TransactionType.BOTH ||
-                                    (amount < 0 && params.transactionType == TransactionType.DEBT) ||
-                                    (amount > 0 && params.transactionType == TransactionType.CREDIT)) {
-                                    
-                                    let stats = period.stats;
-                                    this.addStat(index, amount, period, params.statParam);
-                                }
-                            }
+                        if (params.transactionType == TransactionType.BOTH ||
+                            (amount > 0 && params.transactionType == TransactionType.DEBT) ||
+                            (amount < 0 && params.transactionType == TransactionType.CREDIT)) {
+                            
+                            let stats = period.stats;
+                            this.addStat(index, amount, period, params.statParam);
                         }
                     }
                 }

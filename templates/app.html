@@ -13,22 +13,21 @@
             <ul>
                 <account-tree 
                     [account]="rootAccount"
-                     [selectedAccount]="selectedAccount" 
-                     (accountSelected)="onAccountSelected($event)"></account-tree>
+                     [selectedAccounts]="selectedAccounts" 
+                     (accountSelected)="onAccountClicked($event)"></account-tree>
             </ul>
         </div>
     </div>
     
     <div id="right">
         <div id="right_content">
-            <div *ngIf="selectedAccount">
-                <h2>{{ selectedAccount.name }} 
+            <div *ngIf="selectedAccounts && selectedAccounts.length > 0">
+                <h2>
+                    {{ selectedAccounts[0].name }}
+                    <template [ngIf]="selectedAccounts.length > 1">
+                        et {{ selectedAccounts.length - 1 }} autres     
+                    </template>
                 </h2>
-                <h3>
-                    {{ selectedAccount.cumulativeBalance | number : '1.2-2' }} / 
-                    {{ selectedAccount.balance | number : '1.2-2' }} / 
-                    {{ selectedAccount.nbTransactions }}
-                </h3>
             </div>
 
             <br/>
@@ -52,6 +51,7 @@
             <div id="chartContainer" class="sixteen-nine" [hidden]="!chart">
                 <canvas class="content" id="myChart"></canvas>
             </div>
+
             <div>
                 <span>Niveau :</span>
                 <select #d (change)="onDepthChanged(d.options[d.selectedIndex].value)">
@@ -64,7 +64,8 @@
             </div>
 
             <ul class="pagination">
-                <li *ngFor='let pageIndex of nbPage | keys' [class.currentPage] = "pageIndex == currentPage">
+                bla
+                <li *ngFor='let pageIndex of nbPage | numberToArray' [class.currentPage] = "pageIndex == currentPage">
                     <a (click)="onPageChanged(pageIndex)">{{pageIndex}}</a>
                 </li>
             </ul>

@@ -42,7 +42,7 @@ export class AppComponent {
   ledger: LedgerService
   rootAccount : Account;
   transactions : Transaction[] = []
-  selectedAccount: Account
+  selectedAccounts: Account[] = []
   startDate: moment.Moment
   endDate: moment.Moment
   tagFilter = ""
@@ -115,8 +115,16 @@ export class AppComponent {
       });
   }
 
-  onAccountSelected(account: Account){
-    this.selectedAccount = account;
+  onAccountClicked(account: Account){
+    let index = this.selectedAccounts.indexOf(account);
+
+    if(index == -1){
+      this.selectedAccounts.push(account)
+    }
+    else{
+      this.selectedAccounts.splice(index, 1)
+    }
+    
     this.refreshTransactions();
   }
 
@@ -153,7 +161,7 @@ export class AppComponent {
 
   refreshTransactions(){
     var t0 = performance.now();
-    this.transactions = this.ledger.filterTransactions(this.selectedAccount ? this.selectedAccount.name : "", this.startDate, this.endDate, this.tagFilter, this.currentType);
+    this.transactions = this.ledger.filterTransactions(this.selectedAccounts, this.startDate, this.endDate, this.tagFilter, this.currentType);
     var t1 = performance.now();
     console.log("Call to filterTransactions took " + (t1 - t0) + " milliseconds.");
 
@@ -186,7 +194,7 @@ export class AppComponent {
     this.maxDepth = maxDepth
 
     let params : StatsParam = {
-      from: this.selectedAccount,
+      from: this.selectedAccounts,
       startDate: this.startDate,
       endDate: this.endDate,
       groupy: GroupBy.Account,
@@ -349,7 +357,7 @@ export class AccountTreeComponent {
   account: Account;
 
   @Input()
-  selectedAccount: Account;
+  selectedAccounts: Account[];
 
   isCollapsed: boolean = false;
   
@@ -359,13 +367,13 @@ export class AccountTreeComponent {
   @Output()
   accountSelected = new EventEmitter<Account>();
 
-  onAccountSelected(account: Account){
-    this.accountSelected.emit(account);
+  onAccountSelected(){
+    this.accountSelected.emit(this.account);
   }
 
-onAccountChecked(chk : boolean){
-  this.isChecked = chk
-}
+  onAccountChecked(chk : boolean){
+    this.isChecked = chk
+  }
 
   onChildSelected(account: Account){
     this.accountSelected.emit(account);

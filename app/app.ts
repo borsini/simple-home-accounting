@@ -43,6 +43,7 @@ class Account {
     balance: number
     childrenBalance: number
     nbTransactions: number
+    nbChildrenTransactions: number
     children: Set<Account>;
 
     constructor(n: string) {
