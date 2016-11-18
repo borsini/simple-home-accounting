@@ -5,7 +5,7 @@
     <input #check type="checkbox" [attr.checked]="selectedAccounts.indexOf(account) != -1 ? true : null" (change)="onAccountSelected()"/>
     
     <span [class.emptyAccount] = "account.nbTransactions == 0" [class.currentAccount] = "selectedAccounts.indexOf(account) != -1" (click)="onAccountSelected()">
-        {{ account.name.split(':').pop() }}
+        {{ account.name.split(':').pop() }} - {{ account.balance.toFixed(2) }}
     </span>
 
     <ul *ngFor="let account of account.children">

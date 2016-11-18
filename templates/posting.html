@@ -4,6 +4,6 @@
   <option *ngFor="let a of allAccounts">{{ a }}</option>
 </datalist>
 
+<span class="cell">({{posting.comment || 'Ajouter un commentaire'}})</span>
 <span class="cell">{{posting.amount || 'Ajouter un montant'}}</span>
 <span class="cell">{{posting.currency || 'Ajouter une monnaie'}}</span>
-<span class="cell">({{posting.comment || 'Ajouter un commentaire'}})</span>

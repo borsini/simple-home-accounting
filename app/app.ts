@@ -40,17 +40,26 @@ interface Posting {
 
 class Account {
     name: string
+    children: Set<Account>;
     balance: number
     childrenBalance: number
     nbTransactions: number
     nbChildrenTransactions: number
-    children: Set<Account>;
+    debits: number
+    credits: number
+    childrenDebits: number
+    childrenCredits: number
 
     constructor(n: string) {
         this.name = n;
         this.balance = 0
         this.childrenBalance = 0
         this.nbTransactions = 0
+        this.nbChildrenTransactions = 0
+        this.debits = 0
+        this.credits = 0
+        this.childrenDebits = 0
+        this.childrenCredits = 0
         this.children = new Set()
     }
 }
@@ -59,3 +68,4 @@ enum GroupBy { Account = 1, Year, Semester, Trimester, Month, Week, Day }
 enum StatParam { Sum = 1, Average }
 enum PeriodGap { None = 1, Year, Month, Week, Day }
 enum TransactionType { DEBT = 1, CREDIT, BOTH }
+enum SelectionBehavior { UNION = 1, INTERSECTION }

@@ -45,11 +45,20 @@
                 <option *ngFor='let type of types | keys' [value]="type.key" [selected]="type.key == currentType">{{type.value}}</option>
             </select>
             <br/>
-            <span>{{transactions.length}} transactions</span>
+            <span>{{transactions.length}} transactions affichées sur {{ nbTransactionsInSelectedAccounts() }} </span>
             <br/>
 
             <div id="chartContainer" class="sixteen-nine" [hidden]="!chart">
-                <canvas class="content" id="myChart"></canvas>
+                <div class="content">
+                    <div class="floatHalfLeft">
+                        <canvas id="debitChart"></canvas>
+                    </div>
+                    <div class="floatHalfRight">
+                    <canvas id="creditChart"></canvas>
+                    </div>
+                    <br style="clear:both;"/>
+                </div>
+
             </div>
 
             <div>

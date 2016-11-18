@@ -468,7 +468,7 @@ export class LedgerService {
             let transactionDate = this.getTransactionDate(tr);
 
             this._minDate =  this._minDate ? moment.min( this._minDate, transactionDate) : transactionDate;
-                this._maxDate =  this._maxDate ? moment.max( this._maxDate, transactionDate) : transactionDate;
+            this._maxDate =  this._maxDate ? moment.max( this._maxDate, transactionDate) : transactionDate;
 
             tr.postings.forEach(ps => {
                 if(ps.currency){
@@ -509,10 +509,22 @@ export class LedgerService {
         if(!isFinalAccount){
             a.childrenBalance += amount
             a.nbChildrenTransactions ++
+            if(amount > 0){
+                a.childrenCredits += amount
+            }
+            else{
+                a.childrenDebits += amount
+            }
         }
         else{
             a.balance += amount
             a.nbTransactions++
+            if(amount > 0){
+                a.credits += amount
+            }
+            else{
+                a.credits += amount
+            }
         }
     }
 
@@ -528,7 +540,15 @@ export class LedgerService {
         return Array.from(this._allAccountsByName.values()).filter( a => a.name.indexOf(':') == -1).sort( (a1, a2) => a1.name.localeCompare(a2.name) )
     }
 
-    filterTransactions(accounts: Account[], startDate: moment.Moment, endDate: moment.Moment, tag: string, type: TransactionType){
+    get minDate(): moment.Moment {
+        return this._minDate
+    }
+
+    get maxDate(): moment.Moment {
+        return this._maxDate
+    }
+
+    filterTransactions(behavior: SelectionBehavior, accounts: Account[], startDate: moment.Moment, endDate: moment.Moment, tag: string, type: TransactionType){
         let accountsNames = accounts.map(a => a.name)
 
         return this._transactions.filter( tr => {
@@ -543,13 +563,20 @@ export class LedgerService {
                 isValid = isValid && trDate.isSameOrBefore(endDate);
             }
 
-            let postingMatchingAccountAndType = tr.postings.filter( p => accountsNames.indexOf(p.account) != -1).find( p => 
+            let postingMatchingAccountAndType = false
+            if(behavior == SelectionBehavior.UNION){
+                postingMatchingAccountAndType = tr.postings.filter( p => accountsNames.indexOf(p.account) != -1).find( p => 
                     type == TransactionType.BOTH ||
                     p.amount >= 0 && type == TransactionType.CREDIT ||
                     p.amount <= 0 && type == TransactionType.DEBT 
-            )
+                ) != null
+            }
+            else if(behavior == SelectionBehavior.INTERSECTION){
+                let accountsNames = accounts.map(a => a.name)
+                postingMatchingAccountAndType = tr.postings.map(p => p.account).filter(account => accountsNames.indexOf(account) != -1).length == accountsNames.length
+            }
 
-            isValid = isValid && (postingMatchingAccountAndType != null);
+            isValid = isValid && postingMatchingAccountAndType;
 
             if(tag && tag.length > 0){
                 isValid = isValid && tr.header.tag == tag;
@@ -621,12 +648,7 @@ export class LedgerService {
             period => {
                 let transactionDate: moment.Moment = this.getTransactionDate(tr);
                 if (transactionDate >= period.startDate && transactionDate < period.endDate) {
-                    let accountNames = tr.postings.map(p => p.account);
-                    let postingsThatAreNotFromAccounts =  tr.postings.filter(function (p) {
-                        return params.from.map(a => a.name).indexOf(p.account) == -1;
-                    });
-
-                    for(let p of postingsThatAreNotFromAccounts){
+                    for(let p of tr.postings){
                         let index: string;
                         if (params.groupy == GroupBy.Account) {
                             index = p.account.split(":", params.maxDepth).join(":");
