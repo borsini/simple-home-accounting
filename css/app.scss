@@ -159,12 +159,16 @@ input, select {
 
             .floatHalfLeft {
                 width: 50%;
+                height: 100%;
+                background-color: red;
                 float: left;
             }
 
             .floatHalfRight {
                 width: 50%;
-               float: right; 
+                height: 100%;
+                background-color: blue;
+                float: right; 
             }
         }
 

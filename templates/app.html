@@ -48,13 +48,13 @@
             <span>{{transactions.length}} transactions affichées sur {{ nbTransactionsInSelectedAccounts() }} </span>
             <br/>
 
-            <div id="chartContainer" class="sixteen-nine" [hidden]="!chart">
+<canvas id="debitChart"></canvas>
+ <canvas id="creditChart"></canvas>
+            <div id="chartContainer" class="sixteen-nine">
                 <div class="content">
                     <div class="floatHalfLeft">
-                        <canvas id="debitChart"></canvas>
                     </div>
                     <div class="floatHalfRight">
-                    <canvas id="creditChart"></canvas>
                     </div>
                     <br style="clear:both;"/>
                 </div>

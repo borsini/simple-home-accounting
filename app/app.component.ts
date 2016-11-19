@@ -231,7 +231,7 @@ export class AppComponent {
       maxDepth: this.currentDepth,
       numPeriods: 1,
       periodGap: PeriodGap.None,
-      transactionType: TransactionType.DEBT,
+      transactionType: TransactionType.CREDIT,
       statParam: this.currentParam
     }
 
