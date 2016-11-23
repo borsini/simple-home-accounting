@@ -154,22 +154,8 @@ input, select {
         }
 
         #chartContainer {
-            width:100%;
+            width:90%;
             margin:auto;
-
-            .floatHalfLeft {
-                width: 50%;
-                height: 100%;
-                background-color: red;
-                float: left;
-            }
-
-            .floatHalfRight {
-                width: 50%;
-                height: 100%;
-                background-color: blue;
-                float: right; 
-            }
         }
 
         #transactions {

@@ -40,28 +40,15 @@
                     <option value="*">*</option>
                     <option value="!">!</option>
             </select>
-            <span>Type de transaction :</span>
-            <select #t (change)="onTypeChanged(t.options[t.selectedIndex].value)">
-                <option *ngFor='let type of types | keys' [value]="type.key" [selected]="type.key == currentType">{{type.value}}</option>
-            </select>
             <br/>
             <span>{{transactions.length}} transactions affichées sur {{ nbTransactionsInSelectedAccounts() }} </span>
             <br/>
 
-<canvas id="debitChart"></canvas>
- <canvas id="creditChart"></canvas>
-            <div id="chartContainer" class="sixteen-nine">
-                <div class="content">
-                    <div class="floatHalfLeft">
-                    </div>
-                    <div class="floatHalfRight">
-                    </div>
-                    <br style="clear:both;"/>
+            <div [hidden]="!chart" >
+                <div id="chartContainer" class="sixteen-nine">
+                    <canvas id="chart" class="content"></canvas>
                 </div>
 
-            </div>
-
-            <div>
                 <span>Niveau :</span>
                 <select #d (change)="onDepthChanged(d.options[d.selectedIndex].value)">
                     <option *ngFor='let depth of maxDepth | numberToArray' [value]="depth">{{depth}}</option>
@@ -70,10 +57,13 @@
                 <select #p (change)="onParamChanged(p.options[p.selectedIndex].value)">
                     <option *ngFor='let param of params | keys' [value]="param.key">{{param.value}}</option>
                 </select>
+                <span>Type de transaction :</span>
+                <select #t (change)="onTypeChanged(t.options[t.selectedIndex].value)">
+                    <option *ngFor='let type of types | keys' [value]="type.key" [selected]="type.key == currentType">{{type.value}}</option>
+                </select>
             </div>
 
             <ul class="pagination">
-                bla
                 <li *ngFor='let pageIndex of nbPage | numberToArray' [class.currentPage] = "pageIndex == currentPage">
                     <a (click)="onPageChanged(pageIndex)">{{pageIndex}}</a>
                 </li>

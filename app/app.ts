@@ -69,3 +69,13 @@ enum StatParam { Sum = 1, Average }
 enum PeriodGap { None = 1, Year, Month, Week, Day }
 enum TransactionType { DEBT = 1, CREDIT, BOTH }
 enum SelectionBehavior { UNION = 1, INTERSECTION }
+
+interface ChartJsData {
+    labels: string[]
+    datasets: ChartJsDataset[]
+}
+interface ChartJsDataset {
+    data: any[],
+    borderWidth?: number,
+    backgroundColor?: string[]
+}

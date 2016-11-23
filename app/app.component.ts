@@ -47,7 +47,7 @@ export class AppComponent {
   endDate: moment.Moment
   tagFilter = ""
   transactionToAdd : Transaction;
-  behavior: SelectionBehavior = SelectionBehavior.INTERSECTION;
+  behavior: SelectionBehavior = SelectionBehavior.UNION;
 
   sliceStart: number = 0;
   sliceEnd: number = 5;
@@ -64,8 +64,7 @@ export class AppComponent {
   params = StatParam
   currentParam = StatParam.Sum
   
-  debitChart: any;
-  creditChart: any;
+  chart: any;
 
   constructor(ledger: LedgerService) {
     this.ledger = ledger;
@@ -167,7 +166,7 @@ export class AppComponent {
 
   refreshTransactions(){
     var t0 = performance.now();
-    this.transactions = this.ledger.filterTransactions(this.behavior, this.selectedAccounts, this.startDate, this.endDate, this.tagFilter, this.currentType);
+    this.transactions = this.ledger.filterTransactions(this.behavior, this.selectedAccounts, this.startDate, this.endDate, this.tagFilter, TransactionType.BOTH);
     var t1 = performance.now();
     console.log("Call to filterTransactions took " + (t1 - t0) + " milliseconds.");
 
@@ -186,7 +185,6 @@ export class AppComponent {
           this.ledger.categorize(p, t)
         }
       })
-      
     })
   }
 
@@ -198,11 +196,10 @@ export class AppComponent {
 
     this.maxDepth = maxDepth
 
-    this.showDebitStats()
-    this.showCreditStats()
+    this.showStats()
   }
 
-  showDebitStats(){
+  showStats(){
     let params : StatsParam = {
       from: this.selectedAccounts,
       startDate: this.startDate,
@@ -211,35 +208,27 @@ export class AppComponent {
       maxDepth: this.currentDepth,
       numPeriods: 1,
       periodGap: PeriodGap.None,
-      transactionType: TransactionType.DEBT,
+      transactionType: this.currentType,
       statParam: this.currentParam
     }
 
-    let periods = this.ledger.analyzeTransactions(
-      this.transactions,
-      params);
+    let periods = this.ledger.analyzeTransactions(this.transactions, params)
 
-    this.drawPeriodAsPie(periods[0], "debitChart", this.debitChart);
+    if(this.chart){
+      this.chart.destroy()
+    }
+    let data = this.periodToPieData(periods[0])
+    this.chart = this.createPieChartWithData(data)
   }
 
-  showCreditStats(){
-    let params : StatsParam = {
-      from: this.selectedAccounts,
-      startDate: this.startDate,
-      endDate: this.endDate,
-      groupy: GroupBy.Account,
-      maxDepth: this.currentDepth,
-      numPeriods: 1,
-      periodGap: PeriodGap.None,
-      transactionType: TransactionType.CREDIT,
-      statParam: this.currentParam
-    }
-
-    let periods = this.ledger.analyzeTransactions(
-      this.transactions,
-      params);
-
-    this.drawPeriodAsPie(periods[0], "creditChart", this.creditChart);
+  createPieChartWithData(data: ChartJsData){
+      return new Chart(document.getElementById("chart"), {
+        type: "pie",
+        data: data,
+        options: {
+          cutoutPercentage: 50
+        }
+    })
   }
 
   hashCode(str) { // java String#hashCode
@@ -258,14 +247,12 @@ export class AppComponent {
     return "00000".substring(0, 6 - c.length) + c;
   }
 
-  drawPeriodAsPie(period: Period, domChartId: string, chart: any){
+  periodToPieData(period: Period) : ChartJsData {
     var indexes = new Set<string>();
     
     period.stats.forEach( (k, v) => {
       indexes.add(v);
     })
-                
-    
 
     let labels = Array.from(indexes.values())
     let dataset = {
@@ -279,18 +266,7 @@ export class AppComponent {
         datasets: [dataset]
     }
 
-    if(chart){
-      chart.destroy()
-    }
-
-    var ctx = document.getElementById(domChartId);
-    chart = new Chart(ctx, {
-        type: "pie",
-        data: data,
-        options: {
-          cutoutPercentage: 50
-        }
-    });
+    return data;
   }
 
   drawPeriodsAsBar(periods: Array<Period>) {
