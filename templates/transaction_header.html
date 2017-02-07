@@ -1,0 +1,22 @@
+<td>
+    <span *ngIf="!isEditing">{{header.tag}}</span>
+    <select *ngIf="isEditing">
+        <option>Vide</option>
+        <option>*</option>
+        <option>!</option>
+    </select>
+</td>
+<td>
+    <span *ngIf="!isEditing">{{header.date}}</span>
+    <input type="text" *ngIf="isEditing" value="{{header.date}}"/>
+</td>
+<td>
+    <span *ngIf="!isEditing">{{header.title}}</span>
+    <input type="text" *ngIf="isEditing" value="{{header.title}}"/>
+</td>
+
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><button (click)="onEditClicked()">Editer</button></td>

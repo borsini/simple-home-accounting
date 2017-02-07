@@ -327,30 +327,33 @@ export class AppComponent {
 }
 
 @Component({
-  selector: '[transaction]',
-  templateUrl: './templates/transaction.html'
+  selector: '[transaction-header]',
+  templateUrl: './templates/transaction_header.html'
 })
-export class TransactionComponent {
+export class TransactionHeaderComponent {
   @Input()
-  transaction: Transaction;
+  header: Header;
+
+  isEditing = false;
+
+  onEditClicked() {
+    this.isEditing = !this.isEditing;
+  }
 }
 
 @Component({
-  selector: 'posting',
-  templateUrl: './templates/posting.html'
+  selector: '[transaction-body]',
+  templateUrl: './templates/transaction_body.html'
 })
-export class PostingComponent {
+export class TransactionBodyComponent {
   @Input()
-  posting: Posting
+  posting: Posting;
 
-  _ledger: LedgerService;
+  @Input()
+  isEditing = false;
 
-  allAccounts: string[]
-
-  constructor(ledger: LedgerService){
-    this._ledger = ledger;
-    this.allAccounts = ledger.flatAccounts.map( a => a.name)
-  }
+  @Input()
+  isLastPosting: boolean;
 }
 
 @Component({

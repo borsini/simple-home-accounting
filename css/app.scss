@@ -72,6 +72,10 @@ input, select {
     color: black;
 }
 
+table tr td {
+    border: 0px black solid;
+}
+
 .sixteen-nine {
   @include aspect-ratio(16, 9);
 }
@@ -160,23 +164,28 @@ input, select {
 
         #transactions {
             width: 100%;
+            border: 1px solid white;
+            table-layout:fixed;
 
-            td {
+            th, td {
+                text-align: left;
                 padding: 5px;
+            }
+
+            #newTransaction {
+                background-color: $VIBRANT_200;
+            }
+
+            .rowEven {
+                background-color: $COLOR_500;
+            }
+
+            .rowOdd {
+                background-color: $COLOR_400;
             }
         }
 
-        #newTransaction {
-            background-color: $VIBRANT_200;
-        }
-
-        .rowEven {
-            background-color: $COLOR_500;
-        }
-
-        .rowOdd {
-            background-color: $COLOR_400;
-        }
+        
     }
 }
 
