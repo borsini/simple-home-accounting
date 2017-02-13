@@ -157,15 +157,23 @@ table tr td {
             }
         }
 
-        #chartContainer {
-            width:90%;
-            margin:auto;
+        #chartzone {
+            display:none;
+            
+            #chartContainer {
+                width:50%;
+                margin:auto;
+            }
         }
-
+       
         #transactions {
             width: 100%;
             border: 1px solid white;
             table-layout:fixed;
+
+            thead {
+                border: 1px solid white;
+            }
 
             th, td {
                 text-align: left;

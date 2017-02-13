@@ -44,7 +44,7 @@
             <span>{{transactions.length}} transactions affichées sur {{ nbTransactionsInSelectedAccounts() }} </span>
             <br/>
 
-            <div [hidden]="!chart" >
+            <div [hidden]="!chart" id="chartzone">
                 <div id="chartContainer" class="sixteen-nine">
                     <canvas id="chart" class="content"></canvas>
                 </div>
@@ -71,7 +71,7 @@
 
             <table id="transactions">
                 
-                <thead>
+                <thead *ngIf="transactions.length > 0">
                     <tr>
                         <th>Statut</th>
                         <th>Date</th>
