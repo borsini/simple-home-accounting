@@ -1,0 +1,35 @@
+<md-sidenav-container class="mat-typography">
+  <md-sidenav #drawer [opened]="rootAccount | async">
+    <menu-drawer></menu-drawer>
+  </md-sidenav>
+
+  <div class="main">
+    <md-toolbar color="primary">
+        
+      <md-icon class="material-icons" (click)="drawer.toggle()">menu</md-icon>
+
+      <span>Liste des transactions</span>
+
+      <div [hidden]="!isLoading">
+          <md-progress-spinner
+            color="accent"
+            mode="indeterminate">
+          </md-progress-spinner>
+      
+          </div>
+
+      <span class="example-spacer"></span>
+        
+        <label id="filename" class="action_btn" for="upload-ledger">Importer .ledger</label>
+        <input type="file" [hidden]="true" id="upload-ledger" (change)="uploadLedgerOnChange($event.target.files)" />
+
+        
+    </md-toolbar>
+
+    <div class="content">
+      <transactions></transactions>
+    </div>
+
+  </div>
+
+</md-sidenav-container>

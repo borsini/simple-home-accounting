@@ -1,0 +1,43 @@
+<md-input-container floatPlaceholder="never">
+    <input mdInput #filter placeholder="Rechercher...">
+  </md-input-container>
+
+  <md-paginator #paginator
+  [pageIndex]="0"
+  [pageSize]="25"
+  [pageSizeOptions]="[10, 25, 50]">
+</md-paginator>
+
+<md-table #table [dataSource]="dataSource" mdSort>
+  
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- ID Column -->
+  <ng-container cdkColumnDef="title">
+    <md-header-cell *cdkHeaderCellDef md-sort-header> Titre </md-header-cell>
+    <md-cell *cdkCellDef="let row"> 
+      <p class="md-body-2">{{row.header.title}} </p>
+    </md-cell>
+  </ng-container>
+
+  <!-- Progress Column -->
+  <ng-container cdkColumnDef="date">
+    <md-header-cell *cdkHeaderCellDef md-sort-header> Date </md-header-cell>
+    <md-cell *cdkCellDef="let row"> {{row.header.date}} </md-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container cdkColumnDef="movements">
+    <md-header-cell *cdkHeaderCellDef> Mouvements </md-header-cell>
+    <md-cell *cdkCellDef="let row"> 
+      <ul>
+        <li *ngFor="let p of row.postings">{{p.account}} {{p.amount}}{{p.currency}}</li>
+      </ul>
+    </md-cell>
+  </ng-container>
+
+  <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+  <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+</md-table>
+

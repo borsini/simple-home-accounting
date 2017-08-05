@@ -1,5 +1,0 @@
-{
-    "name": "google-chart",
-    "main": "google-chart.d.ts",
-    "browser": "google-chart.d.ts"
-}

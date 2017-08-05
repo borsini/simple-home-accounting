@@ -1,0 +1,26 @@
+body {
+    overflow: hidden;
+  }
+
+.main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh;
+}
+
+md-toolbar {
+    flex: 0 0 auto;
+}
+
+md-progress-spinner {
+    width:30px;
+    height:30px;
+}
+
+.content {
+    flex: 1 1 auto;
+    position: relative;/* need this to position inner content */
+    overflow-y: auto;
+}
