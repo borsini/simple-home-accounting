@@ -17,7 +17,7 @@ export class TransactionsComponent implements OnInit {
 
   transactions : Observable<Transaction[]>
   dataSource: TransactionDataSource;
-  displayedColumns = ['title', 'date', 'movements'];
+  displayedColumns = ['title', 'date', 'movements', 'status'];
 
   @ViewChild(MdPaginator) paginator: MdPaginator;
   @ViewChild(MdSort) sort: MdSort;
@@ -34,38 +34,36 @@ export class TransactionsComponent implements OnInit {
 
 }
 
-/*
 export class TransactionRow {
-  private _transaction : Transaction
 
-  get title(): string{
+  constructor(private _transaction: Transaction){}
+
+  get title() {
     return this._transaction.header.title
   }
 
-  get date(): string{
+  get date() {
     return this._transaction.header.date
   }
 
-  get amount(): number{
-    return this._transaction.postings.title
+  get postings() {
+    return this._transaction.postings
   }
-  amount: number
-  startAccount: string
-  endAccount: string
+
+  get isComplete() {
+    return this._transaction.header.title != undefined &&
+    this._transaction.postings.length > 1
+  }
 }
-*/
 
-export class TransactionDataSource extends DataSource<Transaction> {
-
-  //get filter(): string { return this._filterChange.value; }
-  //set filter(filter: string) { this._filterChange.next(filter); }
+export class TransactionDataSource extends DataSource<TransactionRow> {
 
   constructor(private _state : AppStateService, private _paginator: MdPaginator, private _sort: MdSort, private _filter: ElementRef) {
     super()
   }
 
   /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<Transaction[]> {
+  connect(): Observable<TransactionRow[]> {
 
     let sortChange = Observable.from<MdSort>(this._sort.mdSortChange)
       .flatMap( d => this._state.selectedAccounts())
@@ -74,13 +72,15 @@ export class TransactionDataSource extends DataSource<Transaction> {
       .flatMap( d => this._state.selectedAccounts())
     
     let filter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
-      .debounceTime(300).distinctUntilChanged()
+      .debounceTime(200)
+      .distinctUntilChanged()
+      .do( f => this._paginator.pageIndex = 0)
       .flatMap( d => this._state.selectedAccounts())
 
     let selectedAccountsChanged = this._state.selectedAccounts()
 
     return Observable.merge(pageChange, sortChange, filter, selectedAccountsChanged)
-  
+    .debounceTime(150)
     .flatMap( a => this._state.transactions(a))
     .map( data => this.filterData(this._filter.nativeElement.value, data) )
     .map( data => this.sortData(data))
@@ -88,7 +88,7 @@ export class TransactionDataSource extends DataSource<Transaction> {
       this._paginator.length = data.length
       return this.paginateData(data)
     })
-    .do(s => {}, e => console.log(e))
+    .map( data => data.map( tr => new TransactionRow(tr)))
   }
 
   disconnect() {}

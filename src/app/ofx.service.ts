@@ -55,13 +55,6 @@ export class OfxService {
                       amount: parseFloat(a),
                       currency: c,
                       comment: m
-                  },
-                  {
-                      tag: null,
-                      account: "Inconnu",
-                      amount: null,
-                      currency: null,
-                      comment: null
                   }
               ]
           }

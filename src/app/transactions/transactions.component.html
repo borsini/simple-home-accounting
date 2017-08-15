@@ -1,5 +1,5 @@
 <md-input-container floatPlaceholder="never">
-    <input mdInput #filter placeholder="Rechercher...">
+    <input mdInput #filter placeholder="Titre, date ou montant...">
   </md-input-container>
 
   <md-paginator #paginator
@@ -17,14 +17,14 @@
   <ng-container cdkColumnDef="title">
     <md-header-cell *cdkHeaderCellDef md-sort-header> Titre </md-header-cell>
     <md-cell *cdkCellDef="let row"> 
-      <p class="md-body-2">{{row.header.title}} </p>
+      <p class="md-body-2">{{row.title}} </p>
     </md-cell>
   </ng-container>
 
   <!-- Progress Column -->
   <ng-container cdkColumnDef="date">
     <md-header-cell *cdkHeaderCellDef md-sort-header> Date </md-header-cell>
-    <md-cell *cdkCellDef="let row"> {{row.header.date}} </md-cell>
+    <md-cell *cdkCellDef="let row"> {{row.date}} </md-cell>
   </ng-container>
 
   <!-- Name Column -->
@@ -32,10 +32,18 @@
     <md-header-cell *cdkHeaderCellDef> Mouvements </md-header-cell>
     <md-cell *cdkCellDef="let row"> 
       <ul>
-        <li *ngFor="let p of row.postings">{{p.account}} {{p.amount}}{{p.currency}}</li>
+        <span *ngFor="let p of row.postings">{{p.amount < 0 ? '-' : '+'}}{{p.amount}}{{p.currency}}  {{p.account}} </span>
       </ul>
     </md-cell>
   </ng-container>
+
+  <!-- Name Column -->
+  <ng-container cdkColumnDef="status">
+      <md-header-cell *cdkHeaderCellDef> Statut </md-header-cell>
+      <md-cell *cdkCellDef="let row"> 
+        <md-icon class="material-icons">{{row.isComplete ? 'check_circle' : 'error'}}</md-icon>
+      </md-cell>
+    </ng-container>
 
   <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
   <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
