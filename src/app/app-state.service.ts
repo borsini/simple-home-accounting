@@ -40,6 +40,10 @@ export class AppStateService {
     });
   }
 
+  allTransactions() : Observable<Transaction[]> { 
+    return Observable.of(this._transactions)
+  }
+
   transactions(inAccounts: Set<Account>): Observable<Transaction[]> {
     return new Observable( obs => {
 

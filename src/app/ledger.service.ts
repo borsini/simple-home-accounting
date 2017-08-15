@@ -113,4 +113,25 @@ export class LedgerService {
       obs.complete()
     })
   }
+
+  generateLedgerString(transactions : Transaction[]) : Observable<string> {
+    return new Observable( obs => {
+      let out : string = ""
+      transactions.forEach( tr => {
+        out += tr.header.date + " " + tr.header.title + "\n"
+        
+        tr.postings.forEach( p => {
+            out += "    "
+            out += p.account + "    " + p.currency + " " + p.amount
+            out += p.comment ? " ; " + p.comment : ""
+            out += "\n"
+        });
+
+        out += "\n"
+      });
+      
+      obs.next(out)
+      obs.complete()
+    })
+  }
 }

@@ -20,6 +20,8 @@
 
       <span class="example-spacer"></span>
         
+        <span (click)="saveLedgerClicked()">Save</span>
+
         <label id="filename" class="action_btn" for="upload-ledger">Importer .ledger</label>
         <input type="file" [hidden]="true" id="upload-ledger" (change)="uploadLedgerOnChange($event.target.files)" />
 

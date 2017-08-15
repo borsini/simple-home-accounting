@@ -6,6 +6,8 @@ import { LedgerService } from './ledger.service'
 import { OfxService } from './ofx.service'
 import { Account, Transaction } from './models/models'
 
+import * as fileSaver from 'file-saver'
+
 import {Observable} from 'rxjs'
 
 @Component({
@@ -59,6 +61,16 @@ export class AppComponent {
       },
       () => this.isLoading = false
     )
+  }
+
+  saveLedgerClicked() {
+    this._state.allTransactions()
+    .flatMap(tr => this._ledger.generateLedgerString(tr))
+    .do(ledger => {
+      var blob = new Blob([ledger], {type: "text/plain;charset=utf-8"});
+      fileSaver.saveAs(blob, "accounts.ledger");
+    })
+    .subscribe()    
   }
 
   private readFileObservable(file: Blob): Observable<string> {
