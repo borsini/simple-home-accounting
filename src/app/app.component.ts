@@ -2,6 +2,7 @@ import { Component } from '@angular/core'
 import { AsyncPipe } from '@angular/common'
 import { AppStateService } from './app-state.service'
 import { LedgerService } from './ledger.service'
+import { OfxService } from './ofx.service'
 import { Account, Transaction } from './models/models'
 
 import {Observable} from 'rxjs'
@@ -10,7 +11,7 @@ import {Observable} from 'rxjs'
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [ LedgerService]
+  providers: [ LedgerService, OfxService]
 })
 export class AppComponent {
   private _flatAccounts: Map<String, Account>
@@ -19,7 +20,7 @@ export class AppComponent {
   rootAccount : Observable<Account>
   title = 'app';
 
-  constructor(private _state: AppStateService, private _ledger: LedgerService){
+  constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService){
     
     this.isLoading = false
     this._flatAccounts = new Map()
@@ -30,11 +31,21 @@ export class AppComponent {
   }
 
   uploadLedgerOnChange(files: FileList) {
-
     this.isLoading = true
-
     this.readFileObservable(files.item(0))
     .flatMap( res => this._ledger.parseLedgerString(res))
+    .flatMap(tr => this._state.setTransactions(tr) )
+    .subscribe(
+      transactions => console.log(transactions),
+      e => console.log(e),
+      () => this.isLoading = false
+    )
+  }
+
+  uploadOfxOnChange(files: FileList) {
+    this.isLoading = true
+    this.readFileObservable(files.item(0))
+    .flatMap( res => this._ofx.parseOfxString(res))
     .flatMap(tr => this._state.setTransactions(tr) )
     .subscribe(
       transactions => console.log(transactions),
@@ -54,6 +65,4 @@ export class AppComponent {
       reader.readAsText(file)
     })
   }
-
-  
 }
