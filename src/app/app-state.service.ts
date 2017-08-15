@@ -56,14 +56,19 @@ export class AppStateService {
   }
 
   setTransactions(tr: Transaction[]): Observable<any> {
-    this._transactions = tr
-    let accounts = this.getAccountsFromTransactions(tr)
-    let root = new Account("ROOT")
-    root.children = new Set(accounts);
-    this._rootAccount = root
-    this._rootAccountSubject.next(this._rootAccount)
+    return new Observable( obs => {
+      this._transactions = tr
+      let accounts = this.getAccountsFromTransactions(tr)
+      let root = new Account("ROOT")
+      root.children = new Set(accounts);
+      this._rootAccount = root
+      this._rootAccountSubject.next(this._rootAccount)
 
-    return Observable.empty()
+      this._selectedAccounts = new Set()
+      this._selectedAccountsSubject.next(this._selectedAccounts)
+
+      obs.complete()
+    })
   }
 
   private getAccountsFromTransactions(transactions: Transaction[]) : Account[] {
