@@ -1,11 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { CdkTableModule } from '@angular/cdk';
-import {MdButtonModule, MdCheckboxModule, MdToolbarModule, MdSidenavModule, MdTableModule, MdPaginatorModule, MdSortModule, MdInputModule, MdProgressSpinnerModule} from '@angular/material';
+import {MdButtonModule, MdCheckboxModule, MdToolbarModule, MdSidenavModule, MdTableModule, MdPaginatorModule, MdSortModule, MdInputModule, MdProgressSpinnerModule, MdDialogModule} from '@angular/material';
+
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 
-import { AppComponent } from './app.component';
+import { AppComponent, DialogResultExampleDialog } from './app.component';
 import { AccountTreeComponent } from './account-tree/account-tree.component';
 
 import { AppStateService } from './app-state.service';
@@ -17,12 +18,16 @@ import { TransactionsComponent } from './transactions/transactions.component';
     AppComponent,
     AccountTreeComponent,
     MenuDrawerComponent,
-    TransactionsComponent
+    TransactionsComponent,
+    DialogResultExampleDialog,
+  ],
+  entryComponents: [
+    DialogResultExampleDialog
   ],
   imports: [
-    BrowserModule, MdButtonModule, MdCheckboxModule, MdToolbarModule, MdSidenavModule, CdkTableModule, MdTableModule, MdPaginatorModule,BrowserAnimationsModule, MdSortModule, MdInputModule, MdProgressSpinnerModule
+    BrowserModule, MdButtonModule, MdCheckboxModule, MdToolbarModule, MdSidenavModule, CdkTableModule, MdTableModule, MdPaginatorModule,BrowserAnimationsModule, MdSortModule, MdInputModule, MdProgressSpinnerModule, MdDialogModule
   ],
-  providers : [AppStateService],
+  providers : [AppStateService, ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
