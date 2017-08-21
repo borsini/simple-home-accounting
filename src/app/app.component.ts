@@ -33,25 +33,9 @@ export class AppComponent {
     })
   }
 
-  uploadLedgerOnChange(files: FileList) {
+  uploadFileOnChange(files: FileList) {
     this.isLoading = true
-    this.readFileObservable(files.item(0))
-    .flatMap( res => this._ledger.parseLedgerString(res))
-    .flatMap(tr => this._state.setTransactions(tr) )
-    .subscribe(
-      transactions => console.log(transactions),
-      e => {
-        this.openErrorDialog(e)
-        this.isLoading = false
-      },
-      () => this.isLoading = false
-    )
-  }
-
-  uploadOfxOnChange(files: FileList) {
-    this.isLoading = true
-    this.readFileObservable(files.item(0))
-    .flatMap( res => this._ofx.parseOfxString(res))
+    this.readAndParseTransactionsFromFile(files.item(0))
     .flatMap(tr => this._state.setTransactions(tr) )
     .subscribe(
       transactions => console.log(transactions),
@@ -73,7 +57,24 @@ export class AppComponent {
     .subscribe()    
   }
 
-  private readFileObservable(file: Blob): Observable<string> {
+  private readAndParseTransactionsFromFile(file:File): Observable<Transaction[]> {
+    let exploded = file.name.split(".")
+    let ext = exploded[exploded.length - 1]
+
+    if(ext == "ledger"){
+      return this.readFileObservable(file)
+      .flatMap(content => this._ledger.parseLedgerString(content))
+    }
+    else if(ext == "ofx"){
+      return this.readFileObservable(file)
+      .flatMap(content => this._ofx.parseOfxString(content))
+    }
+    else {
+      return Observable.throw("Cette extension n'est pas autorisée")
+    }
+  }
+
+  private readFileObservable(file: File): Observable<string> {
     return new Observable( obs => {
       var reader = new FileReader();
       reader.addEventListener('load', function () {

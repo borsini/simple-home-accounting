@@ -22,12 +22,8 @@
         
         <span (click)="saveLedgerClicked()">Save</span>
 
-        <label id="filename" class="action_btn" for="upload-ledger">Importer .ledger</label>
-        <input type="file" [hidden]="true" id="upload-ledger" (change)="uploadLedgerOnChange($event.target.files)" />
-
-        <label id="filename" class="action_btn" for="upload-ofx">Importer .ofx</label>
-        <input type="file" [hidden]="true" id="upload-ofx" (change)="uploadOfxOnChange($event.target.files)" />
-
+        <label id="filename" class="action_btn" for="upload-file">Importer .ledger ou .ofx</label>
+        <input type="file" accept=".ofx, .ledger" [hidden]="true" id="upload-file" (change)="uploadFileOnChange($event.target.files)" />
         
     </md-toolbar>
 
