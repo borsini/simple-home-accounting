@@ -1,11 +1,36 @@
 md-table {
   
   }
-  
-md-cell {
-    vertical-align:text-top;
-}
+
 
 md-input-container {
     width:100%;
+}
+
+md-cell {
+    padding: 5px 0;
+}
+
+.mat-row {
+    height: auto;
+    align-items: flex-start;
+}
+
+.posting {
+    display:flex;
+}
+.posting_right {
+    flex:0;
+}
+
+.posting_left {
+    flex:1;
+}
+
+.shrink_cell {
+    flex: 0 1 100px;
+}
+
+.grow_cell {
+    flex: 1 0 100px;
 }

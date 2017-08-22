@@ -4,7 +4,7 @@ import {DataSource} from '@angular/cdk';
 import {MdPaginator, MdSort, Sort, PageEvent} from '@angular/material';
 
 import { AppStateService } from '../app-state.service'
-import { Transaction } from '../models/models'
+import { Transaction, Posting } from '../models/models'
 import {Observable} from 'rxjs'
 
 
@@ -34,6 +34,21 @@ export class TransactionsComponent implements OnInit {
 
 }
 
+export class PostingRow {
+
+  constructor(private _posting: Posting){}
+  
+    get account() {
+      return this._posting.account
+    }
+  
+    get amount() {
+      let value = this._posting.amount
+      return (value < 0 ? '-' : '+') + Math.abs(value)
+    }
+  
+}
+
 export class TransactionRow {
 
   constructor(private _transaction: Transaction){}
@@ -47,7 +62,7 @@ export class TransactionRow {
   }
 
   get postings() {
-    return this._transaction.postings
+    return this._transaction.postings.map(p => new PostingRow(p))
   }
 
   get isComplete() {

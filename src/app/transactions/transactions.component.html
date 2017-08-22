@@ -16,31 +16,32 @@
   <!-- ID Column -->
   <ng-container cdkColumnDef="title">
     <md-header-cell *cdkHeaderCellDef md-sort-header> Titre </md-header-cell>
-    <md-cell *cdkCellDef="let row"> 
+    <md-cell *cdkCellDef="let row">
       <p class="md-body-2">{{row.title}} </p>
     </md-cell>
   </ng-container>
 
   <!-- Progress Column -->
   <ng-container cdkColumnDef="date">
-    <md-header-cell *cdkHeaderCellDef md-sort-header> Date </md-header-cell>
-    <md-cell *cdkCellDef="let row"> {{row.date}} </md-cell>
+    <md-header-cell *cdkHeaderCellDef md-sort-header [ngClass]="'shrink_cell'"> Date </md-header-cell>
+    <md-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'"> {{row.date}} </md-cell>
   </ng-container>
 
   <!-- Name Column -->
   <ng-container cdkColumnDef="movements">
-    <md-header-cell *cdkHeaderCellDef> Mouvements </md-header-cell>
-    <md-cell *cdkCellDef="let row"> 
-      <ul>
-        <span *ngFor="let p of row.postings">{{p.amount < 0 ? '-' : '+'}}{{p.amount}}{{p.currency}}  {{p.account}} </span>
-      </ul>
+    <md-header-cell *cdkHeaderCellDef [ngClass]="'grow_cell'"> Mouvements </md-header-cell>
+    <md-cell *cdkCellDef="let row" [ngClass]="'grow_cell'"> 
+        <div *ngFor="let p of row.postings" class="posting">
+          <span class="posting_left">{{p.account}}</span>
+          <span class="posting_right" *ngIf="p.amount != 0">{{p.amount}}</span>
+        </div>
     </md-cell>
   </ng-container>
 
   <!-- Name Column -->
   <ng-container cdkColumnDef="status">
-      <md-header-cell *cdkHeaderCellDef> Statut </md-header-cell>
-      <md-cell *cdkCellDef="let row"> 
+      <md-header-cell *cdkHeaderCellDef [ngClass]="'shrink_cell'"> Statut </md-header-cell>
+      <md-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'"> 
         <md-icon class="material-icons">{{row.isComplete ? 'check_circle' : 'error'}}</md-icon>
       </md-cell>
     </ng-container>

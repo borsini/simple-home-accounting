@@ -9,7 +9,7 @@ interface Header {
     tag: string
 }
 
-interface Posting {
+export interface Posting {
     tag: string
     account: string
     amount: number
