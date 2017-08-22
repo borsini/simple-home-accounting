@@ -1,13 +1,15 @@
 <md-sidenav-container class="mat-typography">
-  <md-sidenav #drawer [opened]="rootAccount | async">
+  <md-sidenav #drawer [opened]="openDrawer | async">
     <menu-drawer></menu-drawer>
   </md-sidenav>
 
   <div class="main">
     <md-toolbar color="primary">
         
-      <md-icon class="material-icons" (click)="drawer.toggle()">menu</md-icon>
-
+      <button md-button (click)="drawer.toggle()">
+          <md-icon class="material-icons" >menu</md-icon>
+      </button>
+      
       <span>Liste des transactions</span>
 
       <div [hidden]="!isLoading">
@@ -15,20 +17,27 @@
             color="accent"
             mode="indeterminate">
           </md-progress-spinner>
-      
-          </div>
+      </div>
 
       <span class="example-spacer"></span>
         
-        <span (click)="saveLedgerClicked()">Save</span>
+      <button md-button (click)="saveLedgerClicked()">
+          <md-icon class="material-icons">file_download</md-icon>
+      </button>
 
-        <label id="filename" class="action_btn" for="upload-file">Importer .ledger ou .ofx</label>
-        <input type="file" accept=".ofx, .ledger" [hidden]="true" id="upload-file" (change)="uploadFileOnChange($event.target.files)" />
+      <input type="file" accept=".ofx, .ledger" [hidden]="true" id="upload-file" (change)="uploadFileOnChange($event.target.files)" />
+      <label id="filename" class="action_btn" for="upload-file">
+        <md-icon class="material-icons">file_upload</md-icon>
+      </label>
         
     </md-toolbar>
 
     <div class="content">
       <transactions></transactions>
+    </div>
+
+    <div class="footer">
+      <edit-transaction></edit-transaction>
     </div>
 
   </div>

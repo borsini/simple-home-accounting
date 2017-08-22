@@ -23,15 +23,16 @@ SecondLine
   =
   _+
   ct:(ct:ClearingTag _ { return ct })?
-  a:Account _* a1:AmountAndCurrency1? a2:AmountAndCurrency2? _* cm:Comment?
+  a:Account
+  _*
+  c:CurrencyCombinations?
+  _*
+  cm:Comment?
   Newline?
   {
-    let amountType = a1 || a2;
-    let amount = amountType ? amountType.amount : null;
-    let currency = amountType ? amountType.currency : null;
     return {
       
-      tag:ct, account:a, amount:amount, currency:currency, comment:cm
+      tag:ct, account:a, sign:c ? c.sign : null, amount:c ? c.amount : null, currency:c ? c.currency : null, comment:cm
     }
   }
 
@@ -40,35 +41,38 @@ Comment
 
 CommentStartChars = [';']
 
-CurrencyName
-  = c:(!Comment !Newline c:[^0-9 ] { return c })+ { return c.join("") }
+CurrencyCombinations = a1:Line / a2:Line2 / a3:Line3
 
-AmountAndCurrency1 =
-  !CommentStartChars
-  sign:'-'?
-    _*
-    units:(units:[0-9]+ { return units.join("") })
-    decimals:('.' decimals:[0-9]*{ return decimals.join("") })?
-    _*
-    n:CurrencyName?
+Line = 
+    sign:'-'? _* num:Number _* n:CurrencyName?
     {
-    	var a = (sign || "") + units + (decimals ? "." + decimals : "");
-      return { currency:n, amount:Number.parseFloat(a) }
-    }
-  
-AmountAndCurrency2 =
-  !CommentStartChars
-  sign:'-'?
-    _*
-    n:CurrencyName?
-    _*
-    units:(units:[0-9]+ { return units.join("") })
-    decimals:('.' decimals:[0-9]*{ return decimals.join("") })?
-    {
-      var a = (sign || "") + units + (decimals ? "." + decimals : "");
-      return { currency:n, amount:Number.parseFloat(a) }
+      return { sign:sign, currency:n, amount:num }
     }
     
+Line2 = 
+    sign:'-'? _* n:CurrencyName? _* num:Number
+    {
+      return { sign:sign, currency:n, amount:num }
+    }
+    
+Line3 =
+  n:CurrencyName? _* sign:'-'? _* num:Number
+    {
+      return { sign:sign, currency:n, amount:num }
+    }
+    
+Number = $([0-9]+ ('.' decimals:[0-9]*)?)
+   
+CurrencyName
+  = '"' chars:CurrencyNameWithEscaping '"' { return chars.join("") }
+  / chars:CurrencyNameWithoutEscaping { return chars.join("") }
+
+CurrencyNameWithoutEscaping
+  = (!(CommentStartChars / Newline / "-" / "+" / '"' / [0-9]) c:. { return c })+
+
+CurrencyNameWithEscaping 
+  = (!(CommentStartChars / Newline / "-" / "+" / '"') c:. { return c })+
+
 Date
   = d:((d:[0-9]+ {return d.join("")})'/'(m:[0-9]+ { return m.join("") })'/'(y:[0-9]+ { return y.join("")} )) 
   { return d.join("") }
@@ -89,4 +93,4 @@ _ "whitespace or tab"
   = [' ', '\t']
 
 Newline
- = ['\n', '\r', '\n\r']
+ = '\n' / '\n\r'/ '\r\n' / '\r'

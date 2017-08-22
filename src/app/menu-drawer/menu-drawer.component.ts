@@ -10,7 +10,7 @@ import { AppStateService } from '../app-state.service';
 export class MenuDrawerComponent implements OnInit {
 
   nbAccountsSelected: Observable<Number>
-  rootAccount : Observable<Account>
+  rootAccount : Observable<Account | undefined>
 
   constructor(state: AppStateService) { 
     this.nbAccountsSelected = state.selectedAccounts().map( a => a.size)

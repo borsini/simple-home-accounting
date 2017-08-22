@@ -1,7 +1,6 @@
 md-table {
   
-  }
-
+}
 
 md-input-container {
     width:100%;
@@ -33,4 +32,16 @@ md-cell {
 
 .grow_cell {
     flex: 1 0 100px;
+}
+
+.highlight{
+    background: #cccccc;
+}
+
+md-row {
+    cursor: pointer;
+}
+
+md-row:hover {
+    background-color: #dddddd;
 }

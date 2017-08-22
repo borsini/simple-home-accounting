@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { v4 as uuid } from 'uuid';
 import {Observable, BehaviorSubject, ReplaySubject, Subject} from 'rxjs'
 import { Account, Transaction } from './models/models'
 import * as moment from "moment";
@@ -8,21 +9,50 @@ export class AppStateService {
 
   private _selectedAccounts: Set<Account> = new Set()
   private _rootAccount : Account
-  private _transactions: Transaction[]
+  private _editedTransaction?: Transaction
+  private _transactions: Map<string, Transaction> = new Map()
 
   private _selectedAccountsSubject: Subject<Set<Account>> = new BehaviorSubject (this._selectedAccounts)
-  private _rootAccountSubject: Subject<Account> = new Subject()
+  private _rootAccountSubject: Subject<Account | undefined> = new BehaviorSubject(undefined)
+  private _editedTransactionSubject: Subject<Transaction | undefined> = new BehaviorSubject(undefined)
+  private _transactionChangeSubject: Subject<Transaction> = new Subject()
 
-  constructor() {   
-
+  private getTransactionsUsingAccounts(accountsNames : string[]) {
+    return Array.from(this._transactions.values()).filter(tr => {
+      return tr.postings.some( p => accountsNames.indexOf(p.account) != -1 )
+    })
   }
 
   selectedAccounts() : Observable<Set<Account>> {
      return this._selectedAccountsSubject.asObservable()
   }
 
-  rootAccount(): Observable<Account> {
+  selectedTransactions(): Observable<Transaction[]> {
+
+    let modif = this._transactionChangeSubject.flatMap( change => this._selectedAccountsSubject )
+    let accounts = this._selectedAccountsSubject
+    
+    return Observable.merge(accounts, modif)
+    .map( accounts => {
+        let accountsNames = Array.from(accounts).map(a => a.name)
+        return this.getTransactionsUsingAccounts(accountsNames)
+      })
+  }
+
+  rootAccount(): Observable<Account | undefined> {
     return this._rootAccountSubject.asObservable()
+  }
+
+  editedTransaction(): Observable<Transaction | undefined> {
+    return this._editedTransactionSubject.asObservable()
+  }
+
+  setEditedTransaction(transaction?: Transaction): Observable<any> {
+    return new Observable( obs => {
+      this._editedTransaction = transaction
+      this._editedTransactionSubject.next(this._editedTransaction)
+      obs.complete()
+    })
   }
 
   selectAccounts(isSelected: boolean, accounts: Account[]) : Observable<any> {
@@ -40,33 +70,32 @@ export class AppStateService {
     });
   }
 
+  allAccountsFlattened(): Observable<Account[]> {
+    return this._rootAccountSubject.flatMap( root => Observable.of(root ? this.allChildAccounts(root) : []))
+  }
+
+  private allChildAccounts(root: Account): Account[] {
+    let children = [root]
+    root.children.forEach(c => children.push(...this.allChildAccounts(c)))
+    return children
+  }
+
   allTransactions() : Observable<Transaction[]> { 
-    return Observable.of(this._transactions)
+    return Observable.of(Array.from(this._transactions.values()))
   }
 
-  transactions(inAccounts: Set<Account>): Observable<Transaction[]> {
+  setTransactions(transactions: Transaction[]): Observable<any> {
+    console.log("set transactions")
     return new Observable( obs => {
+       
+      this._transactions.clear()
 
-      if(this._transactions){
-        let accountsNames = Array.from(inAccounts).map(a => a.name)
-        let transactionsFiltered = this._transactions.filter(tr => {
-          return tr.postings.some( p => accountsNames.indexOf(p.account) != -1 )
-        })
+      transactions.forEach(tr => {
+        tr.uuid = uuid()
+        this._transactions.set(tr.uuid, tr)
+      })
 
-        obs.next(transactionsFiltered)
-      }
-      obs.complete()
-    })
-  }
-
-  setTransactions(tr: Transaction[]): Observable<any> {
-    return new Observable( obs => {
-      this._transactions = tr
-      let accounts = this.getAccountsFromTransactions(tr)
-      let root = new Account("ROOT")
-      root.children = new Set(accounts);
-      this._rootAccount = root
-      this._rootAccountSubject.next(this._rootAccount)
+      this.refreshAccountsFromTransactions()
 
       this._selectedAccounts = new Set()
       this._selectedAccountsSubject.next(this._selectedAccounts)
@@ -75,10 +104,46 @@ export class AppStateService {
     })
   }
 
-  private getAccountsFromTransactions(transactions: Transaction[]) : Account[] {
+  private refreshAccountsFromTransactions() {
+    let accounts = this.getAccountsFromTransactions()
+    let root = new Account("ROOT")
+    root.children = new Set(accounts);
+    this._rootAccount = root
+    this._rootAccountSubject.next(this._rootAccount)
+  }
+
+  createOrUpdateTransaction(transaction: Transaction) : Observable<any> {
+    return new Observable( obs => {
+      if(!transaction.uuid){
+        transaction.uuid = uuid()
+      }
+      this._transactions.set(transaction.uuid, transaction)
+
+      this.refreshAccountsFromTransactions()
+      this._transactionChangeSubject.next(transaction)
+
+      obs.complete()
+    })
+  }
+
+  deleteTransaction(transaction) : Observable<any> {
+    return new Observable( obs => {
+      this._transactions.delete(transaction.uuid)
+      this.refreshAccountsFromTransactions()
+      this._transactionChangeSubject.next(transaction)
+
+      if(this._editedTransaction == transaction){
+        this._editedTransactionSubject.next(undefined)
+      }
+
+      obs.complete()
+    })
+  }
+
+  private getAccountsFromTransactions() : Account[] {
     let flatAccounts = new Map();
     
-    transactions.forEach(tr => {
+    Array.from(this._transactions.values()).forEach(tr => {
 
         let transactionDate = this.getTransactionDate(tr);
 
@@ -92,12 +157,12 @@ export class AppStateService {
             }
 
             let accountParts = ps.account.split(":");
-            let lastParent: Account;
+            let lastParent: Account | undefined;
             let currentAccountName: string = "";
             for (let part of accountParts) {
                 currentAccountName += part;
                 let account = this.getOrCreateAccount(currentAccountName, flatAccounts);
-                this.addAmountToAccount(account, ps.amount, currentAccountName == ps.account);
+                this.addAmountToAccount(account, ps.amount || 0, currentAccountName == ps.account);
                 
                 if(lastParent){
                     lastParent.children.add(account);

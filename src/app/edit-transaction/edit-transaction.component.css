@@ -1,0 +1,49 @@
+#edit_transaction {
+    display:flex;
+    flex-direction: column;
+}
+
+#header {
+    display:flex;
+}
+
+#posting {
+    display:flex;
+}
+
+.expand {
+    flex:1;
+}
+
+#postings > div > * {
+    margin-left: 20px;
+}
+
+#header > * {
+    margin-left: 20px;
+}
+
+.ng-invalid {
+    /*
+    border:1px solid orange;
+    padding:2px;
+    */
+}
+
+#fab_add {
+    bottom: 10px;
+    right: 10px;
+}
+
+md-card-content {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+md-card-actions {
+    display:flex;
+}
+
+#amount {
+    text-align: right;
+}

@@ -24,3 +24,19 @@ md-progress-spinner {
     position: relative;/* need this to position inner content */
     overflow-y: auto;
 }
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 30px;
+    right: 30px;
+}
+
+.overlay {
+    position: absolute;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);;
+}

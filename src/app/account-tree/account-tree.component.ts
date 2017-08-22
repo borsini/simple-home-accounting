@@ -14,14 +14,12 @@ export class AccountTreeComponent {
 
   isCollapsed: boolean = false;
   private _isChecked: boolean = false;
-  private _state : AppStateService;
 
   constructor(private stateService: AppStateService) {
-    this._state = stateService
   }
 
   ngOnInit() {
-    this._state.selectedAccounts().subscribe(accounts => {
+    this.stateService.selectedAccounts().subscribe(accounts => {
       let shouldBeChecked = accounts.has(this.account)
       if(shouldBeChecked != this.isChecked){
         this._isChecked = shouldBeChecked

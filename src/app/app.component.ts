@@ -5,10 +5,10 @@ import { AppStateService } from './app-state.service'
 import { LedgerService } from './ledger.service'
 import { OfxService } from './ofx.service'
 import { Account, Transaction } from './models/models'
-
+import { v4 as uuid } from 'uuid'
 import * as fileSaver from 'file-saver'
 
-import {Observable} from 'rxjs'
+import {Observable, Subject, BehaviorSubject} from 'rxjs'
 
 @Component({
   selector: 'app-root',
@@ -20,30 +20,28 @@ export class AppComponent {
   private _flatAccounts: Map<String, Account>
 
   isLoading: boolean
-  rootAccount : Observable<Account>
+  openDrawer : Subject<boolean> = new BehaviorSubject(false)
   title = 'app';
 
   constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, public dialog: MdDialog){
-    
     this.isLoading = false
     this._flatAccounts = new Map()
-    this.rootAccount = _state.rootAccount().map( a => {
-      console.log(a)
-      return a
-    })
   }
 
   uploadFileOnChange(files: FileList) {
     this.isLoading = true
     this.readAndParseTransactionsFromFile(files.item(0))
-    .flatMap(tr => this._state.setTransactions(tr) )
+    .flatMap(tr => this._state.setTransactions(tr))
     .subscribe(
-      transactions => console.log(transactions),
+      transactions => {},
       e => {
         this.openErrorDialog(e)
         this.isLoading = false
       },
-      () => this.isLoading = false
+      () => {
+        this.isLoading = false
+        this.openDrawer.next(true)
+      }
     )
   }
 
@@ -54,7 +52,7 @@ export class AppComponent {
       var blob = new Blob([ledger], {type: "text/plain;charset=utf-8"});
       fileSaver.saveAs(blob, "accounts.ledger");
     })
-    .subscribe()    
+    .subscribe()
   }
 
   private readAndParseTransactionsFromFile(file:File): Observable<Transaction[]> {

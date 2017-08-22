@@ -1,20 +1,23 @@
+import * as moment from "moment";
+
 export interface Transaction {
+    uuid: string | undefined
     header: Header
     postings: Array<Posting>
 }
 
 interface Header {
-    date: string
+    date: moment.Moment
     title: string
-    tag: string
+    tag?: string
 }
 
 export interface Posting {
-    tag: string
+    tag?: string
     account: string
-    amount: number
-    currency: string
-    comment: string
+    amount?: number
+    currency?: string
+    comment?: string
 }
 
 export class Account {

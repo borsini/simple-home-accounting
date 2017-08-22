@@ -1,0 +1,68 @@
+<button *ngIf="!isEditing" id="fab_add" md-fab color="accent" (click)="createTransaction()">+</button>
+
+<md-card *ngIf="isEditing" id="edit_transaction">
+    <form [formGroup]="group" novalidate (ngSubmit)="onSubmit()">
+    <md-card-content>
+  
+    <div id="header">
+      <md-input-container floatPlaceholder="never" id="title" class="expand">
+        <input mdInput #filter placeholder="Titre" formControlName="title">
+      </md-input-container>
+      
+      <md-input-container id="date">
+          <input mdInput [mdDatepicker]="picker" placeholder="Date" formControlName="date">
+          <md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>
+        </md-input-container>
+        <md-datepicker #picker></md-datepicker>
+
+        <button id="close" (click)="closePanel()" md-icon-button>
+            <md-icon class="material-icons">clear</md-icon>
+          </button>
+    </div>
+
+    <div id="postings" formArrayName="postings">
+      <div *ngFor="let p of postings.controls; let i=index" [formGroupName]="i" id="posting" >
+        <md-input-container class="expand" floatPlaceholder="never">
+          <input mdInput placeholder="Compte" formControlName="account" type="text" [mdAutocomplete]="auto">
+        </md-input-container>
+        <md-input-container class="expand" floatPlaceholder="never">
+          <input mdInput #filter placeholder="Commentaire" formControlName="comment">
+        </md-input-container>
+        <md-input-container id="amount" floatPlaceholder="never">
+            <input mdInput #filter placeholder="Montant" type="number" formControlName="amount">
+        </md-input-container>
+        <md-input-container id="currency" floatPlaceholder="never">
+            <input mdInput #filter placeholder="Monnaie" formControlName="currency">
+        </md-input-container>
+        <button id="close" (click)="removePosting(i)" md-icon-button>
+          <md-icon class="material-icons">delete</md-icon>
+        </button>
+      </div>
+    </div>
+
+    <md-autocomplete #auto="mdAutocomplete">
+      <md-option *ngFor="let account of filteredAccounts | async" [value]="account.name">
+          {{ account.name }}
+      </md-option>
+    </md-autocomplete>
+       
+  </md-card-content>
+
+  <md-card-actions>
+      <button md-raised-button type="submit" [disabled]="group.pristine || group.invalid" color="primary">Sauvegarder</button>
+      <button md-raised-button type="button" (click)="revert()" [disabled]="group.pristine">Réinitialiser</button>
+    
+    <button md-raised-button type="menu" (click)="addPosting();$event.preventDefault();">Ajouter une ligne</button>
+    <button md-raised-button type="menu" (click)="deleteTransaction();$event.preventDefault();" *ngIf="transaction?.uuid" color="warn">Supprimer la transaction</button>
+
+    <div class="expand"></div>
+
+    <button md-raised-button *ngIf="group.status === 'INVALID'" type="button" color="warn"><md-icon class="material-icons">warning</md-icon>{{ (formErrors | async) }}</button>
+
+    
+  
+  </md-card-actions>
+
+</form>
+
+</md-card>

@@ -3,8 +3,6 @@ import {Observable} from 'rxjs'
 import { Account, Transaction } from './models/models'
 import * as moment from "moment"
 
-const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
-
 @Injectable()
 export class OfxService {
 
@@ -43,14 +41,15 @@ export class OfxService {
           let m = tr.MEMO['#text']
 
           let t: Transaction = {
+              uuid: undefined,
               header: {
-                  tag: null,
-                  date: d.format(LEDGER_DATE_FORMAT),
+                  tag: "",
+                  date: d,
                   title: n
               },
               postings: [
                   {
-                      tag: null,
+                      tag: "",
                       account: acc,
                       amount: parseFloat(a),
                       currency: c,
@@ -83,7 +82,7 @@ export class OfxService {
               }
           }
       } else if (xml.nodeType == 3) { // text
-          obj = xml.nodeValue;
+          obj = xml.nodeValue || "";
       }
 
       // do children

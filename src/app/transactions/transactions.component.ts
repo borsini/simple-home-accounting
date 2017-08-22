@@ -1,12 +1,15 @@
 import { Component, OnInit, NgModule, ViewChild, ElementRef } from '@angular/core';
 import { AsyncPipe } from '@angular/common'
-import {DataSource} from '@angular/cdk';
+import {DataSource} from '@angular/cdk/table';
 import {MdPaginator, MdSort, Sort, PageEvent} from '@angular/material';
 
 import { AppStateService } from '../app-state.service'
 import { Transaction, Posting } from '../models/models'
 import {Observable} from 'rxjs'
 
+import * as moment from "moment"
+
+const LEDGER_DATE_FORMAT = "DD/MM/YYYY"
 
 @Component({
   selector: 'transactions',
@@ -24,7 +27,7 @@ export class TransactionsComponent implements OnInit {
   @ViewChild('filter') filter: ElementRef;
 
   constructor(private _state: AppStateService) {
-    this.transactions = _state.selectedAccounts().flatMap(a => _state.transactions(a))
+    this.transactions = _state.selectedTransactions()
    }
 
   ngOnInit() {
@@ -32,6 +35,9 @@ export class TransactionsComponent implements OnInit {
     this.dataSource = new TransactionDataSource(this._state, this.paginator, this.sort, this.filter)
   }
 
+  onTransactionClicked(row: TransactionRow) {
+    this._state.setEditedTransaction(row.transaction).subscribe()
+  }
 }
 
 export class PostingRow {
@@ -43,31 +49,38 @@ export class PostingRow {
     }
   
     get amount() {
-      let value = this._posting.amount
-      return (value < 0 ? '-' : '+') + Math.abs(value)
+      return this._posting.amount
     }
-  
+
+    get currency() {
+      return this._posting.currency
+    }
+
 }
 
 export class TransactionRow {
 
-  constructor(private _transaction: Transaction){}
+  constructor(public transaction: Transaction, private _selectedTransaction: Observable<Transaction | undefined>){}
 
   get title() {
-    return this._transaction.header.title
+    return this.transaction.header.title
   }
 
   get date() {
-    return this._transaction.header.date
+    return this.transaction.header.date.format(LEDGER_DATE_FORMAT)
   }
 
   get postings() {
-    return this._transaction.postings.map(p => new PostingRow(p))
+    return this.transaction.postings.map(p => new PostingRow(p))
   }
 
   get isComplete() {
-    return this._transaction.header.title != undefined &&
-    this._transaction.postings.length > 1
+    return this.transaction.header.title != undefined &&
+    this.transaction.postings.length > 1
+  }
+
+  get isSelected() : Observable<boolean> {
+    return this._selectedTransaction.map(tr => this.transaction == tr)
   }
 }
 
@@ -75,35 +88,38 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
   constructor(private _state : AppStateService, private _paginator: MdPaginator, private _sort: MdSort, private _filter: ElementRef) {
     super()
+
+    this._sort.active = 'date'
+    this._sort.start = 'desc'
+    this._sort.direction = 'desc'
   }
 
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   connect(): Observable<TransactionRow[]> {
 
     let sortChange = Observable.from<MdSort>(this._sort.mdSortChange)
-      .flatMap( d => this._state.selectedAccounts())
+      .flatMap( d => this._state.selectedTransactions())
     
     let pageChange = Observable.from<PageEvent>(this._paginator.page)
-      .flatMap( d => this._state.selectedAccounts())
+      .flatMap( d => this._state.selectedTransactions())
     
     let filter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
       .debounceTime(200)
       .distinctUntilChanged()
       .do( f => this._paginator.pageIndex = 0)
-      .flatMap( d => this._state.selectedAccounts())
+      .flatMap( d => this._state.selectedTransactions())
 
-    let selectedAccountsChanged = this._state.selectedAccounts()
+    let selectedTransactionsChanged = this._state.selectedTransactions()
 
-    return Observable.merge(pageChange, sortChange, filter, selectedAccountsChanged)
+    return Observable.merge(pageChange, sortChange, filter, selectedTransactionsChanged)
     .debounceTime(150)
-    .flatMap( a => this._state.transactions(a))
     .map( data => this.filterData(this._filter.nativeElement.value, data) )
     .map( data => this.sortData(data))
     .map( data => {
       this._paginator.length = data.length
       return this.paginateData(data)
     })
-    .map( data => data.map( tr => new TransactionRow(tr)))
+    .map( data => data.map( tr => new TransactionRow(tr, this._state.editedTransaction())))
   }
 
   disconnect() {}
@@ -117,12 +133,12 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
     if (!this._sort.active || this._sort.direction == '') { return data; }
 
     return data.sort((a, b) => {
-      let propertyA: string = '';
-      let propertyB: string = '';
+      let propertyA: string | moment.Moment = '';
+      let propertyB: string | moment.Moment = '';
 
       switch (this._sort.active) {
         case 'title': [propertyA, propertyB] = [a.header.title, b.header.title]; break;
-        case 'date': [propertyA, propertyB] = [a.header.date, b.header.date]; break;
+        case 'date': [propertyA, propertyB  ] = [a.header.date, b.header.date]; break;
       }
 
       let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
@@ -141,7 +157,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
           let titleMatches, amountOrAccountMatches : boolean = false
           titleMatches = tr.header.title && tr.header.title.toLowerCase().indexOf(word) >= 0
           amountOrAccountMatches = tr.postings.some( p => {
-              return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount && p.amount.toString().indexOf(word) >= 0)
+              return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount != undefined && p.amount.toString().indexOf(word) >= 0)
           })
 
           return titleMatches || amountOrAccountMatches
