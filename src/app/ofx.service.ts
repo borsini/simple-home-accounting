@@ -29,11 +29,23 @@ export class OfxService {
 
       let transactions : Transaction[] = []
 
-      jsOfx.OFX.BANKMSGSRSV1.STMTTRNRS.forEach(trList => {
+      let STMTTRNRS = jsOfx.OFX.BANKMSGSRSV1.STMTTRNRS
+
+        if(!(STMTTRNRS instanceof Array)) {
+            STMTTRNRS = [STMTTRNRS]
+        }
+
+    STMTTRNRS.forEach(trList => {
         let c = trList.STMTRS.CURDEF['#text']
         let acc = trList.STMTRS.BANKACCTFROM.ACCTID['#text']
 
-        trList.STMTRS.BANKTRANLIST.STMTTRN.forEach(tr => {
+        let STMTTRN : any = trList.STMTRS.BANKTRANLIST.STMTTRN
+
+        if(!(STMTTRN instanceof Array)) {
+            STMTTRN = [STMTTRN]
+        }
+        
+        STMTTRN.forEach(tr => {
 
           let d = moment(tr.DTPOSTED['#text'], "YYYYMMDD")
           let a = tr.TRNAMT['#text']
