@@ -5,7 +5,7 @@ import {MdButtonModule, MdCheckboxModule, MdToolbarModule, MdSidenavModule, MdTa
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { AppComponent, DialogResultExampleDialog } from './app.component';
+import { AppComponent, DialogResultExampleDialog, DialogTwoOptionsDialog } from './app.component';
 import { AccountTreeComponent } from './account-tree/account-tree.component';
 
 import { AppStateService } from './app-state.service';
@@ -20,10 +20,12 @@ import { MomentDateAdapter, MOMENT_DATE_FORMATS } from './moment-date-adapter'
     MenuDrawerComponent,
     TransactionsComponent,
     DialogResultExampleDialog,
+    DialogTwoOptionsDialog,
     EditTransactionComponent,
   ],
   entryComponents: [
-    DialogResultExampleDialog
+    DialogResultExampleDialog,
+    DialogTwoOptionsDialog
   ],
   imports: [
     BrowserModule, MdButtonModule, MdCheckboxModule, MdToolbarModule, MdSidenavModule, CdkTableModule, MdTableModule, MdPaginatorModule,BrowserAnimationsModule, MdSortModule, MdInputModule, MdProgressSpinnerModule, MdDialogModule, MdDatepickerModule, MdNativeDateModule, ReactiveFormsModule, MdAutocompleteModule, MdNativeDateModule, MdCardModule

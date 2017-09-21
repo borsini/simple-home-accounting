@@ -31,7 +31,8 @@ export class AppComponent {
   uploadFileOnChange(files: FileList) {
     this.isLoading = true
     this.readAndParseTransactionsFromFile(files.item(0))
-    .flatMap(tr => this._state.setTransactions(tr))
+    .zip(this.userWantsToAppendTransactions())
+    .flatMap(zip => this._state.setTransactions(zip[0], zip[1]))
     .subscribe(
       transactions => {},
       e => {
@@ -43,6 +44,34 @@ export class AppComponent {
         this.openDrawer.next(true)
       }
     )
+  }
+
+  userWantsToAppendTransactions(): Observable<boolean> {
+    return this._state.allTransactions()
+      .map( tr => tr.length)
+      .flatMap( count => {
+        if(count > 0){
+          return new Observable( subscriber => {
+            let dialogRef = this.dialog.open(DialogTwoOptionsDialog, {
+              data: {
+              title:"Importation",
+              content:"Que faire des transactions existantes ?",
+              option1: {key:true, value:"Les conserver"},
+              option2: {key:false, value:"Les remplacer"},
+              },
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              if(result != undefined){
+                subscriber.next(result)
+              }
+              subscriber.complete()
+            });
+          })
+        } 
+        else{
+          return Observable.of(false)
+        }
+      })
   }
 
   saveLedgerClicked() {
@@ -100,4 +129,20 @@ export class AppComponent {
 })
 export class DialogResultExampleDialog {
   constructor(public dialogRef: MdDialogRef<DialogResultExampleDialog>, @Inject(MD_DIALOG_DATA) public data: any) {}
+}
+
+@Component({
+  selector: 'dialog-two-options',
+  template: `
+  <h2 md-dialog-title>{{ data.title }}</h2>
+  <md-dialog-content>{{ data.content }}</md-dialog-content>
+  <md-dialog-actions>
+    <button md-button [md-dialog-close]="data.option1.key">{{ data.option1.value }}</button>
+    <button md-button [md-dialog-close]="data.option2.key">{{ data.option2.value }}</button>
+  </md-dialog-actions>
+  `
+  
+})
+export class DialogTwoOptionsDialog {
+  constructor(public dialogRef: MdDialogRef<DialogTwoOptionsDialog>, @Inject(MD_DIALOG_DATA) public data: any) {}
 }

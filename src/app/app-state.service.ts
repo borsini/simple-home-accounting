@@ -84,11 +84,12 @@ export class AppStateService {
     return Observable.of(Array.from(this._transactions.values()))
   }
 
-  setTransactions(transactions: Transaction[]): Observable<any> {
-    console.log("set transactions")
+  setTransactions(transactions: Transaction[], append: boolean): Observable<any> {
     return new Observable( obs => {
-       
-      this._transactions.clear()
+      
+      if(!append){
+        this._transactions.clear()
+      }
 
       transactions.forEach(tr => {
         tr.uuid = uuid()
