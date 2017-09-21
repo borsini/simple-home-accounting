@@ -160,7 +160,7 @@ export class LedgerService {
         
         tr.postings.forEach( p => {
             out += "    "
-            out += p.account + "    " + p.currency + " " + p.amount
+            out += p.account + "    " + (p.currency || "") + " " + (p.amount || "")
             out += p.comment ? " ; " + p.comment : ""
             out += "\n"
         });
