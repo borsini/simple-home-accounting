@@ -21,7 +21,7 @@
 
       <span class="example-spacer"></span>
         
-      <button md-button (click)="saveLedgerClicked()">
+      <button md-button (click)="saveLedgerClicked()" [disabled]="disableDownloadButton | async">
           <md-icon class="material-icons">file_download</md-icon>
       </button>
 

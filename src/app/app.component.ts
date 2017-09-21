@@ -21,11 +21,17 @@ export class AppComponent {
 
   isLoading: boolean
   openDrawer : Subject<boolean> = new BehaviorSubject(false)
+  disableDownloadButton : Observable<boolean>
   title = 'app';
 
   constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, public dialog: MdDialog){
     this.isLoading = false
     this._flatAccounts = new Map()
+
+    this.disableDownloadButton = this._state.allTransactions()
+    .concat(this._state.transactionsChangedEvents()
+    .flatMap(obs => this._state.allTransactions()))
+    .map(tr => tr.length == 0)
   }
 
   uploadFileOnChange(files: FileList) {

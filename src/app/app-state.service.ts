@@ -15,7 +15,7 @@ export class AppStateService {
   private _selectedAccountsSubject: Subject<Set<Account>> = new BehaviorSubject (this._selectedAccounts)
   private _rootAccountSubject: Subject<Account | undefined> = new BehaviorSubject(undefined)
   private _editedTransactionSubject: Subject<Transaction | undefined> = new BehaviorSubject(undefined)
-  private _transactionChangeSubject: Subject<Transaction> = new Subject()
+  private _transactionsChangedSubject: Subject<Transaction[]> = new Subject()
 
   private getTransactionsUsingAccounts(accountsNames : string[]) {
     return Array.from(this._transactions.values()).filter(tr => {
@@ -29,7 +29,7 @@ export class AppStateService {
 
   selectedTransactions(): Observable<Transaction[]> {
 
-    let modif = this._transactionChangeSubject.flatMap( change => this._selectedAccountsSubject )
+    let modif = this._transactionsChangedSubject.flatMap( change => this._selectedAccountsSubject )
     let accounts = this._selectedAccountsSubject
     
     return Observable.merge(accounts, modif)
@@ -74,6 +74,10 @@ export class AppStateService {
     return this._rootAccountSubject.flatMap( root => Observable.of(root ? this.allChildAccounts(root) : []))
   }
 
+  transactionsChangedEvents() : Observable<Transaction[]> {
+    return this._transactionsChangedSubject.asObservable()
+  }
+
   private allChildAccounts(root: Account): Account[] {
     let children = [root]
     root.children.forEach(c => children.push(...this.allChildAccounts(c)))
@@ -100,6 +104,7 @@ export class AppStateService {
 
       this._selectedAccounts = new Set()
       this._selectedAccountsSubject.next(this._selectedAccounts)
+      this._transactionsChangedSubject.next(Array.from(this._transactions.values()))
 
       obs.complete()
     })
@@ -121,7 +126,7 @@ export class AppStateService {
       this._transactions.set(transaction.uuid, transaction)
 
       this.refreshAccountsFromTransactions()
-      this._transactionChangeSubject.next(transaction)
+      this._transactionsChangedSubject.next([transaction])
 
       obs.complete()
     })
@@ -131,7 +136,7 @@ export class AppStateService {
     return new Observable( obs => {
       this._transactions.delete(transaction.uuid)
       this.refreshAccountsFromTransactions()
-      this._transactionChangeSubject.next(transaction)
+      this._transactionsChangedSubject.next([transaction])
 
       if(this._editedTransaction == transaction){
         this._editedTransactionSubject.next(undefined)
