@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core'
 import { JsonPipe } from '@angular/common';
 import {MdDatepicker} from '@angular/material'
-import { FormControl, FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, ValidationErrors }            from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AsyncValidatorFn, AbstractControl, ValidationErrors }            from '@angular/forms';
 
 import {Observable, Subject} from 'rxjs'
 import { Transaction, Posting } from '../models/models'
@@ -49,7 +49,7 @@ export class EditTransactionComponent implements OnInit {
 
     return this._formBuilder.group({
       account: accountFormControl,
-      amount: [null, Validators.pattern(/^\d+(\.\d+)?$/)],
+      amount: [null, Validators.pattern(/^-?\d+(\.\d+)?$/)],
       currency: [''],
       comment: ['']
     })
@@ -63,7 +63,7 @@ export class EditTransactionComponent implements OnInit {
       });
       
       let postingsControl = this.transaction ? this.transaction.postings.map(p => this.createPostingGroup()) : []
-      this.group.setControl('postings', this._formBuilder.array(postingsControl, postingsRepartitionValidator()))
+      this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator()))
 
       //Initialize values
       let title = this.transaction ? this.transaction.header.title : ''
@@ -71,7 +71,7 @@ export class EditTransactionComponent implements OnInit {
       let postings = this.transaction ? this.transaction.postings.map( p => {
         return { 
           account: p.account,
-          amount: p.amount || null,
+          amount: p.amount ? p.amount.toString() : null,
           currency: p.currency,
           comment: p.comment
         }
@@ -86,8 +86,9 @@ export class EditTransactionComponent implements OnInit {
 
       this.formErrors = Observable
       .of(this.logErrors(this.group))
-      .concat(this.group.valueChanges)
-      .map( t => this.logErrors(this.group)[0])
+      .concat(this.group.valueChanges.map( t => this.logErrors(this.group)))
+      .do(e => console.log(e))
+      .map(e => e[0])
       
       this.group.markAsDirty()
       this.group.updateValueAndValidity()
@@ -127,7 +128,7 @@ export class EditTransactionComponent implements OnInit {
         return {
           tag: '',
           account: p.account,
-          amount: p.amount,
+          amount: p.amount ? Number.parseFloat(p.amount) : null,
           comment: p.comment,
           currency: p.currency
         } as Posting
@@ -176,27 +177,29 @@ export class EditTransactionComponent implements OnInit {
   }
 }
 
-export function postingsRepartitionValidator(): ValidatorFn {
-  return (array: FormArray): ValidationErrors | null => {
+export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
+  return (array: FormArray): Observable<ValidationErrors | null> => {
+    console.log("async")
     let accounts = new Set(array.controls.map(c => c.get('account')!.value as string).filter(a => a != ""))
 
+    let error :ValidationErrors | null = null; 
     if(accounts.size < 2) {
-      return { 'notEnoughAccounts': 'minimum is 2'}
+      error = { 'notEnoughAccounts': 'minimum is 2'}
     }
     else {
-      let amounts = array.controls.map(c => c.get('amount')!.value as number)
+      let amounts = array.controls.map(c => c.get('amount')!.value as string)      
+      let howManyNulls = amounts.filter(a => a == null || a.trim() == '').length
 
-      let howManyNulls = amounts.filter(a => a == null).length
       if(howManyNulls > 1){
-        return { 'onlyOneNullAmount': null }
+        error = { 'onlyOneNullAmount': null }
       }
       else if(howManyNulls == 0) {
-          let sum = amounts.filter(a => a != null).reduce((p, c) => p + c, 0)
+          let sum = amounts.filter(a => a != null && a.trim() != '').map(a => Number.parseFloat(a)).reduce((p, c) => p + c, 0)
           if(sum != 0){
-            return { 'incorrectBalance': sum }
+            error = { 'incorrectBalance': sum }
           }
       }
     }
-    return null
+    return Observable.of(error)
   };
 }
