@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core'
+import { Component, Inject, ViewChild, OnInit } from '@angular/core'
 import { AsyncPipe } from '@angular/common'
-import {MdDialog, MdDialogRef, MD_DIALOG_DATA} from '@angular/material'
+import {MdDialog, MdDialogRef, MD_DIALOG_DATA, MdSidenav} from '@angular/material'
 import { AppStateService } from './app-state.service'
 import { LedgerService } from './ledger.service'
 import { OfxService } from './ofx.service'
@@ -16,22 +16,35 @@ import {Observable, Subject, BehaviorSubject} from 'rxjs'
   styleUrls: ['./app.component.css'],
   providers: [ LedgerService, OfxService]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private _flatAccounts: Map<String, Account>
+  private _openDrawer : Subject<boolean> = new BehaviorSubject(false)
+
+  @ViewChild(MdSidenav) sidenav: MdSidenav;
 
   isLoading: boolean
-  openDrawer : Subject<boolean> = new BehaviorSubject(false)
   disableDownloadButton : Observable<boolean>
   title = 'app';
 
   constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, public dialog: MdDialog){
     this.isLoading = false
     this._flatAccounts = new Map()
+  }
 
+  ngOnInit() {
     this.disableDownloadButton = this._state.allTransactions()
     .concat(this._state.transactionsChangedEvents()
     .flatMap(obs => this._state.allTransactions()))
     .map(tr => tr.length == 0)
+
+    this._openDrawer.subscribe( open => {
+      if(open){
+        this.sidenav.open()
+      }
+      else{
+        this.sidenav.close()
+      }
+    })
   }
 
   uploadFileOnChange(files: FileList) {
@@ -47,7 +60,7 @@ export class AppComponent {
       },
       () => {
         this.isLoading = false
-        this.openDrawer.next(true)
+        this._openDrawer.next(true)
       }
     )
   }

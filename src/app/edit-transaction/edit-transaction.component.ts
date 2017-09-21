@@ -179,7 +179,6 @@ export class EditTransactionComponent implements OnInit {
 
 export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
   return (array: FormArray): Observable<ValidationErrors | null> => {
-    console.log("async")
     let accounts = new Set(array.controls.map(c => c.get('account')!.value as string).filter(a => a != ""))
 
     let error :ValidationErrors | null = null; 
