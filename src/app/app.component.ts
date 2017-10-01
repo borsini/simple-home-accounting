@@ -32,9 +32,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.disableDownloadButton = this._state.allTransactions()
-    .concat(this._state.transactionsChangedEvents()
-    .flatMap(obs => this._state.allTransactions()))
+    this.disableDownloadButton = this._state.allTransactionsColdObservable()
+    .concat(this._state.transactionsChangedHotObservable()
+    .flatMap(obs => this._state.allTransactionsColdObservable()))
     .map(tr => tr.length == 0)
 
     this._openDrawer.subscribe( open => {
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     this.isLoading = true
     this.readAndParseTransactionsFromFile(files.item(0))
     .zip(this.userWantsToAppendTransactions())
-    .flatMap(zip => this._state.setTransactions(zip[0], zip[1]))
+    .flatMap(zip => this._state.setTransactionsColdObservable(zip[0], zip[1]))
     .subscribe(
       transactions => {},
       e => {
@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
   }
 
   userWantsToAppendTransactions(): Observable<boolean> {
-    return this._state.allTransactions()
+    return this._state.allTransactionsColdObservable()
       .map( tr => tr.length)
       .flatMap( count => {
         if(count > 0){
@@ -94,7 +94,7 @@ export class AppComponent implements OnInit {
   }
 
   saveLedgerClicked() {
-    this._state.allTransactions()
+    this._state.allTransactionsColdObservable()
     .flatMap(tr => this._ledger.generateLedgerString(tr))
     .do(ledger => {
       var blob = new Blob([ledger], {type: "text/plain;charset=utf-8"});

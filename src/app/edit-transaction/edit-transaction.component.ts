@@ -28,7 +28,7 @@ export class EditTransactionComponent implements OnInit {
   constructor(private _state: AppStateService, private _formBuilder: FormBuilder) { }
 
   ngOnInit(){
-    this._state.editedTransaction().subscribe( tr => {
+    this._state.editedTransactionHotObservable().subscribe( tr => {
       this.transaction = tr
       this.isEditing = this.transaction != undefined
       this.init()
@@ -99,14 +99,14 @@ export class EditTransactionComponent implements OnInit {
   };
 
   filterAccount(query: any) : Observable<Account[]>{
-    return this._state.allAccountsFlattened().map(accounts => {
+    return this._state.allAccountsFlattenedHotObservable().map(accounts => {
       return accounts.filter(a => a.name.toLowerCase().indexOf(query.toLowerCase()) != -1)
     })
   }
 
   onSubmit() {
     let tr = this.prepareTransaction()
-    this._state.createOrUpdateTransaction(tr).subscribe()
+    this._state.createOrUpdateTransactionColdObservable(tr).subscribe()
     this.closePanel()
   }
 
@@ -169,11 +169,11 @@ export class EditTransactionComponent implements OnInit {
   }
 
   deleteTransaction(){
-    this._state.deleteTransaction(this.transaction).subscribe()
+    this._state.deleteTransactionColdObservable(this.transaction).subscribe()
   }
 
   closePanel(){
-    this._state.setEditedTransaction(undefined).subscribe()
+    this._state.setEditedTransactionColdObservable(undefined).subscribe()
   }
 }
 

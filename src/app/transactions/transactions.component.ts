@@ -27,7 +27,7 @@ export class TransactionsComponent implements OnInit {
   @ViewChild('filter') filter: ElementRef;
 
   constructor(private _state: AppStateService) {
-    this.transactions = _state.selectedTransactions()
+    this.transactions = _state.selectedTransactionsHotObservable()
    }
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class TransactionsComponent implements OnInit {
   }
 
   onTransactionClicked(row: TransactionRow) {
-    this._state.setEditedTransaction(row.transaction).subscribe()
+    this._state.setEditedTransactionColdObservable(row.transaction).subscribe()
   }
 }
 
@@ -98,18 +98,18 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
   connect(): Observable<TransactionRow[]> {
 
     let sortChange = Observable.from<MdSort>(this._sort.mdSortChange)
-      .flatMap( d => this._state.selectedTransactions())
+      .flatMap( d => this._state.selectedTransactionsHotObservable())
     
     let pageChange = Observable.from<PageEvent>(this._paginator.page)
-      .flatMap( d => this._state.selectedTransactions())
+      .flatMap( d => this._state.selectedTransactionsHotObservable())
     
     let filter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
       .debounceTime(200)
       .distinctUntilChanged()
       .do( f => this._paginator.pageIndex = 0)
-      .flatMap( d => this._state.selectedTransactions())
+      .flatMap( d => this._state.selectedTransactionsHotObservable())
 
-    let selectedTransactionsChanged = this._state.selectedTransactions()
+    let selectedTransactionsChanged = this._state.selectedTransactionsHotObservable()
 
     return Observable.merge(pageChange, sortChange, filter, selectedTransactionsChanged)
     .debounceTime(150)
@@ -119,7 +119,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       this._paginator.length = data.length
       return this.paginateData(data)
     })
-    .map( data => data.map( tr => new TransactionRow(tr, this._state.editedTransaction())))
+    .map( data => data.map( tr => new TransactionRow(tr, this._state.editedTransactionHotObservable())))
   }
 
   disconnect() {}

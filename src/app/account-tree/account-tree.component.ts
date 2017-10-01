@@ -19,18 +19,18 @@ export class AccountTreeComponent {
   }
 
   ngOnInit() {
-    this.stateService.selectedAccounts().subscribe(accounts => {
+    this.stateService.selectedAccountsHotObservable().subscribe(accounts => {
       let shouldBeChecked = accounts.has(this.account)
       if(shouldBeChecked != this.isChecked){
         this._isChecked = shouldBeChecked
-        this.stateService.selectAccounts(shouldBeChecked, Array.from(this.account.children)).subscribe()
+        this.stateService.selectAccountsColdObservable(shouldBeChecked, Array.from(this.account.children)).subscribe()
       }
     })
   }
 
   @Input()
   set isChecked(isChecked: boolean) {
-    this.stateService.selectAccounts(isChecked, [this.account]).subscribe()
+    this.stateService.selectAccountsColdObservable(isChecked, [this.account]).subscribe()
   }
  
   get isChecked(): boolean { return this._isChecked; }

@@ -13,8 +13,8 @@ export class MenuDrawerComponent implements OnInit {
   rootAccount : Observable<Account | undefined>
 
   constructor(state: AppStateService) { 
-    this.nbAccountsSelected = state.selectedAccounts().map( a => a.size)
-    this.rootAccount = state.rootAccount()
+    this.nbAccountsSelected = state.selectedAccountsHotObservable().map( a => a.size)
+    this.rootAccount = state.rootAccountHotObservable()
   }
 
   ngOnInit() {
