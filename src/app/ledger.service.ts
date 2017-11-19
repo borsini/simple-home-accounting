@@ -157,7 +157,7 @@ export class LedgerService {
     return new Observable( obs => {
       let out : string = ""
       transactions.forEach( tr => {
-        out += tr.header.date + " " + tr.header.title + "\n"
+        out += tr.header.date.format("YYYY/MM/DD") + " " + tr.header.title + "\n"
         
         tr.postings.forEach( p => {
             out += "    "
