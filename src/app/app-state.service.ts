@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import { v4 as uuid } from 'uuid';
+import { Injectable } from '@angular/core'
+import { v4 as uuid } from 'uuid'
 import {Observable, BehaviorSubject, ReplaySubject, Subject} from 'rxjs'
 import { Account, Transaction } from './models/models'
-import * as moment from "moment";
+import * as moment from "moment"
+import Decimal from "decimal.js"
 
 @Injectable()
 export class AppStateService {
@@ -74,7 +75,7 @@ export class AppStateService {
       obs.complete()
     });
   }
-  
+
   allTransactionsColdObservable() : Observable<Transaction[]> { 
     return Observable.of(Array.from(this._transactions.values()))
   }
@@ -181,7 +182,7 @@ export class AppStateService {
               for (let part of accountParts) {
                   currentAccountName += part;
                   let account = this.getOrCreateAccount(currentAccountName, flatAccounts);
-                  this.addAmountToAccount(account, ps.amount || 0, currentAccountName == ps.account);
+                  this.addAmountToAccount(account, ps.amount || new Decimal(0), currentAccountName == ps.account);
                   
                   if(lastParent){
                       lastParent.children.add(account);
@@ -209,27 +210,28 @@ export class AppStateService {
     return stat;           
   }
 
-  private addAmountToAccount(a: Account, amount: number, isFinalAccount: boolean) {
-  if(!isFinalAccount){
-      a.childrenBalance += amount
-      a.nbChildrenTransactions ++
-      if(amount > 0){
-          a.childrenCredits += amount
-      }
-      else{
-          a.childrenDebits += amount
-      }
-  }
-  else{
-      a.balance += amount
-      a.nbTransactions++
-      if(amount > 0){
-          a.credits += amount
-      }
-      else{
-          a.credits += amount
-      }
-  }
+  private addAmountToAccount(a: Account, amount: decimal.Decimal, isFinalAccount: boolean) {
+    if(!isFinalAccount){
+        a.childrenBalance = a.childrenBalance.plus(amount)
+        a.nbChildrenTransactions ++
+        if(amount.greaterThan(0)){
+            a.childrenCredits = a.childrenCredits.plus(amount)
+        }
+        else{
+            a.childrenDebits = a.childrenDebits.plus(amount)
+        }
+    }
+    else{
+        a.balance = a.balance.plus(amount)
+        a.nbTransactions++
+
+        if(amount.greaterThan(0)){
+          a.credits = a.credits.plus(amount)
+        }
+        else{
+            a.debits = a.debits.plus(amount)
+        }
+    }
   }
 
   private getTransactionDate(tr: Transaction) : moment.Moment {

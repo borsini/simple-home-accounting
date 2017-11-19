@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs'
 import { Account, Transaction } from './models/models'
 import * as moment from "moment"
+import Decimal from "decimal.js"
 
 @Injectable()
 export class OfxService {
@@ -48,7 +49,7 @@ export class OfxService {
         STMTTRN.forEach(tr => {
 
           let d = moment(tr.DTPOSTED['#text'], "YYYYMMDD")
-          let a = tr.TRNAMT['#text']
+          let a : string = tr.TRNAMT['#text']
           let n = tr.NAME['#text']
           let m = tr.MEMO['#text']
 
@@ -63,7 +64,7 @@ export class OfxService {
                   {
                       tag: "",
                       account: acc,
-                      amount: parseFloat(a),
+                      amount: new Decimal(a.replace("+", "")),
                       currency: c,
                       comment: m
                   }

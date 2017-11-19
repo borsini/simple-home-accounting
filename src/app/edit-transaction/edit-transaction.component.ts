@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core'
-import { JsonPipe } from '@angular/common';
+import { JsonPipe } from '@angular/common'
 import {MdDatepicker} from '@angular/material'
 import { FormControl, FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AsyncValidatorFn, AbstractControl, ValidationErrors }            from '@angular/forms';
 
 import {Observable, Subject} from 'rxjs'
 import { Transaction, Posting } from '../models/models'
 import { AppStateService } from '../app-state.service'
+import Decimal from "decimal.js" 
 
 import * as moment from "moment"
 
@@ -128,7 +129,7 @@ export class EditTransactionComponent implements OnInit {
         return {
           tag: '',
           account: p.account,
-          amount: p.amount ? Number.parseFloat(p.amount) : null,
+          amount: p.amount ? new Decimal(p.amount) : null,
           comment: p.comment,
           currency: p.currency
         } as Posting

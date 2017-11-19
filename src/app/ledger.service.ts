@@ -4,6 +4,7 @@ import { Transaction, Posting } from './models/models'
 
 import * as pegjs from 'pegjs'
 import * as moment from "moment"
+import Decimal from "decimal.js"
 
 @Injectable()
 export class LedgerService {
@@ -132,10 +133,10 @@ export class LedgerService {
             comment: p.comment
           }
 
-          let a = p.amount ? Number.parseFloat((p.sign || "") + p.amount) : undefined
+          let a = p.amount ?  (p.sign || "") + p.amount : undefined
 
           if(a){
-            pt.amount = a
+            pt.amount = new Decimal(a)
           }
 
           return pt
