@@ -1,205 +1,221 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core'
-import { JsonPipe } from '@angular/common'
-import {MdDatepicker} from '@angular/material'
-import { FormControl, FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AsyncValidatorFn, AbstractControl, ValidationErrors }            from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { MdDatepicker } from '@angular/material';
 
-import {Observable, Subject} from 'rxjs'
-import { Transaction, Posting } from '../models/models'
-import { AppStateService } from '../app-state.service'
-import Decimal from "decimal.js" 
+import Decimal from 'decimal.js';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { AppStateService } from '../app-state.service';
+import { Posting, Transaction } from '../models/models';
 
-import * as moment from "moment"
+import * as moment from 'moment';
+import 'rxjs/add/observable/concat';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/mergeMap';
 
 @Component({
-  selector: 'edit-transaction',
+  selector: 'app-edit-transaction',
+  styleUrls: ['./edit-transaction.component.css'],
   templateUrl: './edit-transaction.component.html',
-  styleUrls: ['./edit-transaction.component.css']
 })
 export class EditTransactionComponent implements OnInit {
 
   @ViewChild(MdDatepicker) myDatepicker: MdDatepicker<Date>;
-  
-  private transaction: Transaction | undefined
 
-  isEditing: boolean
-  group : FormGroup
-  filteredAccounts: Subject<Account[]> = new Subject()
-  formErrors: Observable<string>
+  private transaction: Transaction | undefined;
+
+  isEditing: boolean;
+  group: FormGroup;
+  filteredAccounts: Subject<Account[]> = new Subject();
+  formErrors: Observable<string>;
 
   constructor(private _state: AppStateService, private _formBuilder: FormBuilder) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this._state.editedTransactionHotObservable().subscribe( tr => {
-      this.transaction = tr
-      this.isEditing = this.transaction != undefined
-      this.init()
+      this.transaction = tr;
+      this.isEditing = this.transaction !== undefined;
+      this.init();
     });
   }
 
-  createTransaction(){
-    this.isEditing = true
-    this.init()
+  createTransaction() {
+    this.isEditing = true;
+    this.init();
   }
 
-  createPostingGroup(): FormGroup{
-    let accountFormControl = new FormControl('', Validators.required)
+  createPostingGroup(): FormGroup {
+    const accountFormControl = new FormControl('', Validators.required);
 
     accountFormControl.valueChanges
     .flatMap(v => this.filterAccount(v))
-    .subscribe( accounts => this.filteredAccounts.next(accounts))
+    .subscribe( accounts => this.filteredAccounts.next(accounts));
 
     return this._formBuilder.group({
       account: accountFormControl,
       amount: [null, Validators.pattern(/^-?\d+(\.\d+)?$/)],
+      comment: [''],
       currency: [''],
-      comment: ['']
-    })
+    });
   }
-  private init(){
-      //Prepare form structure
+  private init() {
+      // Prepare form structure
       this.group = this._formBuilder.group({
-        title: ['', [Validators.required]],
         date: ['', [Validators.required]],
-        postings: this._formBuilder.array([])
+        postings: this._formBuilder.array([]),
+        title: ['', [Validators.required]],
       });
-      
-      let postingsControl = this.transaction ? this.transaction.postings.map(p => this.createPostingGroup()) : []
-      this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator()))
 
-      //Initialize values
-      let title = this.transaction ? this.transaction.header.title : ''
-      let date = this.transaction ? this.transaction.header.date : moment()
-      let postings = this.transaction ? this.transaction.postings.map( p => {
-        return { 
+      const postingsControl = this.transaction ? this.transaction.postings.map(p => this.createPostingGroup()) : [];
+      this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator()));
+
+      // Initialize values
+      const title = this.transaction ? this.transaction.header.title : '';
+      const date = this.transaction ? this.transaction.header.date : moment();
+      const postings = this.transaction ? this.transaction.postings.map( p => {
+        return {
           account: p.account,
           amount: p.amount ? p.amount.toString() : null,
+          comment: p.comment,
           currency: p.currency,
-          comment: p.comment
-        }
-      }) : []
+        };
+      }) : [];
 
-      //Set all the values
+      // Set all the values
       this.group.setValue({
-        title: title,
         date: date,
-        postings: postings
-      })
+        postings: postings,
+        title: title,
+      });
 
-      this.formErrors = Observable
-      .of(this.logErrors(this.group))
-      .concat(this.group.valueChanges.map( t => this.logErrors(this.group)))
+      const errorObservable = Observable.of(this.logErrors(this.group));
+      const groupErrors = this.group.valueChanges.map( t => this.logErrors(this.group));
+
+    this.formErrors = Observable.concat(errorObservable, groupErrors)
       .do(e => console.log(e))
-      .map(e => e[0])
-      
-      this.group.markAsDirty()
-      this.group.updateValueAndValidity()
+      .map(e => e[0]);
+
+      this.group.markAsDirty();
+      this.group.updateValueAndValidity();
   }
 
   get postings(): FormArray {
     return this.group.get('postings') as FormArray;
-  };
+  }
 
-  filterAccount(query: any) : Observable<Account[]>{
+  filterAccount(query: any): Observable<Account[]> {
     return this._state.allAccountsFlattenedHotObservable().map(accounts => {
-      return accounts.filter(a => a.name.toLowerCase().indexOf(query.toLowerCase()) != -1)
-    })
+      return accounts.filter(a => a.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    });
   }
 
   onSubmit() {
-    let tr = this.prepareTransaction()
-    this._state.createOrUpdateTransactionColdObservable(tr).subscribe()
-    this.closePanel()
+    const tr = this.prepareTransaction();
+    this._state.createOrUpdateTransactionColdObservable(tr).subscribe();
+    this.closePanel();
   }
 
   revert() {
-    this.init()
+    this.init();
   }
 
   private prepareTransaction(): Transaction {
-    const formModel = this.group.value
-  
-    let transaction : Transaction= {
-      uuid: this.transaction ? this.transaction.uuid : undefined,
+    const formModel = this.group.value;
+
+    return {
       header: {
         date: formModel.date,
+        tag: '',
         title: formModel.title,
-        tag: ''
       },
       postings: formModel.postings.map(p => {
         return {
-          tag: '',
           account: p.account,
           amount: p.amount ? new Decimal(p.amount) : null,
           comment: p.comment,
-          currency: p.currency
-        } as Posting
-      })
-    }
-
-    return transaction
+          currency: p.currency,
+          tag: '',
+        } as Posting;
+      }),
+      uuid: this.transaction ? this.transaction.uuid : undefined,
+    };
   }
 
-  logErrors(c: AbstractControl, id: string = "") : string[] {
-    let e = c.errors
-    let errors : string[] = []
+  logErrors(control: AbstractControl, id: string = ''): string[] {
+    const e = control.errors;
+    let errors: string[] = [];
 
-    if(e != null){
-      errors.push(id + ": " + JSON.stringify(e))
+    if (e != null) {
+      errors.push(id + ': ' + JSON.stringify(e));
     }
 
-    if(c instanceof FormGroup){ 
-      Object.keys(c.controls).forEach(k => errors = errors.concat(this.logErrors(c.get(k)!, id+"/"+k)))
-    }
-    else if(c instanceof FormArray){
-      c.controls.forEach((c, i) => errors = errors.concat(this.logErrors(c, id+"["+i+"]")))
+    if (control instanceof FormGroup) {
+      Object.keys(control.controls).forEach(k => {
+        const c = control.get(k);
+        if (c) {
+          errors = errors.concat(this.logErrors(c, id + '/' + k));
+        }
+      });
+    } else if (control instanceof FormArray) {
+      control.controls.forEach((c, i) => errors = errors.concat(this.logErrors(c, id + '[' + i + ']')));
     }
 
     return errors;
   }
 
   addPosting() {
-    let postings = (this.group.get('postings') as FormArray)
-    postings.push(this.createPostingGroup())
-    postings.markAsDirty()
+    const postings = (this.group.get('postings') as FormArray);
+    postings.push(this.createPostingGroup());
+    postings.markAsDirty();
   }
 
-  removePosting(index: number){
-    let postings = (this.group.get('postings') as FormArray)
-    postings.removeAt(index)
-    postings.markAsDirty()
+  removePosting(index: number) {
+    const postings = (this.group.get('postings') as FormArray);
+    postings.removeAt(index);
+    postings.markAsDirty();
   }
 
-  deleteTransaction(){
-    this._state.deleteTransactionColdObservable(this.transaction).subscribe()
+  deleteTransaction() {
+    this._state.deleteTransactionColdObservable(this.transaction).subscribe();
   }
 
-  closePanel(){
-    this._state.setEditedTransactionColdObservable(undefined).subscribe()
+  closePanel() {
+    this._state.setEditedTransactionColdObservable(undefined).subscribe();
   }
 }
 
 export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
   return (array: FormArray): Observable<ValidationErrors | null> => {
-    let accounts = new Set(array.controls.map(c => c.get('account')!.value as string).filter(a => a != ""))
+    const accountControls = array.controls
+      .map(c => c.get('account'))
+      .filter(ac => ac != null)
+      .map(ac => ac.value as string);
+    const accounts = new Set(accountControls);
 
-    let error :ValidationErrors | null = null; 
-    if(accounts.size < 2) {
-      error = { 'notEnoughAccounts': 'minimum is 2'}
-    }
-    else {
-      let amounts = array.controls.map(c => c.get('amount')!.value as string)      
-      let howManyNulls = amounts.filter(a => a == null || a.trim() == '').length
+    let error: ValidationErrors | null = null;
+    if (accounts.size < 2) {
+      error = { 'notEnoughAccounts': 'minimum is 2'};
+    } else {
+      const amountControls = array.controls
+        .map(c => c.get('amount'))
+        .filter(ac => ac != null)
+        .map(ac => ac.value as string);
 
-      if(howManyNulls > 1){
-        error = { 'onlyOneNullAmount': null }
-      }
-      else if(howManyNulls == 0) {
-          let sum = amounts.filter(a => a != null && a.trim() != '').map(a => Number.parseFloat(a)).reduce((p, c) => p + c, 0)
-          if(sum != 0){
-            error = { 'incorrectBalance': sum }
+      const howManyNulls = amountControls.filter(a => a == null || a.trim() === '').length;
+
+      if (howManyNulls > 1) {
+        error = { 'onlyOneNullAmount': null };
+      } else if (howManyNulls === 0) {
+          const sum = amountControls.filter(a => a != null && a.trim() !== '').map(a => Number.parseFloat(a)).reduce((p, c) => p + c, 0);
+          if (sum !== 0) {
+            error = { 'incorrectBalance': sum };
           }
       }
     }
-    return Observable.of(error)
+    return Observable.of(error);
   };
 }

@@ -1,150 +1,152 @@
-import { Injectable } from '@angular/core'
-import { v4 as uuid } from 'uuid'
-import {Observable, BehaviorSubject, ReplaySubject, Subject} from 'rxjs'
-import { Account, Transaction } from './models/models'
-import * as moment from "moment"
-import Decimal from "decimal.js"
+import { Injectable } from '@angular/core';
+import Decimal from 'decimal.js';
+import * as moment from 'moment';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
+import { v4 as uuid } from 'uuid';
+import { Account, Transaction } from './models/models';
 
 @Injectable()
 export class AppStateService {
 
-  private _selectedAccounts: Set<Account> = new Set()
-  private _rootAccount : Account
-  private _editedTransaction?: Transaction
-  private _transactions: Map<string, Transaction> = new Map()
-  private _selectedAccountsSubject: Subject<Set<Account>> = new BehaviorSubject (this._selectedAccounts)
-  private _rootAccountSubject: Subject<Account | undefined> = new BehaviorSubject(undefined)
-  private _editedTransactionSubject: Subject<Transaction | undefined> = new BehaviorSubject(undefined)
-  private _transactionsChangedSubject: Subject<Transaction[]> = new Subject()
+  private _selectedAccounts: Set<Account> = new Set();
+  private _rootAccount: Account;
+  private _editedTransaction?: Transaction;
+  private _transactions: Map<string, Transaction> = new Map();
+  private _selectedAccountsSubject: Subject<Set<Account>> = new BehaviorSubject (this._selectedAccounts);
+  private _rootAccountSubject: Subject<Account | undefined> = new BehaviorSubject(undefined);
+  private _editedTransactionSubject: Subject<Transaction | undefined> = new BehaviorSubject(undefined);
+  private _transactionsChangedSubject: Subject<Transaction[]> = new Subject();
 
   /****** HOT OBSERVABLES ******/
 
-  selectedAccountsHotObservable() : Observable<Set<Account>> {
-     return this._selectedAccountsSubject.asObservable()
+  selectedAccountsHotObservable(): Observable<Set<Account>> {
+     return this._selectedAccountsSubject.asObservable();
   }
 
   selectedTransactionsHotObservable(): Observable<Transaction[]> {
 
-    let modif = this._transactionsChangedSubject.flatMap( change => this._selectedAccountsSubject )
-    let accounts = this._selectedAccountsSubject
-    
-    return Observable.merge(accounts, modif)
+    const modif = this._transactionsChangedSubject.flatMap( change => this._selectedAccountsSubject );
+    const selectedAccounts = this._selectedAccountsSubject;
+
+    return Observable.merge(selectedAccounts, modif)
     .map( accounts => {
-        let accountsNames = Array.from(accounts).map(a => a.name)
-        return this.getTransactionsUsingAccounts(accountsNames)
-      })
+        const accountsNames = Array.from(accounts).map(a => a.name);
+        return this.getTransactionsUsingAccounts(accountsNames);
+      });
   }
 
   rootAccountHotObservable(): Observable<Account | undefined> {
-    return this._rootAccountSubject.asObservable()
+    return this._rootAccountSubject.asObservable();
   }
 
   editedTransactionHotObservable(): Observable<Transaction | undefined> {
-    return this._editedTransactionSubject.asObservable()
+    return this._editedTransactionSubject.asObservable();
   }
 
   allAccountsFlattenedHotObservable(): Observable<Account[]> {
-    return this._rootAccountSubject.flatMap( root => Observable.of(root ? this.allChildAccounts(root) : []))
+    return this._rootAccountSubject.flatMap( root => Observable.of(root ? this.allChildAccounts(root) : []));
   }
 
-  transactionsChangedHotObservable() : Observable<Transaction[]> {
-    return this._transactionsChangedSubject.asObservable()
+  transactionsChangedHotObservable(): Observable<Transaction[]> {
+    return this._transactionsChangedSubject.asObservable();
   }
 
   /****** COLD OBSERVABLES ******/
 
   setEditedTransactionColdObservable(transaction?: Transaction): Observable<any> {
     return Observable.create( obs => {
-      this._editedTransaction = transaction
-      this._editedTransactionSubject.next(this._editedTransaction)
-      obs.complete()
-    })
-  }
-
-  selectAccountsColdObservable(isSelected: boolean, accounts: Account[]) : Observable<any> {
-    return Observable.create( obs => {
-      if(isSelected){
-        accounts.forEach( a => this._selectedAccounts.add(a) )
-      }
-      else{
-        accounts.forEach( a => this._selectedAccounts.delete(a) )
-      }
-      
-      this._selectedAccountsSubject.next(this._selectedAccounts)
-
-      obs.complete()
+      this._editedTransaction = transaction;
+      this._editedTransactionSubject.next(this._editedTransaction);
+      obs.complete();
     });
   }
 
-  allTransactionsColdObservable() : Observable<Transaction[]> { 
-    return Observable.of(Array.from(this._transactions.values()))
+  selectAccountsColdObservable(isSelected: boolean, accounts: Account[]): Observable<any> {
+    return Observable.create( obs => {
+      if (isSelected) {
+        accounts.forEach( a => this._selectedAccounts.add(a) );
+      } else {
+        accounts.forEach( a => this._selectedAccounts.delete(a) );
+      }
+
+      this._selectedAccountsSubject.next(this._selectedAccounts);
+
+      obs.complete();
+    });
+  }
+
+  allTransactionsColdObservable(): Observable<Transaction[]> {
+    return Observable.of(Array.from(this._transactions.values()));
   }
 
   setTransactionsColdObservable(transactions: Transaction[], append: boolean): Observable<any> {
     return Observable.create( obs => {
-      if(!append){
-        this._transactions.clear()
+      if (!append) {
+        this._transactions.clear();
       }
       transactions.forEach(tr => {
-        tr.uuid = uuid()
-        this._transactions.set(tr.uuid, tr)
-      })
-      this._selectedAccounts = new Set()
-      this._selectedAccountsSubject.next(this._selectedAccounts)
-      this._transactionsChangedSubject.next(Array.from(this._transactions.values()))
+        tr.uuid = uuid();
+        this._transactions.set(tr.uuid, tr);
+      });
+      this._selectedAccounts = new Set();
+      this._selectedAccountsSubject.next(this._selectedAccounts);
+      this._transactionsChangedSubject.next(Array.from(this._transactions.values()));
 
-      obs.complete()
+      obs.complete();
     })
-    .concat(this.generateAccounts())
+    .concat(this.generateAccounts());
   }
 
-  createOrUpdateTransactionColdObservable(transaction: Transaction) : Observable<any> {
+  createOrUpdateTransactionColdObservable(transaction: Transaction): Observable<any> {
     return Observable.create( obs => {
-      if(!transaction.uuid){
-        transaction.uuid = uuid()
+      if (!transaction.uuid) {
+        transaction.uuid = uuid();
       }
-      this._transactions.set(transaction.uuid, transaction)
-      this._transactionsChangedSubject.next([transaction])
+      this._transactions.set(transaction.uuid, transaction);
+      this._transactionsChangedSubject.next([transaction]);
 
-      obs.complete()
-    }).concat(this.generateAccounts())
+      obs.complete();
+    }).concat(this.generateAccounts());
   }
 
-  deleteTransactionColdObservable(transaction) : Observable<any> {
+  deleteTransactionColdObservable(transaction): Observable<any> {
     return Observable.create( obs => {
-      this._transactions.delete(transaction.uuid)
-      this._transactionsChangedSubject.next([transaction])
+      this._transactions.delete(transaction.uuid);
+      this._transactionsChangedSubject.next([transaction]);
 
-      if(this._editedTransaction == transaction){
-        this._editedTransactionSubject.next(undefined)
+      if (this._editedTransaction === transaction) {
+        this._editedTransactionSubject.next(undefined);
       }
-      obs.complete()
+      obs.complete();
     })
-    .concat(this.generateAccounts())
+    .concat(this.generateAccounts());
   }
 
   /****** Private ******/
 
-  private getTransactionsUsingAccounts(accountsNames : string[]) {
+  private getTransactionsUsingAccounts(accountsNames: string[]) {
     return Array.from(this._transactions.values()).filter(tr => {
-      return tr.postings.some( p => accountsNames.indexOf(p.account) != -1 )
-    })
+      return tr.postings.some( p => accountsNames.indexOf(p.account) !== -1 );
+    });
   }
 
   private allChildAccounts(root: Account): Account[] {
-    let children = [root]
-    root.children.forEach(c => children.push(...this.allChildAccounts(c)))
-    return children
+    const children = [root];
+    root.children.forEach(c => children.push(...this.allChildAccounts(c)));
+    return children;
   }
 
   private generateAccounts(): Observable<any> {
     return this.createAccountsFromTransactions()
       .do( accounts => {
-        let root = new Account("ROOT")
+        const root = new Account('ROOT');
         root.children = new Set(accounts);
-        this._rootAccount = root
-        this._rootAccountSubject.next(this._rootAccount)
-    
+        this._rootAccount = root;
+        this._rootAccountSubject.next(this._rootAccount);
+
         /*
         let allAccounts = this.allChildAccounts(root)
         let selectedAccounts = Array.from(this._selectedAccounts)
@@ -156,90 +158,87 @@ export class AppStateService {
 
         console.log(this._selectedAccounts)
         */
-      })
+      });
   }
 
-  private createAccountsFromTransactions() : Observable<Account[]> {
+  private createAccountsFromTransactions(): Observable<Account[]> {
     return Observable.create( obs => {
-      let flatAccounts = new Map();
-      
+      const flatAccounts = new Map();
+
       Array.from(this._transactions.values()).forEach(tr => {
-          let transactionDate = this.getTransactionDate(tr);
-  
+          const transactionDate = this.getTransactionDate(tr);
+
           /*
           this._minDate =  this._minDate ? moment.min( this._minDate, transactionDate) : transactionDate;
           this._maxDate =  this._maxDate ? moment.max( this._maxDate, transactionDate) : transactionDate;
           */
-  
+
           tr.postings.forEach(ps => {
-              if(ps.currency){
-                  //this._currencies.add(ps.currency);
+              if (ps.currency) {
+                  // this._currencies.add(ps.currency);
               }
-  
-              let accountParts = ps.account.split(":");
+
+              const accountParts = ps.account.split(':');
               let lastParent: Account | undefined;
-              let currentAccountName: string = "";
-              for (let part of accountParts) {
+              let currentAccountName = '';
+              for (const part of accountParts) {
                   currentAccountName += part;
-                  let account = this.getOrCreateAccount(currentAccountName, flatAccounts);
-                  this.addAmountToAccount(account, ps.amount || new Decimal(0), currentAccountName == ps.account);
-                  
-                  if(lastParent){
+                  const account = this.getOrCreateAccount(currentAccountName, flatAccounts);
+                  this.addAmountToAccount(account, ps.amount || new Decimal(0), currentAccountName === ps.account);
+
+                  if (lastParent) {
                       lastParent.children.add(account);
                   }
-  
+
                   lastParent = account;
-                  currentAccountName += ":";
+                  currentAccountName += ':';
               }
           });
       });
-  
-      obs.next(this.topAccounts(flatAccounts))
-      obs.complete()
-    })
+
+      obs.next(this.topAccounts(flatAccounts));
+      obs.complete();
+    });
 }
 
-  private getOrCreateAccount(name : string, accounts: Map<string, Account>) : Account {
+  private getOrCreateAccount(name: string, accounts: Map<string, Account>): Account {
     let stat = accounts.get(name);
-    
-    if(!stat){
+
+    if (!stat) {
         stat = new Account(name);
         accounts.set(name, stat);
     }
 
-    return stat;           
+    return stat;
   }
 
   private addAmountToAccount(a: Account, amount: decimal.Decimal, isFinalAccount: boolean) {
-    if(!isFinalAccount){
-        a.childrenBalance = a.childrenBalance.plus(amount)
-        a.nbChildrenTransactions ++
-        if(amount.greaterThan(0)){
-            a.childrenCredits = a.childrenCredits.plus(amount)
+    if (!isFinalAccount) {
+        a.childrenBalance = a.childrenBalance.plus(amount);
+        a.nbChildrenTransactions ++;
+        if (amount.greaterThan(0)) {
+            a.childrenCredits = a.childrenCredits.plus(amount);
+        } else {
+            a.childrenDebits = a.childrenDebits.plus(amount);
         }
-        else{
-            a.childrenDebits = a.childrenDebits.plus(amount)
-        }
-    }
-    else{
-        a.balance = a.balance.plus(amount)
-        a.nbTransactions++
+    } else {
+        a.balance = a.balance.plus(amount);
+        a.nbTransactions++;
 
-        if(amount.greaterThan(0)){
-          a.credits = a.credits.plus(amount)
-        }
-        else{
-            a.debits = a.debits.plus(amount)
+        if (amount.greaterThan(0)) {
+          a.credits = a.credits.plus(amount);
+        } else {
+            a.debits = a.debits.plus(amount);
         }
     }
   }
 
-  private getTransactionDate(tr: Transaction) : moment.Moment {
-    return moment(tr.header.date, "YYYY/MM/DD");
+  private getTransactionDate(tr: Transaction): moment.Moment {
+    return moment(tr.header.date, 'YYYY/MM/DD');
   }
 
-  private topAccounts(accounts : Map<string, Account>): Account[] {
-    return Array.from(accounts.values()).filter( a => a.name.indexOf(':') == -1).sort( (a1, a2) => a1.name.localeCompare(a2.name) )
+  private topAccounts(accounts: Map<string, Account>): Account[] {
+    return Array.from(accounts.values()).filter( a => a.name.indexOf(':') === -1).sort( (a1, a2) => a1.name.localeCompare(a2.name) );
   }
 
 }

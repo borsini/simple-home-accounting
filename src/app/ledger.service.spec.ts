@@ -1,11 +1,11 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 
 import { LedgerService } from './ledger.service';
 
 describe('LedgerService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [LedgerService]
+      providers: [LedgerService],
     });
   });
 

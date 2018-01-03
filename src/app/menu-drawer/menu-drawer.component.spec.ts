@@ -8,7 +8,7 @@ describe('MenuDrawerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MenuDrawerComponent ]
+      declarations: [ MenuDrawerComponent ],
     })
     .compileComponents();
   }));

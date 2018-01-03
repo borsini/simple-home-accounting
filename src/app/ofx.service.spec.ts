@@ -1,11 +1,11 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 
 import { OfxService } from './ofx.service';
 
 describe('OfxService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [OfxService]
+      providers: [OfxService],
     });
   });
 

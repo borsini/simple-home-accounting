@@ -12,9 +12,9 @@
     </div>
 
     <li *ngFor="let child of account.children">
-        <account-tree 
+        <app-account-tree 
                 *ngIf="!isCollapsed" 
                 [account]='child' 
-                (accountSelected)="onChildSelected($event)"></account-tree>
+                (accountSelected)="onChildSelected($event)"></app-account-tree>
     </li>
 </ul>

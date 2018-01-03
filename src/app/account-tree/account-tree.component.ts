@@ -1,56 +1,56 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {Account} from '../models/models'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AppStateService } from '../app-state.service';
+import { Account } from '../models/models';
 
 @Component({
-  selector: 'account-tree',
+  selector: 'app-account-tree',
+  styleUrls: ['./account-tree.component.css'],
   templateUrl: './account-tree.component.html',
-  styleUrls: ['./account-tree.component.css']
 })
-export class AccountTreeComponent {
+export class AccountTreeComponent implements OnInit {
 
   @Input()
   account: Account;
 
-  isCollapsed: boolean = false;
-  private _isChecked: boolean = false;
+  isCollapsed = false;
+  private _isChecked = false;
 
   constructor(private stateService: AppStateService) {
   }
 
   ngOnInit() {
     this.stateService.selectedAccountsHotObservable().subscribe(accounts => {
-      let shouldBeChecked = accounts.has(this.account)
-      if(shouldBeChecked != this.isChecked){
-        this._isChecked = shouldBeChecked
-        this.stateService.selectAccountsColdObservable(shouldBeChecked, Array.from(this.account.children)).subscribe()
+      const shouldBeChecked = accounts.has(this.account);
+      if (shouldBeChecked !== this.isChecked) {
+        this._isChecked = shouldBeChecked;
+        this.stateService.selectAccountsColdObservable(shouldBeChecked, Array.from(this.account.children)).subscribe();
       }
-    })
+    });
   }
 
   @Input()
   set isChecked(isChecked: boolean) {
-    this.stateService.selectAccountsColdObservable(isChecked, [this.account]).subscribe()
+    this.stateService.selectAccountsColdObservable(isChecked, [this.account]).subscribe();
   }
- 
+
   get isChecked(): boolean { return this._isChecked; }
 
-  onAccountSelected(){
+  onAccountSelected() {
    // this.stateService.selectAccount(this.account, true).subscribe()
   }
 
-  onAccountChecked(chk : boolean){
+  onAccountChecked(chk: boolean) {
    // console.log(this.isChecked)
 //    this.isChecked = chk
   }
 
-  onChildSelected(account: Account){
+  onChildSelected(account: Account) {
    // this.stateService.selectAccount(account, true).subscribe()
   }
 
-  toggle(){
+  toggle() {
     this.isCollapsed = !this.isCollapsed;
   }
-  
+
 }
 
