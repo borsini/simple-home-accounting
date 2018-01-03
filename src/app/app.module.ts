@@ -2,22 +2,10 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
-  DateAdapter,
-  MD_DATE_FORMATS,
-  MdAutocompleteModule,
-  MdButtonModule,
-  MdCardModule,
-  MdCheckboxModule,
-  MdDatepickerModule,
-  MdDialogModule,
-  MdInputModule,
-  MdNativeDateModule,
-  MdPaginatorModule,
-  MdProgressSpinnerModule,
-  MdSidenavModule,
-  MdSortModule,
-  MdTableModule,
-  MdToolbarModule } from '@angular/material';
+  DateAdapter, MD_DATE_FORMATS, MdAutocompleteModule, MdButtonModule, MdCardModule, MdCheckboxModule, MdDatepickerModule,
+  MdDialogModule, MdInputModule, MdNativeDateModule, MdPaginatorModule, MdProgressSpinnerModule, MdSidenavModule, MdSortModule,
+  MdTableModule, MdToolbarModule,
+} from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -29,6 +17,7 @@ import { EditTransactionComponent } from './edit-transaction/edit-transaction.co
 import { MenuDrawerComponent } from './menu-drawer/menu-drawer.component';
 import { MOMENT_DATE_FORMATS, MomentDateAdapter } from './moment-date-adapter';
 import { TransactionsComponent } from './transactions/transactions.component';
+
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [

@@ -193,7 +193,8 @@ export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
     const accountControls = array.controls
       .map(c => c.get('account'))
       .filter(ac => ac != null)
-      .map(ac => ac.value as string);
+      // tslint:disable-next-line no-non-null-assertion
+      .map(ac => ac!.value as string);
     const accounts = new Set(accountControls);
 
     let error: ValidationErrors | null = null;
@@ -203,7 +204,8 @@ export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
       const amountControls = array.controls
         .map(c => c.get('amount'))
         .filter(ac => ac != null)
-        .map(ac => ac.value as string);
+        // tslint:disable-next-line no-non-null-assertion
+        .map(ac => ac!.value as string);
 
       const howManyNulls = amountControls.filter(a => a == null || a.trim() === '').length;
 

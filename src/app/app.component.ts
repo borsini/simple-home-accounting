@@ -1,13 +1,12 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MD_DIALOG_DATA, MdDialog, MdDialogRef, MdSidenav } from '@angular/material';
 import * as fileSaver from 'file-saver';
-import { v4 as uuid } from 'uuid';
 import { AppStateService } from './app-state.service';
 import { LedgerService } from './ledger.service';
 import { Account, Transaction } from './models/models';
 import { OfxService } from './ofx.service';
 
+import 'rxjs/add/operator/zip';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -57,9 +56,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.disableDownloadButton = this._state.allTransactionsColdObservable()
-    .concat(this._state.transactionsChangedHotObservable()
-    .flatMap(obs => this._state.allTransactionsColdObservable()))
+    const o = this._state.transactionsChangedHotObservable()
+      .flatMap(obs => this._state.allTransactionsColdObservable());
+    this.disableDownloadButton = Observable.concat(this._state.allTransactionsColdObservable(), o)
     .map(tr => tr.length === 0);
 
     this._openDrawer.subscribe( open => {
@@ -73,6 +72,7 @@ export class AppComponent implements OnInit {
 
   uploadFileOnChange(files: FileList) {
     this.isLoading = true;
+
     this.readAndParseTransactionsFromFile(files.item(0))
     .zip(this.userWantsToAppendTransactions())
     .flatMap(zip => this._state.setTransactionsColdObservable(zip[0], zip[1]))

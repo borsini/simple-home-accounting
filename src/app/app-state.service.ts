@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
+import 'rxjs/add/observable/merge';
+import 'rxjs/add/operator/merge';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
 import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
-import { v4 as uuid } from 'uuid';
+import {v4 as uuid } from 'uuid';
 import { Account, Transaction } from './models/models';
 
 @Injectable()
@@ -83,7 +85,7 @@ export class AppStateService {
   }
 
   setTransactionsColdObservable(transactions: Transaction[], append: boolean): Observable<any> {
-    return Observable.create( obs => {
+    const o = Observable.create( obs => {
       if (!append) {
         this._transactions.clear();
       }
@@ -96,12 +98,13 @@ export class AppStateService {
       this._transactionsChangedSubject.next(Array.from(this._transactions.values()));
 
       obs.complete();
-    })
-    .concat(this.generateAccounts());
+    });
+
+    return Observable.concat(o, this.generateAccounts());
   }
 
   createOrUpdateTransactionColdObservable(transaction: Transaction): Observable<any> {
-    return Observable.create( obs => {
+    const o = Observable.create( obs => {
       if (!transaction.uuid) {
         transaction.uuid = uuid();
       }
@@ -109,11 +112,13 @@ export class AppStateService {
       this._transactionsChangedSubject.next([transaction]);
 
       obs.complete();
-    }).concat(this.generateAccounts());
+    });
+
+    return Observable.concat(o, this.generateAccounts());
   }
 
   deleteTransactionColdObservable(transaction): Observable<any> {
-    return Observable.create( obs => {
+    const o = Observable.create( obs => {
       this._transactions.delete(transaction.uuid);
       this._transactionsChangedSubject.next([transaction]);
 
@@ -121,8 +126,8 @@ export class AppStateService {
         this._editedTransactionSubject.next(undefined);
       }
       obs.complete();
-    })
-    .concat(this.generateAccounts());
+    });
+    return Observable.concat(o, this.generateAccounts());
   }
 
   /****** Private ******/

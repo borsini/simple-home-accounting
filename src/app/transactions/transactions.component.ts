@@ -1,15 +1,35 @@
 import { DataSource } from '@angular/cdk/table';
-import { AsyncPipe } from '@angular/common';
-import { Component, ElementRef, NgModule, OnInit, ViewChild } from '@angular/core';
-import { MdPaginator, MdSort, PageEvent, Sort } from '@angular/material';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MdPaginator, MdSort, PageEvent } from '@angular/material';
 
 import * as moment from 'moment';
-import { Observable } from 'rxjs/add/operator/map';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { AppStateService } from '../app-state.service';
 import { Posting, Transaction } from '../models/models';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
+
+export class PostingRow {
+
+  constructor(private _posting: Posting) {}
+
+  get account() {
+    return this._posting.account;
+  }
+
+  get amount() {
+    return this._posting.amount;
+  }
+
+  get currency() {
+    return this._posting.currency;
+  }
+
+}
 
 export class TransactionRow {
 
@@ -36,26 +56,6 @@ export class TransactionRow {
       return this._selectedTransaction.map(tr => this.transaction === tr);
     }
   }
-
-
-  export class PostingRow {
-
-      constructor(private _posting: Posting) {}
-
-        get account() {
-          return this._posting.account;
-        }
-
-        get amount() {
-          return this._posting.amount;
-        }
-
-        get currency() {
-          return this._posting.currency;
-        }
-
-    }
-
 
 export class TransactionDataSource extends DataSource<TransactionRow> {
 

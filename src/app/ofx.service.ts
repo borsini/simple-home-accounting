@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
-import { Account, Transaction } from './models/models';
+import { Transaction } from './models/models';
 
 @Injectable()
 export class OfxService {
