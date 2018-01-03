@@ -79,7 +79,7 @@
       "check-else",
       "check-whitespace"
     ],
-    "ordered-imports": true,
+    "ordered-imports": false,
     "prefer-const": true,
     "quotemark": [
       true,
