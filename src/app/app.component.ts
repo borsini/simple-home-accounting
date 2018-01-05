@@ -1,15 +1,16 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MD_DIALOG_DATA, MdDialog, MdDialogRef, MdSidenav } from '@angular/material';
 import * as fileSaver from 'file-saver';
-import { AppStateService } from './app-state.service';
-import { LedgerService } from './ledger.service';
-import { Account, Transaction } from './models/models';
-import { OfxService } from './ofx.service';
+import { AppStateService } from './shared/services/app-state/app-state.service';
+import { LedgerService } from './shared/services/ledger/ledger.service';
+import { Account } from './shared/models/account';
+import { OfxService } from './shared/services/ofx/ofx.service';
 
 import 'rxjs/add/operator/zip';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { Transaction } from './shared/models/transaction';
 
 @Component({
   selector: 'app-dialog-result-example-dialog',

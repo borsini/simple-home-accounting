@@ -1,25 +1,4 @@
 import Decimal from 'decimal.js';
-import * as moment from 'moment';
-
-export interface Transaction {
-    uuid?: string;
-    header: Header;
-    postings: Array<Posting>;
-}
-
-interface Header {
-    date: moment.Moment;
-    title: string;
-    tag?: string;
-}
-
-export interface Posting {
-    tag?: string;
-    account: string;
-    amount?: decimal.Decimal;
-    currency?: string;
-    comment?: string;
-}
 
 export class Account {
     name: string;

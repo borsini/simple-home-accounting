@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { AppStateService } from '../app-state.service';
+import { AppStateService } from '../../shared/services/app-state/app-state.service';
 
 @Component({
   selector: 'app-menu-drawer',

@@ -9,14 +9,14 @@ import {
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AccountTreeComponent } from './account-tree/account-tree.component';
+import { AccountTreeComponent } from './components/account-tree/account-tree.component';
 import { AppComponent, DialogResultExampleDialogComponent, DialogTwoOptionsDialogComponent } from './app.component';
 
-import { AppStateService } from './app-state.service';
-import { EditTransactionComponent } from './edit-transaction/edit-transaction.component';
-import { MenuDrawerComponent } from './menu-drawer/menu-drawer.component';
-import { MOMENT_DATE_FORMATS, MomentDateAdapter } from './moment-date-adapter';
-import { TransactionsComponent } from './transactions/transactions.component';
+import { AppStateService } from './shared/services/app-state/app-state.service';
+import { EditTransactionComponent } from './components/edit-transaction/edit-transaction.component';
+import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
+import { MOMENT_DATE_FORMATS, MomentDateAdapter } from './shared/moment-date-adapter';
+import { TransactionsComponent } from './components/transactions/transactions.component';
 
 @NgModule({
   bootstrap: [AppComponent],

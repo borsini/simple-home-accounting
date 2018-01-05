@@ -8,8 +8,9 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { AppStateService } from '../app-state.service';
-import { Posting, Transaction } from '../models/models';
+import { AppStateService } from '../../shared/services/app-state/app-state.service';
+import { Transaction } from '../../shared/models/transaction';
+import { Posting } from '../../shared/models/posting';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
 

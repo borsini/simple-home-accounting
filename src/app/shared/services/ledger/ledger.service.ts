@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { Posting, Transaction } from './models/models';
+import { Transaction } from '../../models/transaction';
 
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
 import * as pegjs from 'pegjs';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/toArray';
+import { Posting } from '../../models/posting';
 
 @Injectable()
 export class LedgerService {

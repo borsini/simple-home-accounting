@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AppStateService } from '../app-state.service';
-import { Account } from '../models/models';
+import { AppStateService } from '../../shared/services/app-state/app-state.service';
+import { Account } from '../../shared/models/account';
 
 @Component({
   selector: 'app-account-tree',

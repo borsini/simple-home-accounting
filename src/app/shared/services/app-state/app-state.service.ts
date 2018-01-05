@@ -8,7 +8,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import {v4 as uuid } from 'uuid';
-import { Account, Transaction } from './models/models';
+import { Account } from '../../models/account';
+import { Transaction } from '../../models/transaction';
 
 @Injectable()
 export class AppStateService {

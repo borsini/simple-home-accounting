@@ -8,14 +8,15 @@ import { MdDatepicker } from '@angular/material';
 import Decimal from 'decimal.js';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { AppStateService } from '../app-state.service';
-import { Posting, Transaction } from '../models/models';
+import { AppStateService } from '../../shared/services/app-state/app-state.service';
+import { Transaction } from '../../shared/models/transaction';
 
 import * as moment from 'moment';
 import 'rxjs/add/observable/concat';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
+import { Posting } from '../../shared/models/posting';
 
 @Component({
   selector: 'app-edit-transaction',
