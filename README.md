@@ -1,5 +1,6 @@
 # Ledger
 
+[![Build Status](https://travis-ci.org/Benlenem/ledger-charts.svg?branch=develop)](https://travis-ci.org/Benlenem/ledger-charts)
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.7.
 
 ## Development server
