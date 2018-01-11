@@ -53,7 +53,7 @@ export class OfxService {
 
         STMTTRN.forEach(tr => {
 
-          const d = moment(tr.DTPOSTED['#text'], 'YYYYMMDD');
+          const d = moment.utc(tr.DTPOSTED['#text'], 'YYYYMMDD');
           const a: string = tr.TRNAMT['#text'];
           const n = tr.NAME['#text'];
           const m = tr.MEMO['#text'];
