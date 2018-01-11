@@ -8,9 +8,8 @@ node_js:
 jobs:
   include:
     - stage: test
-      script:
-        - yarn test
+      script: yarn test
+    - stage: build prod
+      script: ng build --prod
     - stage: deploy
-      script:
-        - ng build --prod
-        - firebase deploy --token $FIREBASE_TOKEN
+      script: firebase deploy --token $FIREBASE_TOKEN
