@@ -26,7 +26,6 @@ export class OfxService {
       .replace(/<\/<added>(\w+?)>(<\/\1>)?/g, '</\$1>');
 
       const jsOfx = this.xmlToJson(new DOMParser().parseFromString(xmlOfx, 'text/xml'));
-      console.log(jsOfx);
 
       const transactions: Transaction[] = [];
 
@@ -37,10 +36,16 @@ export class OfxService {
         }
 
     STMTTRNRS.forEach(trList => {
-        const c = trList.STMTRS.CURDEF['#text'];
-        const acc = trList.STMTRS.BANKACCTFROM.ACCTID['#text'];
+      const response = trList.STMTRS;
 
-        let STMTTRN: any = trList.STMTRS.BANKTRANLIST.STMTTRN;
+      if (!response) {
+        return;
+      }
+
+        const c = response.CURDEF['#text'];
+        const acc = response.BANKACCTFROM.ACCTID['#text'];
+
+        let STMTTRN: any = response.BANKTRANLIST.STMTTRN;
 
         if (!(STMTTRN instanceof Array)) {
             STMTTRN = [STMTTRN];

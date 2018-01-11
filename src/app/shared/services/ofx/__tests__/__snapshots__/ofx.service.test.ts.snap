@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OfxService parses empty file 1`] = `[TypeError: Cannot read property 'BANKMSGSRSV1' of undefined]`;
+
+exports[`OfxService parses file with one transaction 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2017-08-23T22:00:00.000Z",
+      "tag": "",
+      "title": "FNAC      23/08",
+    },
+    "postings": Array [
+      Object {
+        "account": "01234567890",
+        "amount": "-18.9",
+        "comment": "PAIEMENT PAR CARTE",
+        "currency": "EUR",
+        "tag": "",
+      },
+    ],
+    "uuid": undefined,
+  },
+]
+`;
+
+exports[`OfxService parses simple file 1`] = `Array []`;

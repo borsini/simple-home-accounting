@@ -18,7 +18,7 @@ jobs:
   include:
     - stage: test
       script:
-        - ng test
+        - yarn test
     - stage: deploy
       script:
         - ng build --prod

@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng test",
+    "test": "jest",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "commitmsg": "validate-commit-msg"
@@ -41,6 +41,7 @@
     "@angular/language-service": "^4.4.2",
     "@types/jasmine": "^2.5.54",
     "@types/jasminewd2": "^2.0.3",
+    "@types/jest": "^22.0.1",
     "@types/node": "^6.0.88",
     "codelyzer": "~3.0.1",
     "commitizen": "^2.9.6",
@@ -50,6 +51,8 @@
     "husky": "^0.14.3",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
+    "jest": "^22.0.4",
+    "jest-preset-angular": "^5.0.0",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "~2.1.1",
     "karma-cli": "~1.0.1",
@@ -67,5 +70,15 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "jest": {
+    "preset": "jest-preset-angular",
+    "roots": [
+      "<rootDir>/src/"
+    ],
+    "setupFiles": [
+      "<rootDir>/src/polyfills.ts"
+    ],
+    "testRegex": "/__tests__/.*test.ts$"
   }
 }
