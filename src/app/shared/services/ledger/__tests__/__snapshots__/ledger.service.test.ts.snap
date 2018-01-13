@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LedgerService parses empty file 1`] = `Array []`;
+
+exports[`LedgerService parses file with one transaction 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2017-01-12T23:00:00.000Z",
+      "tag": "!",
+      "title": "Transaction",
+    },
+    "postings": Array [
+      Object {
+        "account": "CompteA:Sous compte",
+        "amount": "41.3",
+        "comment": "Commentaire",
+        "currency": "€ ",
+        "tag": null,
+      },
+      Object {
+        "account": "CompteB",
+        "comment": null,
+        "currency": null,
+        "tag": "*",
+      },
+    ],
+    "uuid": undefined,
+  },
+]
+`;

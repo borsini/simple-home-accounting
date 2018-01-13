@@ -9,6 +9,8 @@ import * as pegjs from 'pegjs';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/toArray';
 import { Posting } from '../../models/posting';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class LedgerService {
