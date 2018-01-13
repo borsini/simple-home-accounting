@@ -127,7 +127,7 @@ export class LedgerService {
       return {
         uuid: undefined,
         header : {
-          date: moment(t.header.date, 'YYYY/MM/DD'),
+          date: moment.utc(t.header.date, 'YYYY/MM/DD'),
           title: t.header.title,
           tag: t.header.tag,
         },
