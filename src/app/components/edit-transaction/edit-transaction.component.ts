@@ -97,7 +97,6 @@ export class EditTransactionComponent implements OnInit {
       const groupErrors = this.group.valueChanges.map( t => this.logErrors(this.group));
 
     this.formErrors = Observable.concat(errorObservable, groupErrors)
-      .do(e => console.log(e))
       .map(e => e[0]);
 
       this.group.markAsDirty();

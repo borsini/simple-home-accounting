@@ -40,7 +40,6 @@ export class AccountTreeComponent implements OnInit {
   }
 
   onAccountChecked(chk: boolean) {
-   // console.log(this.isChecked)
 //    this.isChecked = chk
   }
 
