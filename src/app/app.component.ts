@@ -12,6 +12,8 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Transaction } from './shared/models/transaction';
 
+const { version } = require('../../package.json')
+
 @Component({
   selector: 'app-dialog-result-example-dialog',
   template: '<h2>Erreur</h2>{{ data }}',
@@ -50,10 +52,14 @@ export class AppComponent implements OnInit {
   isLoading: boolean;
   disableDownloadButton: Observable<boolean>;
   title = 'app';
+  appVersion: string;
+
 
   constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, public dialog: MatDialog) {
     this.isLoading = false;
     this._flatAccounts = new Map();
+
+    this.appVersion = version;
   }
 
   ngOnInit() {
