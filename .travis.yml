@@ -4,6 +4,7 @@ dist: trusty
 language: node_js
 node_js:
   - "8.2.1"
+cache: yarn
 
 jobs:
   include:
@@ -12,4 +13,6 @@ jobs:
     - stage: build prod
       script: ng build --prod
     - stage: deploy
-      script: firebase deploy --token $FIREBASE_TOKEN
+      script:
+        - ng build --prod
+        - firebase deploy --token $FIREBASE_TOKEN
