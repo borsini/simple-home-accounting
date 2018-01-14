@@ -15,7 +15,7 @@ Array [
         "account": "CompteA:Sous compte",
         "amount": "41.3",
         "comment": "Commentaire",
-        "currency": "€ ",
+        "currency": "€",
         "tag": null,
       },
       Object {
@@ -28,4 +28,12 @@ Array [
     "uuid": undefined,
   },
 ]
+`;
+
+exports[`LedgerService saves transactions 1`] = `
+"2013/02/08 Transaction title
+    ! accountA    € 3.14 ; Comment
+    accountB
+
+"
 `;

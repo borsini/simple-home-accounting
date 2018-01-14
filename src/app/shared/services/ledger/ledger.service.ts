@@ -90,7 +90,7 @@ export class LedgerService {
     / chars:CurrencyNameWithoutEscaping { return chars.join("") }
 
   CurrencyNameWithoutEscaping
-    = (!(CommentStartChars / Newline / "-" / "+" / '"' / [0-9]) c:. { return c })+
+    = (!(CommentStartChars / Newline / "-" / "+" / '"' / [0-9] / _) c:. { return c })+
 
   CurrencyNameWithEscaping
     = (!(CommentStartChars / Newline / "-" / "+" / '"') c:. { return c })+
@@ -163,12 +163,25 @@ export class LedgerService {
     return new Observable( obs => {
       let out = '';
       transactions.forEach( tr => {
-        out += tr.header.date.format('YYYY/MM/DD') + ' ' + tr.header.title + '\n';
+
+        out += [tr.header.date.format('YYYY/MM/DD'), tr.header.tag, tr.header.title]
+          .filter(val => val)
+          .join(' ') + '\n';
+
 
         tr.postings.forEach( p => {
             out += '    ';
-            out += p.account + '    ' + (p.currency || '') + ' ' + (p.amount || '');
-            out += p.comment ? ' ; ' + p.comment : '';
+            out += [p.tag, p.account].filter(val => val).join(' ');
+
+            if (p.amount) {
+              out += '    ';
+              out += [p.currency, p.amount].filter(val => val).join(' ');
+            }
+
+            if (p.comment) {
+              out += ' ; ' + p.comment;
+            }
+
             out += '\n';
         });
 
