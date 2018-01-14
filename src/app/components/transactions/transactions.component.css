@@ -1,12 +1,12 @@
-md-table {
-  
+mat-table {
+
 }
 
-md-input-container {
+mat-input-container {
     width:100%;
 }
 
-md-cell {
+mat-cell {
     padding: 5px 0;
 }
 
@@ -38,10 +38,10 @@ md-cell {
     background: #cccccc;
 }
 
-md-row {
+mat-row {
     cursor: pointer;
 }
 
-md-row:hover {
+mat-row:hover {
     background-color: #dddddd;
 }

@@ -10,11 +10,11 @@ body {
     min-height: 100vh;
 }
 
-md-toolbar {
+mat-toolbar {
     flex: 0 0 auto;
 }
 
-md-progress-spinner {
+mat-progress-spinner {
     width:30px;
     height:30px;
 }

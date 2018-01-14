@@ -1,9 +1,9 @@
 <ul class="account" *ngIf="account">
 
     <div>
-      <md-icon *ngIf="account.children?.size > 0" class="material-icons" (click)="toggle()">{{ isCollapsed ? 'chevron_right' : 'expand_more' }}  </md-icon>
-     
-       <md-checkbox [checked]="isChecked" (change)="isChecked = $event.checked"></md-checkbox>
+      <mat-icon *ngIf="account.children?.size > 0" class="material-icons" (click)="toggle()">{{ isCollapsed ? 'chevron_right' : 'expand_more' }}  </mat-icon>
+
+       <mat-checkbox [checked]="isChecked" (change)="isChecked = $event.checked"></mat-checkbox>
 
         <span (click)="isChecked = !isChecked">
             {{ account.name.split(':').pop() }} - {{ account.balance.toFixed(2) }}
@@ -12,9 +12,9 @@
     </div>
 
     <li *ngFor="let child of account.children">
-        <app-account-tree 
-                *ngIf="!isCollapsed" 
-                [account]='child' 
+        <app-account-tree
+                *ngIf="!isCollapsed"
+                [account]='child'
                 (accountSelected)="onChildSelected($event)"></app-account-tree>
     </li>
 </ul>

@@ -2,9 +2,10 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
-  DateAdapter, MD_DATE_FORMATS, MdAutocompleteModule, MdButtonModule, MdCardModule, MdCheckboxModule, MdDatepickerModule,
-  MdDialogModule, MdInputModule, MdNativeDateModule, MdPaginatorModule, MdProgressSpinnerModule, MdSidenavModule, MdSortModule,
-  MdTableModule, MdToolbarModule,
+  DateAdapter, MAT_DATE_FORMATS, MatAutocompleteModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatDatepickerModule,
+  MatIconModule,
+  MatDialogModule, MatFormFieldModule, MatInputModule, MatNativeDateModule, MatPaginatorModule, MatProgressSpinnerModule, MatSidenavModule, MatSortModule,
+  MatTableModule, MatToolbarModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,8 +16,8 @@ import { AppComponent, DialogResultExampleDialogComponent, DialogTwoOptionsDialo
 import { AppStateService } from './shared/services/app-state/app-state.service';
 import { EditTransactionComponent } from './components/edit-transaction/edit-transaction.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
-import { MOMENT_DATE_FORMATS, MomentDateAdapter } from './shared/moment-date-adapter';
 import { TransactionsComponent } from './components/transactions/transactions.component';
+import {MAT_MOMENT_DATE_FORMATS, MomentDateAdapter} from '@angular/material-moment-adapter';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -35,29 +36,31 @@ import { TransactionsComponent } from './components/transactions/transactions.co
   ],
   imports: [
     BrowserModule,
-    MdButtonModule,
-    MdCheckboxModule,
-    MdToolbarModule,
-    MdSidenavModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatToolbarModule,
+    MatSidenavModule,
     CdkTableModule,
-    MdTableModule,
-    MdPaginatorModule,
+    MatTableModule,
+    MatPaginatorModule,
     BrowserAnimationsModule,
-    MdSortModule,
-    MdInputModule,
-    MdProgressSpinnerModule,
-    MdDialogModule,
-    MdDatepickerModule,
-    MdNativeDateModule,
+    MatSortModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     ReactiveFormsModule,
-    MdAutocompleteModule,
-    MdNativeDateModule,
-    MdCardModule,
+    MatAutocompleteModule,
+    MatNativeDateModule,
+    MatCardModule,
   ],
   providers : [
     AppStateService,
     {provide: DateAdapter, useClass: MomentDateAdapter},
-    {provide: MD_DATE_FORMATS, useValue: MOMENT_DATE_FORMATS},
+    {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
   ],
 })
 export class AppModule { }

@@ -1,6 +1,6 @@
 import { DataSource } from '@angular/cdk/table';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MdPaginator, MdSort, PageEvent } from '@angular/material';
+import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 
 import * as moment from 'moment';
 import 'rxjs/add/observable/fromEvent';
@@ -60,7 +60,7 @@ export class TransactionRow {
 
 export class TransactionDataSource extends DataSource<TransactionRow> {
 
-    constructor(private _state: AppStateService, private _paginator: MdPaginator, private _sort: MdSort, private _filter: ElementRef) {
+    constructor(private _state: AppStateService, private _paginator: MatPaginator, private _sort: MatSort, private _filter: ElementRef) {
       super();
 
       this._sort.active = 'date';
@@ -71,7 +71,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
     /** Connect function called by the table to retrieve one stream containing the data to render. */
     connect(): Observable<TransactionRow[]> {
 
-      const sortChange = Observable.from<MdSort>(this._sort.mdSortChange)
+      const sortChange = Observable.from<MatSort>(this._sort.sortChange)
         .flatMap( d => this._state.selectedTransactionsHotObservable());
 
       const pageChange = Observable.from<PageEvent>(this._paginator.page)
@@ -154,8 +154,8 @@ export class TransactionsComponent implements OnInit {
   dataSource: TransactionDataSource;
   displayedColumns = ['title', 'date', 'movements', 'status'];
 
-  @ViewChild(MdPaginator) paginator: MdPaginator;
-  @ViewChild(MdSort) sort: MdSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild('filter') filter: ElementRef;
 
   constructor(private _state: AppStateService) {
@@ -163,7 +163,6 @@ export class TransactionsComponent implements OnInit {
    }
 
   ngOnInit() {
-    console.log(this.paginator);
     this.dataSource = new TransactionDataSource(this._state, this.paginator, this.sort, this.filter);
   }
 

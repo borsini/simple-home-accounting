@@ -1,36 +1,36 @@
-<md-sidenav-container class="mat-typography">
-  <md-sidenav #drawer>
+<mat-sidenav-container class="mat-typography">
+  <mat-sidenav #drawer>
     <app-menu-drawer></app-menu-drawer>
-  </md-sidenav>
+  </mat-sidenav>
 
   <div class="main">
-    <md-toolbar color="primary">
-        
-      <button md-button (click)="drawer.toggle()">
-          <md-icon class="material-icons" >menu</md-icon>
+    <mat-toolbar color="primary">
+
+      <button mat-button (click)="drawer.toggle()">
+          <mat-icon class="material-icons" >menu</mat-icon>
       </button>
-      
+
       <span>Liste des transactions</span>
 
       <div [hidden]="!isLoading">
-          <md-progress-spinner
+          <mat-progress-spinner
             color="accent"
             mode="indeterminate">
-          </md-progress-spinner>
+          </mat-progress-spinner>
       </div>
 
       <span class="example-spacer"></span>
-        
-      <button md-button (click)="saveLedgerClicked()" [disabled]="disableDownloadButton | async">
-          <md-icon class="material-icons">file_download</md-icon>
+
+      <button mat-button (click)="saveLedgerClicked()" [disabled]="disableDownloadButton | async">
+          <mat-icon class="material-icons">file_download</mat-icon>
       </button>
 
       <input type="file" accept=".ofx, .ledger" [hidden]="true" id="upload-file" (change)="uploadFileOnChange($event.target.files)" />
       <label id="filename" class="action_btn" for="upload-file">
-        <md-icon class="material-icons">file_upload</md-icon>
+        <mat-icon class="material-icons">file_upload</mat-icon>
       </label>
-        
-    </md-toolbar>
+
+    </mat-toolbar>
 
     <div class="content">
       <app-transactions></app-transactions>
@@ -42,4 +42,4 @@
 
   </div>
 
-</md-sidenav-container>
+</mat-sidenav-container>

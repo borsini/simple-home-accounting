@@ -218,7 +218,7 @@ export class AppStateService {
     return stat;
   }
 
-  private addAmountToAccount(a: Account, amount: decimal.Decimal, isFinalAccount: boolean) {
+  private addAmountToAccount(a: Account, amount: Decimal, isFinalAccount: boolean) {
     if (!isFinalAccount) {
         a.childrenBalance = a.childrenBalance.plus(amount);
         a.nbChildrenTransactions ++;

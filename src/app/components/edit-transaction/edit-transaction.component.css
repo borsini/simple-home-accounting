@@ -35,12 +35,12 @@
     right: 10px;
 }
 
-md-card-content {
+mat-card-content {
     max-height: 300px;
     overflow-y: scroll;
 }
 
-md-card-actions {
+mat-card-actions {
     display:flex;
 }
 

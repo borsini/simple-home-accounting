@@ -1,8 +1,9 @@
+import Decimal from 'decimal.js';
+
 export interface Posting {
   tag?: string;
   account: string;
-  amount?: decimal.Decimal;
+  amount?: Decimal;
   currency?: string;
   comment?: string;
 }
-

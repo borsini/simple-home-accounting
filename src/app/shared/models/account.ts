@@ -3,14 +3,14 @@ import Decimal from 'decimal.js';
 export class Account {
     name: string;
     children: Set<Account>;
-    balance: decimal.Decimal;
-    childrenBalance: decimal.Decimal;
+    balance: Decimal;
+    childrenBalance: Decimal;
     nbTransactions: number;
     nbChildrenTransactions: number;
-    debits: decimal.Decimal;
-    credits: decimal.Decimal;
-    childrenDebits: decimal.Decimal;
-    childrenCredits: decimal.Decimal;
+    debits: Decimal;
+    credits: Decimal;
+    childrenDebits: Decimal;
+    childrenCredits: Decimal;
 
     constructor(n: string) {
         this.name = n;

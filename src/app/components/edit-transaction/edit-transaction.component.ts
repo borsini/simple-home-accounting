@@ -3,7 +3,7 @@ import {
   AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { MdDatepicker } from '@angular/material';
+import { MatDatepicker } from '@angular/material';
 
 import Decimal from 'decimal.js';
 import { Observable } from 'rxjs/Observable';
@@ -25,7 +25,7 @@ import { Posting } from '../../shared/models/posting';
 })
 export class EditTransactionComponent implements OnInit {
 
-  @ViewChild(MdDatepicker) myDatepicker: MdDatepicker<Date>;
+  @ViewChild(MatDatepicker) myDatepicker: MatDatepicker<Date>;
 
   private transaction: Transaction | undefined;
 

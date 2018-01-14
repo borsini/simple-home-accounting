@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MD_DIALOG_DATA, MdDialog, MdDialogRef, MdSidenav } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav } from '@angular/material';
 import * as fileSaver from 'file-saver';
 import { AppStateService } from './shared/services/app-state/app-state.service';
 import { LedgerService } from './shared/services/ledger/ledger.service';
@@ -17,22 +17,22 @@ import { Transaction } from './shared/models/transaction';
   template: '<h2>Erreur</h2>{{ data }}',
 })
 export class DialogResultExampleDialogComponent {
-  constructor(public dialogRef: MdDialogRef<DialogResultExampleDialogComponent>, @Inject(MD_DIALOG_DATA) public data: any) {}
+  constructor(public dialogRef: MatDialogRef<DialogResultExampleDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {}
 }
 
 @Component({
   selector: 'app-dialog-two-options',
   template: `
-  <h2 md-dialog-title>{{ data.title }}</h2>
-  <md-dialog-content>{{ data.content }}</md-dialog-content>
-  <md-dialog-actions>
-    <button md-button [md-dialog-close]="data.option1.key">{{ data.option1.value }}</button>
-    <button md-button [md-dialog-close]="data.option2.key">{{ data.option2.value }}</button>
-  </md-dialog-actions>
+  <h2 mat-dialog-title>{{ data.title }}</h2>
+  <mat-dialog-content>{{ data.content }}</mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="data.option1.key">{{ data.option1.value }}</button>
+    <button mat-button [mat-dialog-close]="data.option2.key">{{ data.option2.value }}</button>
+  </mat-dialog-actions>
   `,
 })
 export class DialogTwoOptionsDialogComponent {
-  constructor(public dialogRef: MdDialogRef<DialogTwoOptionsDialogComponent>, @Inject(MD_DIALOG_DATA) public data: any) {}
+  constructor(public dialogRef: MatDialogRef<DialogTwoOptionsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {}
 }
 
 @Component({
@@ -45,13 +45,13 @@ export class AppComponent implements OnInit {
   private _flatAccounts: Map<String, Account>;
   private _openDrawer: Subject<boolean> = new BehaviorSubject(false);
 
-  @ViewChild(MdSidenav) sidenav: MdSidenav;
+  @ViewChild(MatSidenav) sidenav: MatSidenav;
 
   isLoading: boolean;
   disableDownloadButton: Observable<boolean>;
   title = 'app';
 
-  constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, public dialog: MdDialog) {
+  constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, public dialog: MatDialog) {
     this.isLoading = false;
     this._flatAccounts = new Map();
   }

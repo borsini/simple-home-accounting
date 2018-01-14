@@ -1,36 +1,36 @@
-<md-input-container floatPlaceholder="never">
-    <input mdInput #filter placeholder="Titre, date ou montant...">
-  </md-input-container>
+<mat-input-container floatPlaceholder="never">
+    <input matInput #filter placeholder="Titre, date ou montant...">
+  </mat-input-container>
 
-  <md-paginator #paginator
+  <mat-paginator #paginator
   [pageIndex]="0"
   [pageSize]="25"
   [pageSizeOptions]="[10, 25, 50]">
-</md-paginator>
+</mat-paginator>
 
-<md-table #table [dataSource]="dataSource" mdSort>
-  
+<mat-table #table [dataSource]="dataSource" matSort>
+
   <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
 
   <!-- ID Column -->
   <ng-container cdkColumnDef="title">
-    <md-header-cell *cdkHeaderCellDef md-sort-header> Titre </md-header-cell>
-    <md-cell *cdkCellDef="let row">
-      <p class="md-body-2">{{row.title}}</p>
-    </md-cell>
+    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Titre </mat-header-cell>
+    <mat-cell *cdkCellDef="let row">
+      <p class="mat-body-2">{{row.title}}</p>
+    </mat-cell>
   </ng-container>
 
   <!-- Progress Column -->
   <ng-container cdkColumnDef="date">
-    <md-header-cell *cdkHeaderCellDef md-sort-header [ngClass]="'shrink_cell'"> Date </md-header-cell>
-    <md-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'"> {{row.date}} </md-cell>
+    <mat-header-cell *cdkHeaderCellDef mat-sort-header [ngClass]="'shrink_cell'"> Date </mat-header-cell>
+    <mat-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'"> {{row.date}} </mat-cell>
   </ng-container>
 
   <!-- Name Column -->
   <ng-container cdkColumnDef="movements">
-    <md-header-cell *cdkHeaderCellDef [ngClass]="'grow_cell'"> Mouvements </md-header-cell>
-    <md-cell *cdkCellDef="let row" [ngClass]="'grow_cell'"> 
+    <mat-header-cell *cdkHeaderCellDef [ngClass]="'grow_cell'"> Mouvements </mat-header-cell>
+    <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell'">
         <div *ngFor="let p of row.postings.slice(0,2)" class="posting">
           <span class="posting_left">{{p.account}}</span>
           <span class="posting_right" *ngIf="p.amount != 0">{{p.amount}}{{p.currency}}</span>
@@ -39,23 +39,23 @@
         <div *ngIf="row.postings.length > 2" class="posting">
           et {{ row.postings.length - 2 }} supplémentaire(s)
         </div>
-    </md-cell>
+    </mat-cell>
   </ng-container>
 
   <!-- Name Column -->
   <ng-container cdkColumnDef="status">
-      <md-header-cell *cdkHeaderCellDef [ngClass]="'shrink_cell'"> Statut </md-header-cell>
-      <md-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'"> 
-        <md-icon class="material-icons">{{row.isComplete ? 'check_circle' : 'error'}}</md-icon>
-      </md-cell>
+      <mat-header-cell *cdkHeaderCellDef [ngClass]="'shrink_cell'"> Statut </mat-header-cell>
+      <mat-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'">
+        <mat-icon class="material-icons">{{row.isComplete ? 'check_circle' : 'error'}}</mat-icon>
+      </mat-cell>
     </ng-container>
 
-  <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-  <md-row 
+  <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row
     *cdkRowDef="let row; columns: displayedColumns;"
-    (click)=onTransactionClicked(row) 
+    (click)=onTransactionClicked(row)
     [ngClass]="{highlight:(row.isSelected | async) == true}">
-  </md-row>
+  </mat-row>
 
-</md-table>
+</mat-table>
 
