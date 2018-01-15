@@ -10,6 +10,8 @@ import { Subject } from 'rxjs/Subject';
 import {v4 as uuid } from 'uuid';
 import { Account } from '../../models/account';
 import { Transaction } from '../../models/transaction';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/concat';
 
 @Injectable()
 export class AppStateService {
@@ -152,19 +154,22 @@ export class AppStateService {
         root.children = new Set(accounts);
         this._rootAccount = root;
         this._rootAccountSubject.next(this._rootAccount);
-
-        /*
-        let allAccounts = this.allChildAccounts(root)
-        let selectedAccounts = Array.from(this._selectedAccounts)
-
-        this._selectedAccounts = new Set(selectedAccounts.filter(a => allAccounts.some(a2 => {
-          return a2.name == a.name
-        })))
-        this._selectedAccountsSubject.next(this._selectedAccounts)
-
-        console.log(this._selectedAccounts)
-        */
       });
+  }
+
+  private addMissingAmount(transaction: Transaction) {
+    const t = transaction.postings.find(p => p.amount === undefined);
+
+    if (!t) {
+      return;
+    }
+
+    const sum = transaction.postings
+      .filter(p => p.amount !== undefined)
+      .map(p => p.amount)
+      .reduce((a1, a2) => Decimal.add(a1!, a2!), new Decimal(0));
+
+    t.amount = new Decimal(-sum!);
   }
 
   private createAccountsFromTransactions(): Observable<Account[]> {
@@ -172,18 +177,8 @@ export class AppStateService {
       const flatAccounts = new Map();
 
       Array.from(this._transactions.values()).forEach(tr => {
-          const transactionDate = this.getTransactionDate(tr);
-
-          /*
-          this._minDate =  this._minDate ? moment.min( this._minDate, transactionDate) : transactionDate;
-          this._maxDate =  this._maxDate ? moment.max( this._maxDate, transactionDate) : transactionDate;
-          */
-
+        this.addMissingAmount(tr);
           tr.postings.forEach(ps => {
-              if (ps.currency) {
-                  // this._currencies.add(ps.currency);
-              }
-
               const accountParts = ps.account.split(':');
               let lastParent: Account | undefined;
               let currentAccountName = '';
@@ -205,14 +200,14 @@ export class AppStateService {
       obs.next(this.topAccounts(flatAccounts));
       obs.complete();
     });
-}
+  }
 
-  private getOrCreateAccount(name: string, accounts: Map<string, Account>): Account {
-    let stat = accounts.get(name);
+  private getOrCreateAccount(name: string, accountsMap: Map<string, Account>): Account {
+    let stat = accountsMap.get(name);
 
     if (!stat) {
         stat = new Account(name);
-        accounts.set(name, stat);
+        accountsMap.set(name, stat);
     }
 
     return stat;

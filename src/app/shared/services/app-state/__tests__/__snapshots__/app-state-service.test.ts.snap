@@ -1,0 +1,395 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppStateService allAccountsFlattenedHotObservable returns nothing at startup 1`] = `Array []`;
+
+exports[`AppStateService allTransactionsColdObservable returns nothing at startup 1`] = `Array []`;
+
+exports[`AppStateService allTransactionsColdObservable returns transactions 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2013-02-08T00:00:00.000Z",
+      "title": "Bakery",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "-3.05",
+        "comment": "Comment",
+        "currency": "$",
+        "tag": "!",
+      },
+      Object {
+        "account": "Expenses:Grocery:Bread",
+        "amount": "3.05",
+      },
+    ],
+    "uuid": "uuid 0",
+  },
+  Object {
+    "header": Object {
+      "date": "2013-02-10T00:00:00.000Z",
+      "title": "Dentist",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "50",
+        "currency": "€",
+      },
+      Object {
+        "account": "Incomes:Salary",
+        "amount": "-50",
+      },
+    ],
+    "uuid": "uuid 1",
+  },
+]
+`;
+
+exports[`AppStateService editedTransactionHotObservable returns edited transaction 1`] = `
+Object {
+  "header": Object {
+    "date": "2013-02-08T00:00:00.000Z",
+    "title": "Bakery",
+  },
+  "postings": Array [
+    Object {
+      "account": "Bank:Current account",
+      "amount": "-3.05",
+      "comment": "Comment",
+      "currency": "$",
+      "tag": "!",
+    },
+    Object {
+      "account": "Expenses:Grocery:Bread",
+      "amount": "3.05",
+    },
+  ],
+  "uuid": "uuid 10",
+}
+`;
+
+exports[`AppStateService rootAccountHotObservable returns account 1`] = `
+Account {
+  "balance": "0",
+  "children": Set {
+    Account {
+      "balance": "0",
+      "children": Set {
+        Account {
+          "balance": "46.95",
+          "children": Set {},
+          "childrenBalance": "0",
+          "childrenCredits": "0",
+          "childrenDebits": "0",
+          "credits": "50",
+          "debits": "-3.05",
+          "name": "Bank:Current account",
+          "nbChildrenTransactions": 0,
+          "nbTransactions": 2,
+        },
+      },
+      "childrenBalance": "46.95",
+      "childrenCredits": "50",
+      "childrenDebits": "-3.05",
+      "credits": "0",
+      "debits": "0",
+      "name": "Bank",
+      "nbChildrenTransactions": 2,
+      "nbTransactions": 0,
+    },
+    Account {
+      "balance": "0",
+      "children": Set {
+        Account {
+          "balance": "0",
+          "children": Set {
+            Account {
+              "balance": "3.05",
+              "children": Set {},
+              "childrenBalance": "0",
+              "childrenCredits": "0",
+              "childrenDebits": "0",
+              "credits": "3.05",
+              "debits": "0",
+              "name": "Expenses:Grocery:Bread",
+              "nbChildrenTransactions": 0,
+              "nbTransactions": 1,
+            },
+          },
+          "childrenBalance": "3.05",
+          "childrenCredits": "3.05",
+          "childrenDebits": "0",
+          "credits": "0",
+          "debits": "0",
+          "name": "Expenses:Grocery",
+          "nbChildrenTransactions": 1,
+          "nbTransactions": 0,
+        },
+      },
+      "childrenBalance": "3.05",
+      "childrenCredits": "3.05",
+      "childrenDebits": "0",
+      "credits": "0",
+      "debits": "0",
+      "name": "Expenses",
+      "nbChildrenTransactions": 1,
+      "nbTransactions": 0,
+    },
+    Account {
+      "balance": "0",
+      "children": Set {
+        Account {
+          "balance": "-50",
+          "children": Set {},
+          "childrenBalance": "0",
+          "childrenCredits": "0",
+          "childrenDebits": "0",
+          "credits": "0",
+          "debits": "-50",
+          "name": "Incomes:Salary",
+          "nbChildrenTransactions": 0,
+          "nbTransactions": 1,
+        },
+      },
+      "childrenBalance": "-50",
+      "childrenCredits": "0",
+      "childrenDebits": "-50",
+      "credits": "0",
+      "debits": "0",
+      "name": "Incomes",
+      "nbChildrenTransactions": 1,
+      "nbTransactions": 0,
+    },
+  },
+  "childrenBalance": "0",
+  "childrenCredits": "0",
+  "childrenDebits": "0",
+  "credits": "0",
+  "debits": "0",
+  "name": "ROOT",
+  "nbChildrenTransactions": 0,
+  "nbTransactions": 0,
+}
+`;
+
+exports[`AppStateService rootAccountHotObservable returns nothing at startup 1`] = `undefined`;
+
+exports[`AppStateService selectAccountsColdObservable selects accounts 1`] = `
+Set {
+  Account {
+    "balance": "0",
+    "children": Set {},
+    "childrenBalance": "0",
+    "childrenCredits": "0",
+    "childrenDebits": "0",
+    "credits": "0",
+    "debits": "0",
+    "name": "Account A",
+    "nbChildrenTransactions": 0,
+    "nbTransactions": 0,
+  },
+  Account {
+    "balance": "0",
+    "children": Set {},
+    "childrenBalance": "0",
+    "childrenCredits": "0",
+    "childrenDebits": "0",
+    "credits": "0",
+    "debits": "0",
+    "name": "Account B",
+    "nbChildrenTransactions": 0,
+    "nbTransactions": 0,
+  },
+}
+`;
+
+exports[`AppStateService selectAccountsColdObservable unselects accounts 1`] = `
+Set {
+  Account {
+    "balance": "0",
+    "children": Set {},
+    "childrenBalance": "0",
+    "childrenCredits": "0",
+    "childrenDebits": "0",
+    "credits": "0",
+    "debits": "0",
+    "name": "Account A",
+    "nbChildrenTransactions": 0,
+    "nbTransactions": 0,
+  },
+}
+`;
+
+exports[`AppStateService setTransactionsColdObservable appends transactions 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2013-02-08T00:00:00.000Z",
+      "title": "Bakery",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "-3.05",
+        "comment": "Comment",
+        "currency": "$",
+        "tag": "!",
+      },
+      Object {
+        "account": "Expenses:Grocery:Bread",
+        "amount": "3.05",
+      },
+    ],
+    "uuid": "uuid 6",
+  },
+  Object {
+    "header": Object {
+      "date": "2013-02-10T00:00:00.000Z",
+      "title": "Dentist",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "50",
+        "currency": "€",
+      },
+      Object {
+        "account": "Incomes:Salary",
+        "amount": "-50",
+      },
+    ],
+    "uuid": "uuid 7",
+  },
+]
+`;
+
+exports[`AppStateService setTransactionsColdObservable empties selected accounts 1`] = `Set {}`;
+
+exports[`AppStateService setTransactionsColdObservable replaces transactions 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2013-02-10T00:00:00.000Z",
+      "title": "Dentist",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "50",
+        "currency": "€",
+      },
+      Object {
+        "account": "Incomes:Salary",
+        "amount": "-50",
+      },
+    ],
+    "uuid": "uuid 5",
+  },
+]
+`;
+
+exports[`AppStateService setTransactionsColdObservable sets root account 1`] = `
+Account {
+  "balance": "0",
+  "children": Set {
+    Account {
+      "balance": "0",
+      "children": Set {
+        Account {
+          "balance": "46.95",
+          "children": Set {},
+          "childrenBalance": "0",
+          "childrenCredits": "0",
+          "childrenDebits": "0",
+          "credits": "50",
+          "debits": "-3.05",
+          "name": "Bank:Current account",
+          "nbChildrenTransactions": 0,
+          "nbTransactions": 2,
+        },
+      },
+      "childrenBalance": "46.95",
+      "childrenCredits": "50",
+      "childrenDebits": "-3.05",
+      "credits": "0",
+      "debits": "0",
+      "name": "Bank",
+      "nbChildrenTransactions": 2,
+      "nbTransactions": 0,
+    },
+    Account {
+      "balance": "0",
+      "children": Set {
+        Account {
+          "balance": "0",
+          "children": Set {
+            Account {
+              "balance": "3.05",
+              "children": Set {},
+              "childrenBalance": "0",
+              "childrenCredits": "0",
+              "childrenDebits": "0",
+              "credits": "3.05",
+              "debits": "0",
+              "name": "Expenses:Grocery:Bread",
+              "nbChildrenTransactions": 0,
+              "nbTransactions": 1,
+            },
+          },
+          "childrenBalance": "3.05",
+          "childrenCredits": "3.05",
+          "childrenDebits": "0",
+          "credits": "0",
+          "debits": "0",
+          "name": "Expenses:Grocery",
+          "nbChildrenTransactions": 1,
+          "nbTransactions": 0,
+        },
+      },
+      "childrenBalance": "3.05",
+      "childrenCredits": "3.05",
+      "childrenDebits": "0",
+      "credits": "0",
+      "debits": "0",
+      "name": "Expenses",
+      "nbChildrenTransactions": 1,
+      "nbTransactions": 0,
+    },
+    Account {
+      "balance": "0",
+      "children": Set {
+        Account {
+          "balance": "-50",
+          "children": Set {},
+          "childrenBalance": "0",
+          "childrenCredits": "0",
+          "childrenDebits": "0",
+          "credits": "0",
+          "debits": "-50",
+          "name": "Incomes:Salary",
+          "nbChildrenTransactions": 0,
+          "nbTransactions": 1,
+        },
+      },
+      "childrenBalance": "-50",
+      "childrenCredits": "0",
+      "childrenDebits": "-50",
+      "credits": "0",
+      "debits": "0",
+      "name": "Incomes",
+      "nbChildrenTransactions": 1,
+      "nbTransactions": 0,
+    },
+  },
+  "childrenBalance": "0",
+  "childrenCredits": "0",
+  "childrenDebits": "0",
+  "credits": "0",
+  "debits": "0",
+  "name": "ROOT",
+  "nbChildrenTransactions": 0,
+  "nbTransactions": 0,
+}
+`;
