@@ -207,4 +207,97 @@ describe(AppStateService.name, () => {
       return expect(allAccounts).toMatchSnapshot();
     });
   });
+
+  describe('selectedTransactionsHotObservable', () => {
+    it('returns nothing at startup', async () => {
+      const service = new AppStateService();
+
+      const selectedTransactions = await service
+        .selectedTransactionsHotObservable()
+        .take(1)
+        .toPromise();
+
+      return expect(selectedTransactions).toMatchSnapshot();
+    });
+
+    it('returns all transactions when root account is selected', async () => {
+      const service = new AppStateService();
+
+      await service.setTransactionsColdObservable(transactions, false).toPromise();
+      const rootAccount = await service.rootAccountHotObservable()
+        .take(1)
+        .toPromise();
+
+      await service.selectAccountsColdObservable(true, [rootAccount!])
+        .toPromise();
+      const selectedTransactions = await service
+        .selectedTransactionsHotObservable()
+        .take(1)
+        .toPromise();
+
+      return expect(selectedTransactions).toMatchSnapshot();
+    });
+
+    it('returns transaction when account is selected', async () => {
+      const service = new AppStateService();
+
+      await service.setTransactionsColdObservable(transactions, false).toPromise();
+      const allAccounts = await service.allAccountsFlattenedHotObservable()
+        .take(1)
+        .toPromise();
+
+      const account = allAccounts.find(a => a.name === 'Incomes:Salary');
+      await service.selectAccountsColdObservable(true, [account!])
+        .toPromise();
+      const selectedTransactions = await service
+        .selectedTransactionsHotObservable()
+        .take(1)
+        .toPromise();
+
+      return expect(selectedTransactions).toMatchSnapshot();
+    });
+
+    it('automatically selects new transaction from selected account', async () => {
+      const service = new AppStateService();
+
+      await service.setTransactionsColdObservable([transactions[0]], false).toPromise();
+      const allAccounts = await service.allAccountsFlattenedHotObservable()
+        .take(1)
+        .toPromise();
+
+      const account = allAccounts.find(a => a.name === 'Bank:Current account');
+      await service.selectAccountsColdObservable(true, [account!])
+        .toPromise();
+
+      await service.setTransactionsColdObservable([transactions[1]], true).toPromise();
+      const selectedTransactions = await service
+        .selectedTransactionsHotObservable()
+        .take(1)
+        .toPromise();
+
+      return expect(selectedTransactions).toMatchSnapshot();
+    });
+
+    it('does not select new transaction from unselected account', async () => {
+      const service = new AppStateService();
+
+      await service.setTransactionsColdObservable([transactions[0]], false).toPromise();
+      const allAccounts = await service.allAccountsFlattenedHotObservable()
+        .take(1)
+        .toPromise();
+
+      const account = allAccounts.find(a => a.name === 'Expenses:Grocery:Bread');
+      await service.selectAccountsColdObservable(true, [account!])
+        .toPromise();
+
+      await service.setTransactionsColdObservable([transactions[1]], true).toPromise();
+      const selectedTransactions = await service
+        .selectedTransactionsHotObservable()
+        .take(1)
+        .toPromise();
+
+      return expect(selectedTransactions).toMatchSnapshot();
+    });
+  });
+
 });

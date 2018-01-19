@@ -29,17 +29,17 @@ Array [
   Object {
     "header": Object {
       "date": "2013-02-10T00:00:00.000Z",
-      "title": "Dentist",
+      "title": "Salary",
     },
     "postings": Array [
       Object {
         "account": "Bank:Current account",
-        "amount": "50",
+        "amount": "500",
         "currency": "€",
       },
       Object {
         "account": "Incomes:Salary",
-        "amount": "-50",
+        "amount": "-500",
       },
     ],
     "uuid": "uuid 1",
@@ -78,20 +78,20 @@ Account {
       "balance": "0",
       "children": Set {
         Account {
-          "balance": "46.95",
+          "balance": "496.95",
           "children": Set {},
           "childrenBalance": "0",
           "childrenCredits": "0",
           "childrenDebits": "0",
-          "credits": "50",
+          "credits": "500",
           "debits": "-3.05",
           "name": "Bank:Current account",
           "nbChildrenTransactions": 0,
           "nbTransactions": 2,
         },
       },
-      "childrenBalance": "46.95",
-      "childrenCredits": "50",
+      "childrenBalance": "496.95",
+      "childrenCredits": "500",
       "childrenDebits": "-3.05",
       "credits": "0",
       "debits": "0",
@@ -141,21 +141,21 @@ Account {
       "balance": "0",
       "children": Set {
         Account {
-          "balance": "-50",
+          "balance": "-500",
           "children": Set {},
           "childrenBalance": "0",
           "childrenCredits": "0",
           "childrenDebits": "0",
           "credits": "0",
-          "debits": "-50",
+          "debits": "-500",
           "name": "Incomes:Salary",
           "nbChildrenTransactions": 0,
           "nbTransactions": 1,
         },
       },
-      "childrenBalance": "-50",
+      "childrenBalance": "-500",
       "childrenCredits": "0",
-      "childrenDebits": "-50",
+      "childrenDebits": "-500",
       "credits": "0",
       "debits": "0",
       "name": "Incomes",
@@ -222,6 +222,142 @@ Set {
 }
 `;
 
+exports[`AppStateService selectedTransactionsHotObservable automatically selects new transaction from selected account 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2013-02-08T00:00:00.000Z",
+      "title": "Bakery",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "-3.05",
+        "comment": "Comment",
+        "currency": "$",
+        "tag": "!",
+      },
+      Object {
+        "account": "Expenses:Grocery:Bread",
+        "amount": "3.05",
+      },
+    ],
+    "uuid": "uuid 16",
+  },
+  Object {
+    "header": Object {
+      "date": "2013-02-10T00:00:00.000Z",
+      "title": "Salary",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "500",
+        "currency": "€",
+      },
+      Object {
+        "account": "Incomes:Salary",
+        "amount": "-500",
+      },
+    ],
+    "uuid": "uuid 17",
+  },
+]
+`;
+
+exports[`AppStateService selectedTransactionsHotObservable does not select new transaction from unselected account 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2013-02-08T00:00:00.000Z",
+      "title": "Bakery",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "-3.05",
+        "comment": "Comment",
+        "currency": "$",
+        "tag": "!",
+      },
+      Object {
+        "account": "Expenses:Grocery:Bread",
+        "amount": "3.05",
+      },
+    ],
+    "uuid": "uuid 18",
+  },
+]
+`;
+
+exports[`AppStateService selectedTransactionsHotObservable returns all transactions when root account is selected 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2013-02-08T00:00:00.000Z",
+      "title": "Bakery",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "-3.05",
+        "comment": "Comment",
+        "currency": "$",
+        "tag": "!",
+      },
+      Object {
+        "account": "Expenses:Grocery:Bread",
+        "amount": "3.05",
+      },
+    ],
+    "uuid": "uuid 12",
+  },
+  Object {
+    "header": Object {
+      "date": "2013-02-10T00:00:00.000Z",
+      "title": "Salary",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "500",
+        "currency": "€",
+      },
+      Object {
+        "account": "Incomes:Salary",
+        "amount": "-500",
+      },
+    ],
+    "uuid": "uuid 13",
+  },
+]
+`;
+
+exports[`AppStateService selectedTransactionsHotObservable returns nothing at startup 1`] = `Array []`;
+
+exports[`AppStateService selectedTransactionsHotObservable returns transaction when account is selected 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2013-02-10T00:00:00.000Z",
+      "title": "Salary",
+    },
+    "postings": Array [
+      Object {
+        "account": "Bank:Current account",
+        "amount": "500",
+        "currency": "€",
+      },
+      Object {
+        "account": "Incomes:Salary",
+        "amount": "-500",
+      },
+    ],
+    "uuid": "uuid 15",
+  },
+]
+`;
+
 exports[`AppStateService setTransactionsColdObservable appends transactions 1`] = `
 Array [
   Object {
@@ -247,17 +383,17 @@ Array [
   Object {
     "header": Object {
       "date": "2013-02-10T00:00:00.000Z",
-      "title": "Dentist",
+      "title": "Salary",
     },
     "postings": Array [
       Object {
         "account": "Bank:Current account",
-        "amount": "50",
+        "amount": "500",
         "currency": "€",
       },
       Object {
         "account": "Incomes:Salary",
-        "amount": "-50",
+        "amount": "-500",
       },
     ],
     "uuid": "uuid 7",
@@ -272,17 +408,17 @@ Array [
   Object {
     "header": Object {
       "date": "2013-02-10T00:00:00.000Z",
-      "title": "Dentist",
+      "title": "Salary",
     },
     "postings": Array [
       Object {
         "account": "Bank:Current account",
-        "amount": "50",
+        "amount": "500",
         "currency": "€",
       },
       Object {
         "account": "Incomes:Salary",
-        "amount": "-50",
+        "amount": "-500",
       },
     ],
     "uuid": "uuid 5",
@@ -298,20 +434,20 @@ Account {
       "balance": "0",
       "children": Set {
         Account {
-          "balance": "46.95",
+          "balance": "496.95",
           "children": Set {},
           "childrenBalance": "0",
           "childrenCredits": "0",
           "childrenDebits": "0",
-          "credits": "50",
+          "credits": "500",
           "debits": "-3.05",
           "name": "Bank:Current account",
           "nbChildrenTransactions": 0,
           "nbTransactions": 2,
         },
       },
-      "childrenBalance": "46.95",
-      "childrenCredits": "50",
+      "childrenBalance": "496.95",
+      "childrenCredits": "500",
       "childrenDebits": "-3.05",
       "credits": "0",
       "debits": "0",
@@ -361,21 +497,21 @@ Account {
       "balance": "0",
       "children": Set {
         Account {
-          "balance": "-50",
+          "balance": "-500",
           "children": Set {},
           "childrenBalance": "0",
           "childrenCredits": "0",
           "childrenDebits": "0",
           "credits": "0",
-          "debits": "-50",
+          "debits": "-500",
           "name": "Incomes:Salary",
           "nbChildrenTransactions": 0,
           "nbTransactions": 1,
         },
       },
-      "childrenBalance": "-50",
+      "childrenBalance": "-500",
       "childrenCredits": "0",
-      "childrenDebits": "-50",
+      "childrenDebits": "-500",
       "credits": "0",
       "debits": "0",
       "name": "Incomes",

@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import Decimal from 'decimal.js';
 import { Transaction } from '../../../models/transaction';
-import {Account} from '../../../models/account';
+import { Account } from '../../../models/account';
 
 export const transactions: [Transaction] = [
   {
@@ -25,12 +25,12 @@ export const transactions: [Transaction] = [
   {
     header: {
       date: moment.utc('2013-02-10'),
-      title: 'Dentist',
+      title: 'Salary',
     },
     postings: [
       {
         account: 'Bank:Current account',
-        amount: new Decimal(50),
+        amount: new Decimal(500),
         currency: '€',
       },
       {

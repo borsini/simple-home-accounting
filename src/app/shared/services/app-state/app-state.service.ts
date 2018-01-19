@@ -13,6 +13,8 @@ import { Transaction } from '../../models/transaction';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/concat';
 
+const ROOT_ACCOUNT = 'ROOT';
+
 @Injectable()
 export class AppStateService {
 
@@ -33,13 +35,17 @@ export class AppStateService {
 
   selectedTransactionsHotObservable(): Observable<Transaction[]> {
 
-    const modif = this._transactionsChangedSubject.flatMap( change => this._selectedAccountsSubject );
+    const modif = this._transactionsChangedSubject.flatMap( () => {
+      console.log("EUUUUUH");
+      return this._selectedAccountsSubject;
+    } );
     const selectedAccounts = this._selectedAccountsSubject;
 
     return Observable.merge(selectedAccounts, modif)
     .map( accounts => {
         const accountsNames = Array.from(accounts).map(a => a.name);
-        return this.getTransactionsUsingAccounts(accountsNames);
+        const t =  this.getTransactionsUsingAccounts(accountsNames);
+        return t;
       });
   }
 
@@ -96,9 +102,22 @@ export class AppStateService {
         tr.uuid = uuid();
         this._transactions.set(tr.uuid, tr);
       });
-      this._selectedAccounts = new Set();
+
+      const newTransactions = Array.from(this._transactions.values());
+
+      const allAccountNames = newTransactions
+        .map( t => t.postings )
+        .reduce((p1, p2) => [...p1, ...p2], [])
+        .map( p => p.account);
+
+      const newSelectedAccounts = Array.from(this._selectedAccounts.values())
+        .filter( a => allAccountNames.find( n => n === a.name));
+
+      this._selectedAccounts = new Set(newSelectedAccounts);
+
+
       this._selectedAccountsSubject.next(this._selectedAccounts);
-      this._transactionsChangedSubject.next(Array.from(this._transactions.values()));
+      this._transactionsChangedSubject.next(newTransactions);
 
       obs.complete();
     });
@@ -136,7 +155,14 @@ export class AppStateService {
   /****** Private ******/
 
   private getTransactionsUsingAccounts(accountsNames: string[]) {
-    return Array.from(this._transactions.values()).filter(tr => {
+    const allTransactions = Array.from(this._transactions.values());
+
+    if (accountsNames.find(n => n === ROOT_ACCOUNT)) {
+      return allTransactions;
+    }
+
+    return allTransactions
+      .filter(tr => {
       return tr.postings.some( p => accountsNames.indexOf(p.account) !== -1 );
     });
   }
@@ -150,7 +176,7 @@ export class AppStateService {
   private generateAccounts(): Observable<any> {
     return this.createAccountsFromTransactions()
       .do( accounts => {
-        const root = new Account('ROOT');
+        const root = new Account(ROOT_ACCOUNT);
         root.children = new Set(accounts);
         this._rootAccount = root;
         this._rootAccountSubject.next(this._rootAccount);
@@ -232,10 +258,6 @@ export class AppStateService {
             a.debits = a.debits.plus(amount);
         }
     }
-  }
-
-  private getTransactionDate(tr: Transaction): moment.Moment {
-    return moment(tr.header.date, 'YYYY/MM/DD');
   }
 
   private topAccounts(accounts: Map<string, Account>): Account[] {
