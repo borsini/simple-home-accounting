@@ -36,7 +36,7 @@ export class AppStateService {
   selectedTransactionsHotObservable(): Observable<Transaction[]> {
 
     const modif = this._transactionsChangedSubject.flatMap( () => {
-      console.log("EUUUUUH");
+      console.log('EUUUUUH');
       return this._selectedAccountsSubject;
     } );
     const selectedAccounts = this._selectedAccountsSubject;

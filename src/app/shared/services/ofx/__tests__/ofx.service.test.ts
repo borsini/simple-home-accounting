@@ -1,5 +1,5 @@
 import { inject, TestBed } from '@angular/core/testing';
-import {emptyFile, oneTransactionFile, simpleFile} from './fixtures';
+import { emptyFile, oneTransactionFile, simpleFile } from './fixtures';
 import { OfxService } from '../ofx.service';
 import 'rxjs/add/operator/toPromise';
 

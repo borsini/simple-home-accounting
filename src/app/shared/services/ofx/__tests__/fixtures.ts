@@ -61,7 +61,7 @@ export const oneTransactionFile = `
             <MEMO>PAIEMENT PAR CARTE
         </STMTTRN>
     </BANKTRANLIST>
-    
+
 <LEDGERBAL>
     <BALAMT>-18.90
     <DTASOF>20170824

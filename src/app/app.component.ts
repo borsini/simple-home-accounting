@@ -12,7 +12,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Transaction } from './shared/models/transaction';
 
-const { version } = require('../../package.json')
+const { version } = require('../../package.json');
 
 @Component({
   selector: 'app-dialog-result-example-dialog',

@@ -17,7 +17,7 @@ import { AppStateService } from './shared/services/app-state/app-state.service';
 import { EditTransactionComponent } from './components/edit-transaction/edit-transaction.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
-import {MAT_MOMENT_DATE_FORMATS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
 @NgModule({
   bootstrap: [AppComponent],
