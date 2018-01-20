@@ -1,8 +1,23 @@
 {
+  "extends": [
+    "tslint-immutable"
+  ],
   "rulesDirectory": [
     "node_modules/codelyzer"
   ],
   "rules": {
+    // Recommended built-in rules
+    //"no-parameter-reassignment": true,
+    //"typedef": [true, "call-signature"],
+
+    // Immutability rules
+    //"readonly-keyword": true,
+    //"readonly-array": true,
+    //"no-let": true,
+    //"no-object-mutation": true,
+    //"no-delete": true,
+    //"no-method-signature": true,
+
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
@@ -105,7 +120,6 @@
         "variable-declaration": "nospace"
       }
     ],
-    "typeof-compare": true,
     "unified-signatures": true,
     "variable-name": false,
     "whitespace": [
@@ -115,10 +129,8 @@
       "check-operator",
       "check-module",
       "check-separator",
-      "check-rest-spread",
       "check-type",
       "check-typecast",
-      "check-type-operator",
       "check-preblock"
     ],
     "directive-selector": [
@@ -141,9 +153,6 @@
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
-    "directive-class-suffix": true,
-    "no-access-missing-member": true,
-    "templates-use-public": true,
-    "invoke-injectable": true
+    "directive-class-suffix": true
   }
 }
