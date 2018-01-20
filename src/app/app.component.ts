@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
 
     this.readAndParseTransactionsFromFile(files.item(0))
     .zip(this.userWantsToAppendTransactions())
-    .flatMap(zip => this._state.setTransactionsColdObservable(zip[0], zip[1]))
+    .flatMap(zip => this._state.addTransactionsColdObservable(zip[0], zip[1]))
     .subscribe(
       transactions => {},
       e => {

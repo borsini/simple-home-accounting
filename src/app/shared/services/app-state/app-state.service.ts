@@ -93,7 +93,7 @@ export class AppStateService {
     return Observable.of(Array.from(this._transactions.values()));
   }
 
-  setTransactionsColdObservable(transactions: Transaction[], append: boolean): Observable<any> {
+  addTransactionsColdObservable(transactions: Transaction[], append: boolean): Observable<any> {
     const o = Observable.create( obs => {
       if (!append) {
         this._transactions.clear();

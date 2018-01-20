@@ -35,7 +35,7 @@ describe(AppStateService.name, () => {
 
     it('returns transactions', async () => {
       const service = new AppStateService();
-      await service.setTransactionsColdObservable(transactions, false).toPromise();
+      await service.addTransactionsColdObservable(transactions, false).toPromise();
 
       const allTransactions = await service.allTransactionsColdObservable().toPromise();
 
@@ -57,7 +57,7 @@ describe(AppStateService.name, () => {
 
     it('returns account', async () => {
       const service = new AppStateService();
-      await service.setTransactionsColdObservable(transactions, false).toPromise();
+      await service.addTransactionsColdObservable(transactions, false).toPromise();
 
       const account = await service
         .rootAccountHotObservable()
@@ -122,11 +122,11 @@ describe(AppStateService.name, () => {
     });
   });
 
-  describe('setTransactionsColdObservable', () => {
+  describe('addTransactionsColdObservable', () => {
     it('replaces transactions', async () => {
       const service = new AppStateService();
-      await service.setTransactionsColdObservable([transactions[0]], true).toPromise();
-      await service.setTransactionsColdObservable([transactions[1]], false).toPromise();
+      await service.addTransactionsColdObservable([transactions[0]], true).toPromise();
+      await service.addTransactionsColdObservable([transactions[1]], false).toPromise();
 
       const allTransactions = await service.allTransactionsColdObservable().toPromise();
 
@@ -135,8 +135,8 @@ describe(AppStateService.name, () => {
 
     it('appends transactions', async () => {
       const service = new AppStateService();
-      await service.setTransactionsColdObservable([transactions[0]], true).toPromise();
-      await service.setTransactionsColdObservable([transactions[1]], true).toPromise();
+      await service.addTransactionsColdObservable([transactions[0]], true).toPromise();
+      await service.addTransactionsColdObservable([transactions[1]], true).toPromise();
 
       const allTransactions = await service.allTransactionsColdObservable().toPromise();
 
@@ -147,7 +147,7 @@ describe(AppStateService.name, () => {
       const service = new AppStateService();
 
       await service.selectAccountsColdObservable(true, accounts).toPromise();
-      await service.setTransactionsColdObservable(transactions, true).toPromise();
+      await service.addTransactionsColdObservable(transactions, true).toPromise();
 
       const selectedAccounts = await service
         .selectedAccountsHotObservable()
@@ -159,7 +159,7 @@ describe(AppStateService.name, () => {
 
     it('sets root account', async () => {
       const service = new AppStateService();
-      await service.setTransactionsColdObservable(transactions, true).toPromise();
+      await service.addTransactionsColdObservable(transactions, true).toPromise();
 
       const account = await service
         .rootAccountHotObservable()
@@ -223,7 +223,7 @@ describe(AppStateService.name, () => {
     it('returns all transactions when root account is selected', async () => {
       const service = new AppStateService();
 
-      await service.setTransactionsColdObservable(transactions, false).toPromise();
+      await service.addTransactionsColdObservable(transactions, false).toPromise();
       const rootAccount = await service.rootAccountHotObservable()
         .take(1)
         .toPromise();
@@ -241,7 +241,7 @@ describe(AppStateService.name, () => {
     it('returns transaction when account is selected', async () => {
       const service = new AppStateService();
 
-      await service.setTransactionsColdObservable(transactions, false).toPromise();
+      await service.addTransactionsColdObservable(transactions, false).toPromise();
       const allAccounts = await service.allAccountsFlattenedHotObservable()
         .take(1)
         .toPromise();
@@ -260,7 +260,7 @@ describe(AppStateService.name, () => {
     it('automatically selects new transaction from selected account', async () => {
       const service = new AppStateService();
 
-      await service.setTransactionsColdObservable([transactions[0]], false).toPromise();
+      await service.addTransactionsColdObservable([transactions[0]], false).toPromise();
       const allAccounts = await service.allAccountsFlattenedHotObservable()
         .take(1)
         .toPromise();
@@ -269,7 +269,7 @@ describe(AppStateService.name, () => {
       await service.selectAccountsColdObservable(true, [account!])
         .toPromise();
 
-      await service.setTransactionsColdObservable([transactions[1]], true).toPromise();
+      await service.addTransactionsColdObservable([transactions[1]], true).toPromise();
       const selectedTransactions = await service
         .selectedTransactionsHotObservable()
         .take(1)
@@ -281,7 +281,7 @@ describe(AppStateService.name, () => {
     it('does not select new transaction from unselected account', async () => {
       const service = new AppStateService();
 
-      await service.setTransactionsColdObservable([transactions[0]], false).toPromise();
+      await service.addTransactionsColdObservable([transactions[0]], false).toPromise();
       const allAccounts = await service.allAccountsFlattenedHotObservable()
         .take(1)
         .toPromise();
@@ -290,7 +290,7 @@ describe(AppStateService.name, () => {
       await service.selectAccountsColdObservable(true, [account!])
         .toPromise();
 
-      await service.setTransactionsColdObservable([transactions[1]], true).toPromise();
+      await service.addTransactionsColdObservable([transactions[1]], true).toPromise();
       const selectedTransactions = await service
         .selectedTransactionsHotObservable()
         .take(1)
