@@ -184,7 +184,9 @@ describe(AppStateService.name, () => {
 
     it('returns edited transaction', async () => {
       const service = new AppStateService();
-      await service.setEditedTransactionColdObservable(transactions[0]).toPromise();
+      await service.addTransactionsColdObservable(transactions).toPromise();
+      const allTransactions = await service.allTransactionsColdObservable().toPromise();
+      await service.setEditedTransactionColdObservable(allTransactions[0]).toPromise();
 
       const editedTransaction = await service
         .editedTransactionHotObservable()

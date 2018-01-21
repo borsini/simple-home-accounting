@@ -2,13 +2,16 @@ import { Posting } from './posting';
 import * as moment from 'moment';
 
 export interface Transaction {
-  uuid?: string;
-  header: Header;
-  postings: Array<Posting>;
+  readonly header: Header;
+  readonly postings: Array<Posting>;
 }
 
 interface Header {
-  date: moment.Moment;
-  title: string;
-  tag?: string;
+  readonly date: moment.Moment;
+  readonly title: string;
+  readonly tag?: string;
+}
+
+export interface TransactionWithUUID extends Transaction {
+  readonly uuid: string;
 }

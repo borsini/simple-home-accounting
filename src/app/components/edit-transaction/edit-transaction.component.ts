@@ -9,7 +9,7 @@ import Decimal from 'decimal.js';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { AppStateService } from '../../shared/services/app-state/app-state.service';
-import { Transaction } from '../../shared/models/transaction';
+import { Transaction, TransactionWithUUID } from '../../shared/models/transaction';
 
 import * as moment from 'moment';
 import 'rxjs/add/observable/concat';
@@ -27,7 +27,7 @@ export class EditTransactionComponent implements OnInit {
 
   @ViewChild(MatDatepicker) myDatepicker: MatDatepicker<Date>;
 
-  private transaction: Transaction | undefined;
+  private transactionToEdit: TransactionWithUUID | undefined;
 
   isEditing: boolean;
   group: FormGroup;
@@ -38,8 +38,8 @@ export class EditTransactionComponent implements OnInit {
 
   ngOnInit() {
     this._state.editedTransactionHotObservable().subscribe( tr => {
-      this.transaction = tr;
-      this.isEditing = this.transaction !== undefined;
+      this.transactionToEdit = tr;
+      this.isEditing = this.transactionToEdit !== undefined;
       this.init();
     });
   }
@@ -71,13 +71,13 @@ export class EditTransactionComponent implements OnInit {
         title: ['', [Validators.required]],
       });
 
-      const postingsControl = this.transaction ? this.transaction.postings.map(p => this.createPostingGroup()) : [];
+      const postingsControl = this.transactionToEdit ? this.transactionToEdit.postings.map(p => this.createPostingGroup()) : [];
       this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator()));
 
       // Initialize values
-      const title = this.transaction ? this.transaction.header.title : '';
-      const date = this.transaction ? this.transaction.header.date : moment();
-      const postings = this.transaction ? this.transaction.postings.map( p => {
+      const title = this.transactionToEdit ? this.transactionToEdit.header.title : '';
+      const date = this.transactionToEdit ? this.transactionToEdit.header.date : moment();
+      const postings = this.transactionToEdit ? this.transactionToEdit.postings.map( p => {
         return {
           account: p.account,
           amount: p.amount ? p.amount.toString() : null,
@@ -115,7 +115,18 @@ export class EditTransactionComponent implements OnInit {
 
   onSubmit() {
     const tr = this.prepareTransaction();
-    this._state.createOrUpdateTransactionColdObservable(tr).subscribe();
+
+    if (this.transactionToEdit) {
+      const modifiedTransaction = {
+        ...tr,
+        uuid: this.transactionToEdit.uuid,
+      };
+      console.log('update');
+      this._state.addOrUpdateTransactionsColdObservable([modifiedTransaction]).subscribe();
+    } else {
+      this._state.addTransactionsColdObservable([tr]).subscribe();
+    }
+
     this.closePanel();
   }
 
@@ -141,7 +152,6 @@ export class EditTransactionComponent implements OnInit {
           tag: '',
         } as Posting;
       }),
-      uuid: this.transaction ? this.transaction.uuid : undefined,
     };
   }
 
@@ -180,7 +190,9 @@ export class EditTransactionComponent implements OnInit {
   }
 
   deleteTransaction() {
-    this._state.deleteTransactionColdObservable(this.transaction).subscribe();
+    if (this.transactionToEdit) {
+      this._state.deleteTransactionColdObservable(this.transactionToEdit).subscribe();
+    }
   }
 
   closePanel() {

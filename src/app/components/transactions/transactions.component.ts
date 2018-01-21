@@ -9,7 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { AppStateService } from '../../shared/services/app-state/app-state.service';
-import { Transaction } from '../../shared/models/transaction';
+import {Transaction, TransactionWithUUID} from '../../shared/models/transaction';
 import { Posting } from '../../shared/models/posting';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
@@ -34,7 +34,7 @@ export class PostingRow {
 
 export class TransactionRow {
 
-    constructor(public transaction: Transaction, private _selectedTransaction: Observable<Transaction | undefined>) {}
+    constructor(public transaction: TransactionWithUUID, private _selectedTransaction: Observable<TransactionWithUUID | undefined>) {}
 
     get title() {
       return this.transaction.header.title;
@@ -98,12 +98,12 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
     disconnect() {}
 
-    paginateData(data: Transaction[]): Transaction[] {
+    paginateData(data: TransactionWithUUID[]): TransactionWithUUID[] {
       const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
       return data.splice(startIndex, this._paginator.pageSize);
     }
 
-    sortData(data: Transaction[]): Transaction[] {
+    sortData(data: TransactionWithUUID[]): TransactionWithUUID[] {
       if (!this._sort.active || this._sort.direction === '') { return data; }
 
       return data.sort((a, b) => {
@@ -122,7 +122,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       });
     }
 
-    filterData(query: string, data: Transaction[]): Transaction[] {
+    filterData(query: string, data: TransactionWithUUID[]): TransactionWithUUID[] {
       if (query !== undefined && query !== '' ) {
         return data.filter( tr => {
           const words = query.split(' ').filter(s => s !== '').map( s => s.toLowerCase());

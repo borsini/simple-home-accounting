@@ -59,7 +59,6 @@ export class OfxService {
           const m = tr.MEMO['#text'];
 
           const t: Transaction = {
-              uuid: undefined,
               header: {
                   tag: '',
                   date: d,

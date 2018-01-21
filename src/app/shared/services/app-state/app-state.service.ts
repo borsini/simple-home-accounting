@@ -9,9 +9,10 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import {v4 as uuid } from 'uuid';
 import { Account } from '../../models/account';
-import { Transaction } from '../../models/transaction';
+import { Transaction, TransactionWithUUID } from '../../models/transaction';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/concat';
+import 'rxjs/add/observable/from';
 
 const ROOT_ACCOUNT = 'ROOT';
 
@@ -19,32 +20,33 @@ const ROOT_ACCOUNT = 'ROOT';
 export class AppStateService {
 
   private _selectedAccounts: Set<Account> = new Set();
-  private _rootAccount: Account;
-  private _editedTransaction?: Transaction;
-  private _transactions: Map<string, Transaction> = new Map();
+  private _rootAccount: Account = new Account(ROOT_ACCOUNT);
+  private _editedTransaction?: TransactionWithUUID;
+  private _transactions: Map<string, TransactionWithUUID> = new Map();
   private _selectedAccountsSubject: Subject<Set<Account>> = new BehaviorSubject (this._selectedAccounts);
   private _rootAccountSubject: Subject<Account | undefined> = new BehaviorSubject(undefined);
-  private _editedTransactionSubject: Subject<Transaction | undefined> = new BehaviorSubject(undefined);
-  private _transactionsChangedSubject: Subject<Transaction[]> = new Subject();
+  private _editedTransactionSubject: Subject<TransactionWithUUID | undefined> = new BehaviorSubject(undefined);
+  private _transactionsChangedSubject: Subject<TransactionWithUUID[]> = new Subject();
 
   /****** HOT OBSERVABLES ******/
 
   selectedAccountsHotObservable(): Observable<Set<Account>> {
-     return this._selectedAccountsSubject.asObservable();
+     return this._selectedAccountsSubject.asObservable().do( a => console.log("SIZE " + a.size));
   }
 
-  selectedTransactionsHotObservable(): Observable<Transaction[]> {
-
+  selectedTransactionsHotObservable(): Observable<TransactionWithUUID[]> {
     const modif = this._transactionsChangedSubject.flatMap( () => {
       console.log('EUUUUUH');
       return this._selectedAccountsSubject;
     } );
-    const selectedAccounts = this._selectedAccountsSubject;
+    const selectedAccounts = this._selectedAccountsSubject.do(t => console.log('uh'));
 
     return Observable.merge(selectedAccounts, modif)
     .map( accounts => {
+      console.log(accounts);
         const accountsNames = Array.from(accounts).map(a => a.name);
         const t =  this.getTransactionsUsingAccounts(accountsNames);
+        console.log(t);
         return t;
       });
   }
@@ -53,21 +55,21 @@ export class AppStateService {
     return this._rootAccountSubject.asObservable();
   }
 
-  editedTransactionHotObservable(): Observable<Transaction | undefined> {
+  editedTransactionHotObservable(): Observable<TransactionWithUUID | undefined> {
     return this._editedTransactionSubject.asObservable();
   }
 
   allAccountsFlattenedHotObservable(): Observable<Account[]> {
-    return this._rootAccountSubject.flatMap( root => Observable.of(root ? this.allChildAccounts(root) : []));
+    return this._rootAccountSubject.flatMap( root => Observable.of(root ? [root, ...this.allChildAccounts(root)] : []));
   }
 
-  transactionsChangedHotObservable(): Observable<Transaction[]> {
+  transactionsChangedHotObservable(): Observable<TransactionWithUUID[]> {
     return this._transactionsChangedSubject.asObservable();
   }
 
   /****** COLD OBSERVABLES ******/
 
-  setEditedTransactionColdObservable(transaction?: Transaction): Observable<any> {
+  setEditedTransactionColdObservable(transaction?: TransactionWithUUID): Observable<any> {
     return Observable.create( obs => {
       this._editedTransaction = transaction;
       this._editedTransactionSubject.next(this._editedTransaction);
@@ -75,12 +77,28 @@ export class AppStateService {
     });
   }
 
-  selectAccountsColdObservable(isSelected: boolean, accounts: Account[]): Observable<any> {
+  private selectAccountsColdObservable(isSelected: boolean, accounts: Account[], clearPrevious): Observable<any> {
     return Observable.create( obs => {
+      console.log('SELECTTTTTTT');
+
+      if (clearPrevious) {
+        this._selectedAccounts.clear();
+      }
+
+      const children = accounts.map(a => this.allChildAccounts(a)).reduce( (a, b) => [...a, ...b], []);
+      const accountsToSelect: Account[] = [...accounts, ...children];
+
       if (isSelected) {
-        accounts.forEach( a => this._selectedAccounts.add(a) );
+        accountsToSelect.forEach( a => this._selectedAccounts.add(a) );
       } else {
-        accounts.forEach( a => this._selectedAccounts.delete(a) );
+        accountsToSelect.forEach( a => this._selectedAccounts.delete(a) );
+      }
+
+      const accountsCount = this.allChildAccounts(this._rootAccount).length;
+      if (this._selectedAccounts.size === accountsCount && !this._selectedAccounts.has(this._rootAccount)) {
+        this._selectedAccounts.add((this._rootAccount));
+      } else if (this._selectedAccounts.size === 1 && this._selectedAccounts.has(this._rootAccount)) {
+        this._selectedAccounts.delete(this._rootAccount);
       }
 
       this._selectedAccountsSubject.next(this._selectedAccounts);
@@ -89,57 +107,32 @@ export class AppStateService {
     });
   }
 
-  allTransactionsColdObservable(): Observable<Transaction[]> {
+  selectAccountColdObservable(isSelected: boolean, account: Account): Observable<any> {
+    return this.selectAccountsColdObservable(isSelected, [account], false);
+  }
+
+  allTransactionsColdObservable(): Observable<TransactionWithUUID[]> {
     return Observable.of(Array.from(this._transactions.values()));
   }
 
-  addTransactionsColdObservable(transactions: Transaction[], append: boolean): Observable<any> {
+  addOrUpdateTransactionsColdObservable(transactions: TransactionWithUUID[], append: boolean = true): Observable<any> {
     const o = Observable.create( obs => {
       if (!append) {
         this._transactions.clear();
       }
       transactions.forEach(tr => {
-        tr.uuid = uuid();
         this._transactions.set(tr.uuid, tr);
       });
 
-      const newTransactions = Array.from(this._transactions.values());
-
-      const allAccountNames = newTransactions
-        .map( t => t.postings )
-        .reduce((p1, p2) => [...p1, ...p2], [])
-        .map( p => p.account);
-
-      const newSelectedAccounts = Array.from(this._selectedAccounts.values())
-        .filter( a => allAccountNames.find( n => n === a.name));
-
-      this._selectedAccounts = new Set(newSelectedAccounts);
-
-
-      this._selectedAccountsSubject.next(this._selectedAccounts);
-      this._transactionsChangedSubject.next(newTransactions);
+      this._transactionsChangedSubject.next(transactions);
 
       obs.complete();
     });
 
-    return Observable.concat(o, this.generateAccounts());
+    return Observable.concat(o, this.generateAccounts(), this.refreshSelectedAccounts());
   }
 
-  createOrUpdateTransactionColdObservable(transaction: Transaction): Observable<any> {
-    const o = Observable.create( obs => {
-      if (!transaction.uuid) {
-        transaction.uuid = uuid();
-      }
-      this._transactions.set(transaction.uuid, transaction);
-      this._transactionsChangedSubject.next([transaction]);
-
-      obs.complete();
-    });
-
-    return Observable.concat(o, this.generateAccounts());
-  }
-
-  deleteTransactionColdObservable(transaction): Observable<any> {
+  deleteTransactionColdObservable(transaction: TransactionWithUUID): Observable<any> {
     const o = Observable.create( obs => {
       this._transactions.delete(transaction.uuid);
       this._transactionsChangedSubject.next([transaction]);
@@ -149,7 +142,14 @@ export class AppStateService {
       }
       obs.complete();
     });
-    return Observable.concat(o, this.generateAccounts());
+    return Observable.concat(o, this.generateAccounts(), this.refreshSelectedAccounts());
+  }
+
+  addTransactionsColdObservable(transactions: Transaction[], append: boolean = true): Observable<any> {
+    return Observable.from(transactions)
+      .map(this.addUUIDToTransaction)
+      .toArray()
+      .flatMap(tr => this.addOrUpdateTransactionsColdObservable(tr, append));
   }
 
   /****** Private ******/
@@ -168,8 +168,8 @@ export class AppStateService {
   }
 
   private allChildAccounts(root: Account): Account[] {
-    const children = [root];
-    root.children.forEach(c => children.push(...this.allChildAccounts(c)));
+    const children: Account[] = [];
+    root.children.forEach(c => children.push(...[c, ...this.allChildAccounts(c)]));
     return children;
   }
 
@@ -181,6 +181,20 @@ export class AppStateService {
         this._rootAccount = root;
         this._rootAccountSubject.next(this._rootAccount);
       });
+  }
+
+  private refreshSelectedAccounts(): Observable<any> {
+    return Observable.create( obs => {
+      if (this._selectedAccounts.size > 0) {
+
+        const previousSelectedAccounts = Array.from(this._selectedAccounts.values()).map(a => a.name);
+        const newlySelectedAccounts = [this._rootAccount, ...this.allChildAccounts(this._rootAccount)]
+          .filter(a => previousSelectedAccounts.includes(a.name));
+
+        obs.next(newlySelectedAccounts);
+      }
+      obs.complete();
+    }).flatMap(accounts => this.selectAccountsColdObservable(true, accounts, true));
   }
 
   private addMissingAmount(transaction: Transaction) {
@@ -264,4 +278,10 @@ export class AppStateService {
     return Array.from(accounts.values()).filter( a => a.name.indexOf(':') === -1).sort( (a1, a2) => a1.name.localeCompare(a2.name) );
   }
 
+  private addUUIDToTransaction(transaction: Transaction): TransactionWithUUID {
+    return {
+      ...transaction,
+      uuid: uuid(),
+    };
+  }
 }
