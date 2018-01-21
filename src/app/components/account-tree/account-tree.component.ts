@@ -13,38 +13,19 @@ export class AccountTreeComponent implements OnInit {
   account: Account;
 
   isCollapsed = false;
-  private _isChecked = false;
+  isChecked = false;
 
   constructor(private stateService: AppStateService) {
   }
 
   ngOnInit() {
     this.stateService.selectedAccountsHotObservable().subscribe(accounts => {
-      const shouldBeChecked = accounts.has(this.account);
-      if (shouldBeChecked !== this.isChecked) {
-        this._isChecked = shouldBeChecked;
-        this.stateService.selectAccountsColdObservable(shouldBeChecked, Array.from(this.account.children)).subscribe();
-      }
+      this.isChecked = accounts.has(this.account);
     });
   }
 
-  @Input()
-  set isChecked(isChecked: boolean) {
-    this.stateService.selectAccountsColdObservable(isChecked, [this.account]).subscribe();
-  }
-
-  get isChecked(): boolean { return this._isChecked; }
-
-  onAccountSelected() {
-   // this.stateService.selectAccount(this.account, true).subscribe()
-  }
-
-  onAccountChecked(chk: boolean) {
-//    this.isChecked = chk
-  }
-
-  onChildSelected(account: Account) {
-   // this.stateService.selectAccount(account, true).subscribe()
+  checkAccount(chk: boolean) {
+    this.stateService.selectAccountColdObservable(chk, this.account).subscribe();
   }
 
   toggle() {
