@@ -121,8 +121,7 @@ export class EditTransactionComponent implements OnInit {
         ...tr,
         uuid: this.transactionToEdit.uuid,
       };
-      console.log('update');
-      this._state.addOrUpdateTransactionsColdObservable([modifiedTransaction]).subscribe();
+      this._state.updateTransactionColdObservable(modifiedTransaction).subscribe();
     } else {
       this._state.addTransactionsColdObservable([tr]).subscribe();
     }

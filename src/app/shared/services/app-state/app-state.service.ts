@@ -26,28 +26,24 @@ export class AppStateService {
   private _selectedAccountsSubject: Subject<Set<Account>> = new BehaviorSubject (this._selectedAccounts);
   private _rootAccountSubject: Subject<Account | undefined> = new BehaviorSubject(undefined);
   private _editedTransactionSubject: Subject<TransactionWithUUID | undefined> = new BehaviorSubject(undefined);
-  private _transactionsChangedSubject: Subject<TransactionWithUUID[]> = new Subject();
+  private _transactionsChangedSubject: Subject<TransactionWithUUID[]> = new BehaviorSubject([]);
 
   /****** HOT OBSERVABLES ******/
 
   selectedAccountsHotObservable(): Observable<Set<Account>> {
-     return this._selectedAccountsSubject.asObservable().do( a => console.log("SIZE " + a.size));
+     return this._selectedAccountsSubject.asObservable();
   }
 
   selectedTransactionsHotObservable(): Observable<TransactionWithUUID[]> {
     const modif = this._transactionsChangedSubject.flatMap( () => {
-      console.log('EUUUUUH');
       return this._selectedAccountsSubject;
     } );
-    const selectedAccounts = this._selectedAccountsSubject.do(t => console.log('uh'));
+    const selectedAccounts = this._selectedAccountsSubject;
 
     return Observable.merge(selectedAccounts, modif)
     .map( accounts => {
-      console.log(accounts);
         const accountsNames = Array.from(accounts).map(a => a.name);
-        const t =  this.getTransactionsUsingAccounts(accountsNames);
-        console.log(t);
-        return t;
+        return this.getTransactionsUsingAccounts(accountsNames);
       });
   }
 
@@ -79,7 +75,6 @@ export class AppStateService {
 
   private selectAccountsColdObservable(isSelected: boolean, accounts: Account[], clearPrevious): Observable<any> {
     return Observable.create( obs => {
-      console.log('SELECTTTTTTT');
 
       if (clearPrevious) {
         this._selectedAccounts.clear();
@@ -115,7 +110,11 @@ export class AppStateService {
     return Observable.of(Array.from(this._transactions.values()));
   }
 
-  addOrUpdateTransactionsColdObservable(transactions: TransactionWithUUID[], append: boolean = true): Observable<any> {
+  updateTransactionColdObservable(transaction: TransactionWithUUID): Observable<any> {
+    return this.addOrUpdateTransactionsColdObservable([transaction], false);
+  }
+
+  private addOrUpdateTransactionsColdObservable(transactions: TransactionWithUUID[], append: boolean): Observable<any> {
     const o = Observable.create( obs => {
       if (!append) {
         this._transactions.clear();

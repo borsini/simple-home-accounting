@@ -7,18 +7,18 @@ export const transactions: [Transaction] = [
   {
     header: {
       date: moment.utc('2013-02-08'),
-      title: 'Bakery',
+      title: 'Bread',
     },
     postings: [
       {
-        account: 'Bank:Current account',
+        account: 'Bank',
         tag: '!',
         amount: new Decimal(-3.05),
         currency: '$',
         comment: 'Comment',
       },
       {
-        account: 'Expenses:Grocery:Bread',
+        account: 'Expenses',
       },
     ],
   },
@@ -29,15 +29,35 @@ export const transactions: [Transaction] = [
     },
     postings: [
       {
-        account: 'Bank:Current account',
+        account: 'Bank',
         amount: new Decimal(500),
         currency: '€',
       },
       {
-        account: 'Incomes:Salary',
+        account: 'Job',
       },
     ],
   },
 ];
 
-export const accounts = [new Account('Account A'), new Account('Account B')];
+export const transactionWithNestedAccounts = {
+  header: {
+    date: moment.utc('2013-02-10'),
+    title: 'Savings',
+  },
+  postings: [
+    {
+      account: 'Assets:Bank',
+      amount: new Decimal(100),
+      currency: '€',
+    },
+    {
+      account: 'Assets:Bank:Savings',
+      amount: new Decimal(42),
+      currency: '€',
+    },
+    {
+      account: 'Income:Job',
+    },
+  ],
+};
