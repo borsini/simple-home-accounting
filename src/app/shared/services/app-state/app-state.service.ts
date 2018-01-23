@@ -114,9 +114,9 @@ export class AppStateService {
     return this.addOrUpdateTransactionsColdObservable([transaction], false);
   }
 
-  private addOrUpdateTransactionsColdObservable(transactions: TransactionWithUUID[], append: boolean): Observable<any> {
+  private addOrUpdateTransactionsColdObservable(transactions: TransactionWithUUID[], clearOldTransactions: boolean): Observable<any> {
     const o = Observable.create( obs => {
-      if (!append) {
+      if (clearOldTransactions) {
         this._transactions.clear();
       }
       transactions.forEach(tr => {
@@ -145,11 +145,11 @@ export class AppStateService {
     return Observable.concat(o, this.generateAccounts(), this.refreshSelectedAccounts());
   }
 
-  addTransactionsColdObservable(transactions: Transaction[], append: boolean = true): Observable<any> {
+  addTransactionsColdObservable(transactions: Transaction[], clearOldTransactions: boolean = false): Observable<any> {
     return Observable.from(transactions)
       .map(this.addUUIDToTransaction)
       .toArray()
-      .flatMap(tr => this.addOrUpdateTransactionsColdObservable(tr, append));
+      .flatMap(tr => this.addOrUpdateTransactionsColdObservable(tr, clearOldTransactions));
   }
 
   /****** Private ******/

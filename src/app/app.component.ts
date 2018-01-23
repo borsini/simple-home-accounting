@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
     this.isLoading = true;
 
     this.readAndParseTransactionsFromFile(files.item(0))
-    .zip(this.userWantsToAppendTransactions())
+    .zip(this.userWantsToClearOldTransactions())
     .flatMap(zip => this._state.addTransactionsColdObservable(zip[0], zip[1]))
     .subscribe(
       transactions => {},
@@ -96,7 +96,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  userWantsToAppendTransactions(): Observable<boolean> {
+  userWantsToClearOldTransactions(): Observable<boolean> {
     return this._state.allTransactionsColdObservable()
       .map( tr => tr.length)
       .flatMap( count => {
@@ -105,8 +105,8 @@ export class AppComponent implements OnInit {
             const dialogRef = this.dialog.open(DialogTwoOptionsDialogComponent, {
               data: {
                 content: 'Que faire des transactions existantes ?',
-                option1: {key: true, value: 'Les conserver'},
-                option2: {key: false, value: 'Les remplacer'},
+                option1: {key: false, value: 'Les conserver'},
+                option2: {key: true, value: 'Les remplacer'},
                 title: 'Importation',
               },
             });

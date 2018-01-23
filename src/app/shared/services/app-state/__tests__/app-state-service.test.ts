@@ -86,7 +86,7 @@ describe(AppStateService.name, () => {
     const service = new AppStateService();
 
     // when
-    await service.addTransactionsColdObservable(transactions, false).toPromise();
+    await service.addTransactionsColdObservable(transactions, true).toPromise();
 
     // then
     const state = await getState(service);
@@ -96,10 +96,10 @@ describe(AppStateService.name, () => {
   it('changes state when appending transactions', async () => {
     // given
     const service = new AppStateService();
-    await service.addTransactionsColdObservable([transactions[0]], false).toPromise();
+    await service.addTransactionsColdObservable([transactions[0]], true).toPromise();
 
     // when
-    await service.addTransactionsColdObservable([transactions[1]], true).toPromise();
+    await service.addTransactionsColdObservable([transactions[1]], false).toPromise();
 
     // then
     const state = await getState(service);
@@ -111,7 +111,7 @@ describe(AppStateService.name, () => {
     const service = new AppStateService();
 
     // when
-    await service.addTransactionsColdObservable([transactionWithNestedAccounts], false).toPromise();
+    await service.addTransactionsColdObservable([transactionWithNestedAccounts], true).toPromise();
 
     // then
     const state = await getState(service);
@@ -121,10 +121,10 @@ describe(AppStateService.name, () => {
   it('changes state when replacing one transaction with another', async () => {
     // given
     const service = new AppStateService();
-    await service.addTransactionsColdObservable([transactions[0]], false).toPromise();
+    await service.addTransactionsColdObservable([transactions[0]], true).toPromise();
 
     // when
-    await service.addTransactionsColdObservable([transactions[1]], false).toPromise();
+    await service.addTransactionsColdObservable([transactions[1]], true).toPromise();
 
     // then
     const state = await getState(service);
@@ -134,10 +134,10 @@ describe(AppStateService.name, () => {
   it('changes state when replacing one transaction with nothing', async () => {
     // given
     const service = new AppStateService();
-    await service.addTransactionsColdObservable([transactions[0]], false).toPromise();
+    await service.addTransactionsColdObservable([transactions[0]], true).toPromise();
 
     // when
-    await service.addTransactionsColdObservable([], false).toPromise();
+    await service.addTransactionsColdObservable([], true).toPromise();
 
     // then
     const state = await getState(service);
@@ -147,7 +147,7 @@ describe(AppStateService.name, () => {
   it('changes state when removing transactions', async () => {
     // given
     const service = new AppStateService();
-    await service.addTransactionsColdObservable(transactions, false).toPromise();
+    await service.addTransactionsColdObservable(transactions, true).toPromise();
 
     // when
     const allTransactions = await service.allTransactionsColdObservable().toPromise();
@@ -161,7 +161,7 @@ describe(AppStateService.name, () => {
   it('changes state when editing a transaction', async () => {
     // given
     const service = new AppStateService();
-    await service.addTransactionsColdObservable(transactions, false).toPromise();
+    await service.addTransactionsColdObservable(transactions, true).toPromise();
 
     // when
     const allTransactions = await service.allTransactionsColdObservable().toPromise();
@@ -175,7 +175,7 @@ describe(AppStateService.name, () => {
   it('changes state when updating a transaction', async () => {
     // given
     const service = new AppStateService();
-    await service.addTransactionsColdObservable(transactions, false).toPromise();
+    await service.addTransactionsColdObservable(transactions, true).toPromise();
 
     // when
     const allTransactions = await service.allTransactionsColdObservable().toPromise();
@@ -205,7 +205,7 @@ describe(AppStateService.name, () => {
   it('changes state when selecting root account', async () => {
     // given
     const service = new AppStateService();
-    await service.addTransactionsColdObservable(transactions, false).toPromise();
+    await service.addTransactionsColdObservable(transactions, true).toPromise();
 
     // when
     const rootAccount = await service
