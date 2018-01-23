@@ -177,6 +177,10 @@ export class AppStateService {
       .do( accounts => {
         const root = new Account(ROOT_ACCOUNT);
         root.children = new Set(accounts);
+        root.childrenBalance = Array.from(root.children)
+          .map(a => a.childrenBalance)
+          .reduce( (b1, b2) => b1.plus(b2), new Decimal(0));
+
         this._rootAccount = root;
         this._rootAccountSubject.next(this._rootAccount);
       });
