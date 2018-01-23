@@ -120,6 +120,7 @@ export class AppStateService {
         this._transactions.clear();
       }
       transactions.forEach(tr => {
+        this.addMissingAmount(tr);
         this._transactions.set(tr.uuid, tr);
       });
 
@@ -178,7 +179,7 @@ export class AppStateService {
         const root = new Account(ROOT_ACCOUNT);
         root.children = new Set(accounts);
         root.childrenBalance = Array.from(root.children)
-          .map(a => a.childrenBalance)
+          .map(a => a.childrenBalance.plus(a.balance) )
           .reduce( (b1, b2) => b1.plus(b2), new Decimal(0));
 
         this._rootAccount = root;
@@ -201,14 +202,14 @@ export class AppStateService {
   }
 
   private addMissingAmount(transaction: Transaction) {
-    const t = transaction.postings.find(p => p.amount === undefined);
+    const t = transaction.postings.find(p => p.amount === null || p.amount === undefined);
 
     if (!t) {
       return;
     }
 
     const sum = transaction.postings
-      .filter(p => p.amount !== undefined)
+      .filter(p => p.amount !== null && p.amount !== undefined)
       .map(p => p.amount)
       .reduce((a1, a2) => Decimal.add(a1!, a2!), new Decimal(0));
 
@@ -220,7 +221,6 @@ export class AppStateService {
       const flatAccounts = new Map();
 
       Array.from(this._transactions.values()).forEach(tr => {
-        this.addMissingAmount(tr);
           tr.postings.forEach(ps => {
               const accountParts = ps.account.split(':');
               let lastParent: Account | undefined;

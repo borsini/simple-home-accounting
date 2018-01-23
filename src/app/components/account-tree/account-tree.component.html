@@ -6,7 +6,7 @@
        <mat-checkbox [checked]="isChecked" (change)="checkAccount($event.checked)"></mat-checkbox>
 
         <span (click)="isChecked = !isChecked">
-            {{ account.name.split(':').pop() }} - {{ account.balance.toFixed(2) }}
+            {{ account.name.split(':').pop() }} ° {{ account.balance.plus(account.childrenBalance).toFixed(2) }}
         </span>
 
     </div>
