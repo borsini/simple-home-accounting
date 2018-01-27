@@ -1,0 +1,136 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GnucashService parses empty file 1`] = `[TypeError: Cannot read property 'gnc:book' of undefined]`;
+
+exports[`GnucashService parses file with line break 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2016-05-27T10:59:00.000Z",
+      "title": "VIREMENT EMIS - renflouement fin mai",
+    },
+    "postings": Array [
+      Object {
+        "account": "Actif",
+        "amount": "100",
+        "comment": undefined,
+        "currency": "EUR",
+      },
+      Object {
+        "account": "Revenus",
+        "amount": "-100",
+        "comment": "WEB ORSINI BENJAMIN OU M renflou",
+        "currency": "EUR",
+      },
+    ],
+  },
+]
+`;
+
+exports[`GnucashService parses file with missing amount 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2016-05-27T10:59:00.000Z",
+      "title": "VIREMENT EMIS - renflouement fin mai",
+    },
+    "postings": Array [
+      Object {
+        "account": "Actif",
+        "amount": "0",
+        "comment": undefined,
+        "currency": "EUR",
+      },
+    ],
+  },
+]
+`;
+
+exports[`GnucashService parses file with one transaction 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2016-05-27T10:59:00.000Z",
+      "title": "VIREMENT EMIS - renflouement fin mai",
+    },
+    "postings": Array [
+      Object {
+        "account": "Actif",
+        "amount": "100",
+        "comment": undefined,
+        "currency": "EUR",
+      },
+      Object {
+        "account": "Revenus",
+        "amount": "-100",
+        "comment": "WEB ORSINI BENJAMIN OU M renflou",
+        "currency": "EUR",
+      },
+    ],
+  },
+]
+`;
+
+exports[`GnucashService parses file with only one split 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2016-05-27T10:59:00.000Z",
+      "title": "VIREMENT EMIS - renflouement fin mai",
+    },
+    "postings": Array [
+      Object {
+        "account": "Actif",
+        "amount": "100",
+        "comment": undefined,
+        "currency": "EUR",
+      },
+    ],
+  },
+]
+`;
+
+exports[`GnucashService parses file with two transactions 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": "2016-05-27T10:59:00.000Z",
+      "title": "VIREMENT EMIS - renflouement fin mai",
+    },
+    "postings": Array [
+      Object {
+        "account": "Actif",
+        "amount": "100",
+        "comment": undefined,
+        "currency": "EUR",
+      },
+      Object {
+        "account": "Revenus",
+        "amount": "-100",
+        "comment": "WEB ORSINI BENJAMIN OU M renflou",
+        "currency": "EUR",
+      },
+    ],
+  },
+  Object {
+    "header": Object {
+      "date": "2016-05-30T10:59:00.000Z",
+      "title": "LEROY MERLIN MERIGNAC 27/05",
+    },
+    "postings": Array [
+      Object {
+        "account": "Actif",
+        "amount": "100.8",
+        "comment": undefined,
+        "currency": "EUR",
+      },
+      Object {
+        "account": "Revenus",
+        "amount": "-100.8",
+        "comment": "PAIEMENT PAR CARTE",
+        "currency": "EUR",
+      },
+    ],
+  },
+]
+`;
