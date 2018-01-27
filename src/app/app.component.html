@@ -25,7 +25,7 @@
           <mat-icon class="material-icons">file_download</mat-icon>
       </button>
 
-      <input type="file" accept=".ofx, .ledger" [hidden]="true" id="upload-file" (change)="uploadFileOnChange($event.target.files)" />
+      <input type="file" accept=".ofx, .ledger, .gnucash" [hidden]="true" id="upload-file" (change)="uploadFileOnChange($event.target.files)" />
       <label id="filename" class="action_btn" for="upload-file">
         <mat-icon class="material-icons">file_upload</mat-icon>
       </label>

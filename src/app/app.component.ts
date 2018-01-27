@@ -11,6 +11,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Transaction } from './shared/models/transaction';
+import { GnucashService } from './shared/services/gnucash/gnucash.service';
 
 const { version } = require('../../package.json');
 
@@ -38,7 +39,7 @@ export class DialogTwoOptionsDialogComponent {
 }
 
 @Component({
-  providers: [ LedgerService, OfxService],
+  providers: [ LedgerService, OfxService, GnucashService],
   selector: 'app-root',
   styleUrls: ['./app.component.css'],
   templateUrl: './app.component.html',
@@ -55,7 +56,7 @@ export class AppComponent implements OnInit {
   appVersion: string;
 
 
-  constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, public dialog: MatDialog) {
+  constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, private _gnucash: GnucashService, public dialog: MatDialog) {
     this.isLoading = false;
     this._flatAccounts = new Map();
 
@@ -143,6 +144,9 @@ export class AppComponent implements OnInit {
     } else if (ext === 'ofx') {
       return this.readFileObservable(file)
       .flatMap(content => this._ofx.parseOfxString(content));
+    } else if (ext === 'gnucash') {
+      return this.readFileObservable(file)
+        .flatMap(content => this._gnucash.parseGnucashString(content));
     } else {
       return Observable.throw('Cette extension n\'est pas autorisée');
     }

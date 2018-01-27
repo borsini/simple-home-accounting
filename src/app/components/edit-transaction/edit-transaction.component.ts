@@ -81,8 +81,8 @@ export class EditTransactionComponent implements OnInit {
         return {
           account: p.account,
           amount: p.amount ? p.amount.toString() : null,
-          comment: p.comment,
-          currency: p.currency,
+          comment: p.comment || '',
+          currency: p.currency || '',
         };
       }) : [];
 
