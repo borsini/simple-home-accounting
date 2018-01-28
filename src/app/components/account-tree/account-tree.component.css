@@ -1,13 +1,45 @@
-ul
-{
-list-style-type: none;
-margin: 0;
-padding: 0;
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-li {
-    margin-left:20px
-}
 .account > * {
-    cursor: pointer;
+  cursor: pointer;
+}
+
+.chevron_container {
+  width: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.checked {
+  font-style: italic;
+  background-color: #eeeeee;
+}
+
+.balance {
+  font-size: 0.8em;
+}
+
+mat-checkbox {
+  width: 30px;
+}
+
+.infos {
+  display: flex;
+  flex: 1;
+  justify-content: end;
+}
+
+.account_name {
+  flex: 1;
+}
+
+.account_header {
+  height: 25px;
+  display: flex;
+  flex: 1;
+  align-items: center;
 }

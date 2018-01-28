@@ -12,6 +12,9 @@ export class AccountTreeComponent implements OnInit {
   @Input()
   account: Account;
 
+  @Input()
+  treeLevel: number;
+
   isCollapsed = false;
   isChecked = false;
 

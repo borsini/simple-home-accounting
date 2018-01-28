@@ -10,6 +10,11 @@ body {
     min-height: 100vh;
 }
 
+mat-sidenav {
+  width: 400px;
+  padding:5px;
+}
+
 mat-toolbar {
     flex: 0 0 auto;
 }

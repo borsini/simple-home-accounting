@@ -10,10 +10,12 @@ import { AppStateService } from '../../shared/services/app-state/app-state.servi
 export class MenuDrawerComponent implements OnInit {
 
   nbAccountsSelected: Observable<Number>;
+  nbTransactionsSelected: Observable<Number>;
   rootAccount: Observable<Account | undefined>;
 
   constructor(state: AppStateService) {
     this.nbAccountsSelected = state.selectedAccountsHotObservable().map( a => a.size);
+    this.nbTransactionsSelected = state.selectedTransactionsHotObservable().map( t => t.length);
     this.rootAccount = state.rootAccountHotObservable();
   }
 
