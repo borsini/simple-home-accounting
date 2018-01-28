@@ -73,7 +73,7 @@ export class GnucashService {
 
         return {
           header: {
-            date: moment(datePosted, 'YYYY-MM-DD HH-mm-ss +Z'),
+            date: moment.utc(datePosted, 'YYYY-MM-DD HH-mm-ss Z'),
             title: description,
           },
           postings: splits.map(s => {
