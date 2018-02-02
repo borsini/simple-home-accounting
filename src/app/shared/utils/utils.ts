@@ -24,14 +24,14 @@ export const xmlToJson = (xml: Node): any => {
       const item = xml.childNodes.item(i);
       const nodeName = item.nodeName;
       if (typeof obj[nodeName] === 'undefined') {
-        obj[nodeName] = this.xmlToJson(item);
+        obj[nodeName] = xmlToJson(item);
       } else {
         if (typeof obj[nodeName].push === 'undefined') {
           const old = obj[nodeName];
           obj[nodeName] = [];
           obj[nodeName].push(old);
         }
-        obj[nodeName].push(this.xmlToJson(item));
+        obj[nodeName].push(xmlToJson(item));
       }
     }
   }
