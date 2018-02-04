@@ -1,29 +1,27 @@
-# Ledger
+# Simple Home Accounting
 
 [![Build Status](https://travis-ci.org/Benlenem/ledger-charts.svg?branch=develop)](https://travis-ci.org/Benlenem/ledger-charts)
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.7.
 
-## Development server
+> This project aims to simplify everyone's day-to-day accounting. It provides a simple web based application.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+For years I have use complex or closed source sofwares to do this simple task. I wanted :
+- to do my accounting quickly and everywhere
+- to be independant of my bank application or any of the commercial apps
+- to use an uber simple and long-lasting file format that I could open  in 20 years from now
 
-## Code scaffolding
+One day I came across [ledger](https://www.ledger-cli.org/), a cool text file format quite popular among the geek community. It is part of what we call [plain text accounting](http://plaintextaccounting.org). I decided to write a UI on top of it and voilà :)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Features
 
-## Build
+> The current version is raw and full of small bugs. Mainly because it just suits my needs :D
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+- Import any of your existing .ledger, .ofx, .gnucash files
+- Add / edit / remove transactions
+- Export your transactions as a .ledger file
+- [Soon] Generate charts to get some statistics
 
-## Running unit tests
+If you're curious, you can check the [backlog](https://github.com/Benlenem/ledger-charts/projects).
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Test it
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+A running version of the app is hosted [here](https://ledger-ui.firebaseapp.com/). I personally use it to do my accounting.</br>You can use it too and any feedback would be kindly appreciated !
