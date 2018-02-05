@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Benlenem/ledger-charts.svg?branch=develop)](https://travis-ci.org/Benlenem/ledger-charts)
 
-> This project aims to simplify everyone's day-to-day accounting. It provides a simple web based application.
+> This project aims to simplify everyone's day-to-day accounting. It provides a simple web based serverless application.
 
 For years I have use complex or closed source sofwares to do this simple task. I wanted :
 - to do my accounting quickly and everywhere
