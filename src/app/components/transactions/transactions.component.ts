@@ -1,5 +1,5 @@
 import { DataSource } from '@angular/cdk/table';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 
 import * as moment from 'moment';
@@ -9,7 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { AppStateService } from '../../shared/services/app-state/app-state.service';
-import {Transaction, TransactionWithUUID} from '../../shared/models/transaction';
+import { Transaction, TransactionWithUUID } from '../../shared/models/transaction';
 import { Posting } from '../../shared/models/posting';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
@@ -168,5 +168,9 @@ export class TransactionsComponent implements OnInit {
 
   onTransactionClicked(row: TransactionRow) {
     this._state.setEditedTransactionColdObservable(row.transaction).subscribe();
+  }
+
+  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    this.filter.nativeElement.focus();
   }
 }
