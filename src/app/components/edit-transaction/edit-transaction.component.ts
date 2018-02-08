@@ -27,9 +27,8 @@ export class EditTransactionComponent implements OnInit {
 
   @ViewChild(MatDatepicker) myDatepicker: MatDatepicker<Date>;
 
-  private transactionToEdit: TransactionWithUUID | undefined;
-
-  isEditing: boolean;
+  transactionToEdit: TransactionWithUUID | undefined;
+  isPanelOpen: Observable<boolean>;
   group: FormGroup;
   filteredAccounts: Subject<Account[]> = new Subject();
   formErrors: Observable<string>;
@@ -39,13 +38,14 @@ export class EditTransactionComponent implements OnInit {
   ngOnInit() {
     this._state.editedTransactionHotObservable().subscribe( tr => {
       this.transactionToEdit = tr;
-      this.isEditing = this.transactionToEdit !== undefined;
       this.init();
     });
+
+    this.isPanelOpen = this._state.isTransactionPanelOpenHotObservable();
   }
 
   createTransaction() {
-    this.isEditing = true;
+    this._state.openTransactionPanelColdObservable(true).subscribe();
     this.init();
   }
 

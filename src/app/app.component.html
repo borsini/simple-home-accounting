@@ -1,12 +1,12 @@
 <mat-sidenav-container class="mat-typography">
-  <mat-sidenav #drawer>
+  <mat-sidenav #drawer [opened]="isDrawerOpen" (opened)="handleOpen(true)" (closed)="handleOpen(false)">
     <app-menu-drawer></app-menu-drawer>
   </mat-sidenav>
 
   <div class="main">
     <mat-toolbar color="primary">
 
-      <button mat-button (click)="drawer.toggle()">
+      <button mat-button (click)="toggle()">
           <mat-icon class="material-icons" >menu</mat-icon>
       </button>
 

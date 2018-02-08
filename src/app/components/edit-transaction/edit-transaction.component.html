@@ -1,6 +1,6 @@
-<button *ngIf="!isEditing" id="fab_add" mat-fab color="accent" (click)="createTransaction()">+</button>
+<button *ngIf="!(isPanelOpen | async)" id="fab_add" mat-fab color="accent" (click)="createTransaction()">+</button>
 
-<mat-card *ngIf="isEditing" id="edit_transaction">
+<mat-card *ngIf="isPanelOpen | async" id="edit_transaction">
     <form [formGroup]="group" novalidate (ngSubmit)="onSubmit()">
     <mat-card-content>
 
@@ -53,7 +53,7 @@
       <button mat-raised-button type="button" (click)="revert()" [disabled]="group.pristine">Réinitialiser</button>
 
     <button mat-raised-button type="menu" (click)="addPosting();$event.preventDefault();">Ajouter une ligne</button>
-    <button mat-raised-button type="menu" (click)="deleteTransaction();$event.preventDefault();" *ngIf="isEditing" color="warn">Supprimer la transaction</button>
+    <button mat-raised-button type="menu" (click)="deleteTransaction();$event.preventDefault();" *ngIf="transactionToEdit" color="warn">Supprimer la transaction</button>
 
     <div class="expand"></div>
 

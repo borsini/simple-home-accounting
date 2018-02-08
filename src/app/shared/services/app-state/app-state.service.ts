@@ -13,6 +13,7 @@ import { Transaction, TransactionWithUUID } from '../../models/transaction';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/concat';
 import 'rxjs/add/observable/from';
+import 'rxjs/add/operator/filter';
 
 const ROOT_ACCOUNT = 'ROOT';
 
@@ -23,10 +24,15 @@ export class AppStateService {
   private _rootAccount: Account = new Account(ROOT_ACCOUNT);
   private _editedTransaction?: TransactionWithUUID;
   private _transactions: Map<string, TransactionWithUUID> = new Map();
+  private _isLeftMenuOpen = false;
+  private _isTransactionPanelOpen = false;
+
   private _selectedAccountsSubject: Subject<Set<Account>> = new BehaviorSubject (this._selectedAccounts);
   private _rootAccountSubject: Subject<Account | undefined> = new BehaviorSubject(undefined);
   private _editedTransactionSubject: Subject<TransactionWithUUID | undefined> = new BehaviorSubject(undefined);
   private _transactionsChangedSubject: Subject<TransactionWithUUID[]> = new BehaviorSubject([]);
+  private _isLeftMenuOpenSubject: Subject<boolean> = new BehaviorSubject(this._isLeftMenuOpen);
+  private _isTransactionPanelOpenSubject: Subject<boolean> = new BehaviorSubject(this._isTransactionPanelOpen);
 
   /****** HOT OBSERVABLES ******/
 
@@ -61,6 +67,17 @@ export class AppStateService {
 
   transactionsChangedHotObservable(): Observable<TransactionWithUUID[]> {
     return this._transactionsChangedSubject.asObservable();
+  }
+
+  isLeftMenuOpenHotObservable(): Observable<boolean> {
+    return this._isLeftMenuOpenSubject.asObservable();
+  }
+
+  isTransactionPanelOpenHotObservable(): Observable<boolean> {
+    return Observable.merge(
+      this.editedTransactionHotObservable().map(e => e !== undefined),
+      this._isTransactionPanelOpenSubject.asObservable(),
+    );
   }
 
   /****** COLD OBSERVABLES ******/
@@ -114,24 +131,6 @@ export class AppStateService {
     return this.addOrUpdateTransactionsColdObservable([transaction], false);
   }
 
-  private addOrUpdateTransactionsColdObservable(transactions: TransactionWithUUID[], clearOldTransactions: boolean): Observable<any> {
-    const o = Observable.create( obs => {
-      if (clearOldTransactions) {
-        this._transactions.clear();
-      }
-      transactions.forEach(tr => {
-        this.addMissingAmount(tr);
-        this._transactions.set(tr.uuid, tr);
-      });
-
-      this._transactionsChangedSubject.next(transactions);
-
-      obs.complete();
-    });
-
-    return Observable.concat(o, this.generateAccounts(), this.refreshSelectedAccounts());
-  }
-
   deleteTransactionColdObservable(transaction: TransactionWithUUID): Observable<any> {
     const o = Observable.create( obs => {
       this._transactions.delete(transaction.uuid);
@@ -152,7 +151,37 @@ export class AppStateService {
       .flatMap(tr => this.addOrUpdateTransactionsColdObservable(tr, clearOldTransactions));
   }
 
+  openLeftMenuColdObservable(isOpen: boolean): Observable<boolean> {
+    this._isLeftMenuOpen = isOpen;
+    this._isLeftMenuOpenSubject.next(isOpen);
+    return Observable.of(isOpen);
+  }
+
+  openTransactionPanelColdObservable(isOpen: boolean): Observable<boolean> {
+    this._isTransactionPanelOpen = isOpen;
+    this._isTransactionPanelOpenSubject.next(isOpen);
+    return Observable.of(isOpen);
+  }
+
   /****** Private ******/
+
+  private addOrUpdateTransactionsColdObservable(transactions: TransactionWithUUID[], clearOldTransactions: boolean): Observable<any> {
+    const o = Observable.create( obs => {
+      if (clearOldTransactions) {
+        this._transactions.clear();
+      }
+      transactions.forEach(tr => {
+        this.addMissingAmount(tr);
+        this._transactions.set(tr.uuid, tr);
+      });
+
+      this._transactionsChangedSubject.next(transactions);
+
+      obs.complete();
+    });
+
+    return Observable.concat(o, this.generateAccounts(), this.refreshSelectedAccounts());
+  }
 
   private getTransactionsUsingAccounts(accountsNames: string[]) {
     const allTransactions = Array.from(this._transactions.values());

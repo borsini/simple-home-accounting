@@ -46,15 +46,12 @@ export class DialogTwoOptionsDialogComponent {
 })
 export class AppComponent implements OnInit {
   private _flatAccounts: Map<String, Account>;
-  private _openDrawer: Subject<boolean> = new BehaviorSubject(false);
-
-  @ViewChild(MatSidenav) sidenav: MatSidenav;
 
   isLoading: boolean;
   disableDownloadButton: Observable<boolean>;
+  isDrawerOpen: boolean;
   title = 'app';
   appVersion: string;
-
 
   constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, private _gnucash: GnucashService, public dialog: MatDialog) {
     this.isLoading = false;
@@ -69,30 +66,32 @@ export class AppComponent implements OnInit {
     this.disableDownloadButton = Observable.concat(this._state.allTransactionsColdObservable(), o)
     .map(tr => tr.length === 0);
 
-    this._openDrawer.subscribe( open => {
-      if (open) {
-        this.sidenav.open();
-      } else {
-        this.sidenav.close();
-      }
-    });
+    this._state.isLeftMenuOpenHotObservable().do(open => this.isDrawerOpen = open).subscribe();
+  }
+
+  handleOpen(isOpen: boolean) {
+    this._state.openLeftMenuColdObservable(isOpen).subscribe();
+  }
+
+  toggle() {
+    this._state.openLeftMenuColdObservable(!this.isDrawerOpen).subscribe();
   }
 
   uploadFileOnChange(files: FileList) {
     this.isLoading = true;
 
     this.readAndParseTransactionsFromFile(files.item(0))
-    .zip(this.userWantsToClearOldTransactions())
-    .flatMap(zip => this._state.addTransactionsColdObservable(zip[0], zip[1]))
-    .subscribe(
-      transactions => {},
+      .zip(this.userWantsToClearOldTransactions())
+      .flatMap(zip => this._state.addTransactionsColdObservable(zip[0], zip[1]))
+      .flatMap(_ => this._state.openLeftMenuColdObservable(true))
+      .subscribe(
+      _ => {},
       e => {
         this.openErrorDialog(e);
         this.isLoading = false;
       },
       () => {
         this.isLoading = false;
-        this._openDrawer.next(true);
       },
     );
   }
