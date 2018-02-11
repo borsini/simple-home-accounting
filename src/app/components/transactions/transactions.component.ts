@@ -11,6 +11,12 @@ import { Observable } from 'rxjs/Observable';
 import { AppStateService } from '../../shared/services/app-state/app-state.service';
 import { Transaction, TransactionWithUUID } from '../../shared/models/transaction';
 import { Posting } from '../../shared/models/posting';
+import {Subject} from 'rxjs/Subject';
+import {combineLatest} from 'rxjs/observable/combineLatest';
+import 'rxjs/add/operator/skipUntil';
+import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/first';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
 
@@ -158,12 +164,29 @@ export class TransactionsComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('filter') filter: ElementRef;
 
+  private onKeyDownSubject = new Subject();
+
   constructor(private _state: AppStateService) {
     this.transactions = _state.selectedTransactionsHotObservable();
    }
 
   ngOnInit() {
     this.dataSource = new TransactionDataSource(this._state, this.paginator, this.sort, this.filter);
+
+
+    this.onKeyDownSubject
+      .map(_ => {
+        return combineLatest(
+          this._state.isLeftMenuOpenHotObservable(),
+          this._state.isTransactionPanelOpenHotObservable(),
+        ).map(([a, b]) => {
+          console.log(a, b);
+          return !a && !b;
+        }).first;
+      })
+      .subscribe(() => {
+        this.filter.nativeElement.focus();
+      });
   }
 
   onTransactionClicked(row: TransactionRow) {
@@ -171,6 +194,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-    this.filter.nativeElement.focus();
+    this.onKeyDownSubject.next();
   }
 }
