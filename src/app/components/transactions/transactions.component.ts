@@ -185,7 +185,7 @@ export class TransactionsComponent implements OnInit {
         }).first;
       })
       .subscribe(() => {
-        this.filter.nativeElement.focus();
+        //this.filter.nativeElement.focus();
       });
   }
 
