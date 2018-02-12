@@ -1,7 +1,27 @@
 {
-  "name": "ledger",
+  "name": "simplehomeaccounting",
   "version": "0.5.0",
   "license": "MIT",
+  "main": "main.js",
+  "author": "Benlenem",
+  "description": "Simple web interface for plain text accounting. Compatible with ledger file format.",
+  "build": {
+    "appId": "com.benlenem.simplehomeaccounting",
+    "productName": "Simple Home Accounting",
+    "copyright": "Copyright © 2018 Benlenem",
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "category": "public.app-category.finance"
+    },
+    "asar": false,
+    "files": [
+      "main.js",
+      "build"
+    ]
+  },
+
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +29,13 @@
     "test": "jest",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "commitmsg": "validate-commit-msg"
+    "commitmsg": "validate-commit-msg",
+    "electron": "electron .",
+    "electron-build": "ng build --prod && electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "build-win": "electron-builder build --win",
+    "postinstall": "electron-builder install-app-deps"
   },
   "private": true,
   "dependencies": {
@@ -51,6 +77,8 @@
     "codelyzer": "~4.0.2",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",
+    "electron": "^1.8.2",
+    "electron-builder": "^19.56.0",
     "file-saver": "^1.3.3",
     "firebase-tools": "^3.16.0",
     "husky": "^0.14.3",
