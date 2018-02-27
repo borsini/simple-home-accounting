@@ -1,6 +1,9 @@
+import { Observable } from 'rxjs/Observable';
+import { selectedAccountsSelector, AppStateActions, allAccountsSelector } from './../../shared/reducers/app-state-reducer';
+import { NgRedux } from '@angular-redux/store';
+import { ReduxAppState } from './../../shared/models/app-state';
 import { Component, Input, OnInit } from '@angular/core';
-import { AppStateService } from '../../shared/services/app-state/app-state.service';
-import { Account } from '../../shared/models/account';
+import { Account, ReduxAccount } from '../../shared/models/account';
 
 @Component({
   selector: 'app-account-tree',
@@ -10,25 +13,30 @@ import { Account } from '../../shared/models/account';
 export class AccountTreeComponent implements OnInit {
 
   @Input()
-  account: Account;
+  accountName: string;
 
   @Input()
   treeLevel: number;
 
   isCollapsed = false;
-  isChecked = false;
+  isChecked: boolean;
+  account: ReduxAccount;
 
-  constructor(private stateService: AppStateService) {
+  constructor(private ngRedux: NgRedux<ReduxAppState>) {
   }
 
   ngOnInit() {
-    this.stateService.selectedAccountsHotObservable().subscribe(accounts => {
-      this.isChecked = accounts.has(this.account);
-    });
+    this.ngRedux.select(selectedAccountsSelector)
+    .map(accounts => accounts.includes(this.accountName))
+    .do(c => { this.isChecked = c; }).subscribe();
+    this.ngRedux.select(allAccountsSelector)
+    .map(accounts => accounts[this.accountName])
+    .do(a => this.account = a)
+    .subscribe();
   }
 
   checkAccount(chk: boolean) {
-    this.stateService.selectAccountColdObservable(chk, this.account).subscribe();
+    this.ngRedux.dispatch(AppStateActions.selectAccount(this.accountName, chk));
   }
 
   toggle() {

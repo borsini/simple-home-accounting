@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav } from '@angular/material';
 import * as fileSaver from 'file-saver';
-import { AppStateService } from './shared/services/app-state/app-state.service';
 import { LedgerService } from './shared/services/ledger/ledger.service';
 import { Account } from './shared/models/account';
 import { OfxService } from './shared/services/ofx/ofx.service';
@@ -10,10 +9,19 @@ import 'rxjs/add/operator/zip';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Transaction } from './shared/models/transaction';
+import { Transaction, TransactionWithUUID } from './shared/models/transaction';
 import { GnucashService } from './shared/services/gnucash/gnucash.service';
+import { NgRedux } from '@angular-redux/store';
+import { AppState, ReduxAppState } from './shared/models/app-state';
+import {
+  AppStateActions,
+  selectEditedTransaction,
+  allTransactionsSelector,
+  isLeftMenuOpenSelector,
+  isLoadingSelector } from './shared/reducers/app-state-reducer';
 
 const { version } = require('../../package.json');
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-dialog-result-example-dialog',
@@ -47,58 +55,57 @@ export class DialogTwoOptionsDialogComponent {
 export class AppComponent implements OnInit {
   private _flatAccounts: Map<String, Account>;
 
-  isLoading: boolean;
+  isLoading: Observable<boolean>;
   disableDownloadButton: Observable<boolean>;
-  isDrawerOpen: boolean;
+  isDrawerOpen: Observable<boolean>;
   title = 'app';
   appVersion: string;
 
-  constructor(private _state: AppStateService, private _ledger: LedgerService, private _ofx: OfxService, private _gnucash: GnucashService, public dialog: MatDialog) {
-    this.isLoading = false;
+  constructor(
+    private _ledger: LedgerService,
+    private _ofx: OfxService, private _gnucash: GnucashService, public dialog: MatDialog, private ngRedux: NgRedux<ReduxAppState>) {
     this._flatAccounts = new Map();
-
     this.appVersion = version;
   }
 
   ngOnInit() {
-    const o = this._state.transactionsChangedHotObservable()
-      .flatMap(obs => this._state.allTransactionsColdObservable());
-    this.disableDownloadButton = Observable.concat(this._state.allTransactionsColdObservable(), o)
-    .map(tr => tr.length === 0);
-
-    this._state.isLeftMenuOpenHotObservable().do(open => this.isDrawerOpen = open).subscribe();
+    this.disableDownloadButton = this.ngRedux.select(allTransactionsSelector)
+    .map(tr => Object.keys(tr).length === 0);
+    this.isDrawerOpen = this.ngRedux.select(isLeftMenuOpenSelector);
+    this.isLoading = this.ngRedux.select(isLoadingSelector).do(console.log);
   }
 
   handleOpen(isOpen: boolean) {
-    this._state.openLeftMenuColdObservable(isOpen).subscribe();
+    this.ngRedux.dispatch(AppStateActions.openLeftPanel(isOpen));
   }
 
   toggle() {
-    this._state.openLeftMenuColdObservable(!this.isDrawerOpen).subscribe();
+    this.ngRedux.dispatch(AppStateActions.toggleLeftPanel());
   }
 
   uploadFileOnChange(files: FileList) {
-    this.isLoading = true;
+    this.ngRedux.dispatch(AppStateActions.setIsLoading(true));
 
     this.readAndParseTransactionsFromFile(files.item(0))
       .zip(this.userWantsToClearOldTransactions())
-      .flatMap(zip => this._state.addTransactionsColdObservable(zip[0], zip[1]))
-      .flatMap(_ => this._state.openLeftMenuColdObservable(true))
       .subscribe(
-      _ => {},
+      zip => {
+        this.ngRedux.dispatch(AppStateActions.addTransactions(zip[0], zip[1]));
+        this.ngRedux.dispatch(AppStateActions.openLeftPanel(true));
+      },
       e => {
         this.openErrorDialog(e);
-        this.isLoading = false;
+        this.ngRedux.dispatch(AppStateActions.setIsLoading(false));
       },
       () => {
-        this.isLoading = false;
+        this.ngRedux.dispatch(AppStateActions.setIsLoading(false));
       },
     );
   }
 
   userWantsToClearOldTransactions(): Observable<boolean> {
-    return this._state.allTransactionsColdObservable()
-      .map( tr => tr.length)
+    return this.ngRedux.select(allTransactionsSelector).take(1)
+      .map( tr => Object.keys(tr).length)
       .flatMap( count => {
         if (count > 0) {
           return new Observable( subscriber => {
@@ -124,8 +131,8 @@ export class AppComponent implements OnInit {
   }
 
   saveLedgerClicked() {
-    this._state.allTransactionsColdObservable()
-    .flatMap(tr => this._ledger.generateLedgerString(tr))
+    this.ngRedux.select(allTransactionsSelector)
+    .flatMap(tr => this._ledger.generateLedgerString(Object.values(tr)))
     .do(ledger => {
       const blob = new Blob([ledger], {type: 'text/plain;charset=utf-8'});
       fileSaver.saveAs(blob, 'accounts.ledger');

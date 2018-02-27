@@ -1,0 +1,1223 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rootReducer adds new transaction 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Bank": ReduxAccount {
+        "balance": "-3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Expenses": ReduxAccount {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 0": Object {
+        "header": Object {
+          "date": "2013-02-08T00:00:00.000Z",
+          "title": "Bread",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 0",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer adds new transactions with nested accounts 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Assets": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets:Bank",
+        ],
+        "childrenBalance": "142",
+        "childrenCredits": "142",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "Assets",
+        "nbChildrenTransactions": 2,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Assets:Bank": ReduxAccount {
+        "balance": "100",
+        "children": Array [
+          "Assets:Bank:Savings",
+        ],
+        "childrenBalance": "42",
+        "childrenCredits": "42",
+        "childrenDebits": "0",
+        "credits": "100",
+        "debits": "0",
+        "name": "Assets:Bank",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets",
+        ],
+      },
+      "Assets:Bank:Savings": ReduxAccount {
+        "balance": "42",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "42",
+        "debits": "0",
+        "name": "Assets:Bank:Savings",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets:Bank",
+        ],
+      },
+      "Income": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Income:Job",
+        ],
+        "childrenBalance": "-142",
+        "childrenCredits": "0",
+        "childrenDebits": "-142",
+        "credits": "0",
+        "debits": "0",
+        "name": "Income",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Income:Job": ReduxAccount {
+        "balance": "-142",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-142",
+        "name": "Income:Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Income",
+        ],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets",
+          "Income",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 7": Object {
+        "header": Object {
+          "date": "2013-02-10T00:00:00.000Z",
+          "title": "Savings",
+        },
+        "postings": Array [
+          Object {
+            "account": "Assets:Bank",
+            "amount": "100",
+            "currency": "€",
+          },
+          Object {
+            "account": "Assets:Bank:Savings",
+            "amount": "42",
+            "currency": "€",
+          },
+          Object {
+            "account": "Income:Job",
+            "amount": "-142",
+          },
+        ],
+        "uuid": "uuid 7",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer appends transaction 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Bank": ReduxAccount {
+        "balance": "496.95",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "500",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 2,
+        "parents": Array [],
+      },
+      "Expenses": ReduxAccount {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Job": ReduxAccount {
+        "balance": "-500",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-500",
+        "name": "Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+          "Job",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 1": Object {
+        "header": Object {
+          "date": "2013-02-08T00:00:00.000Z",
+          "title": "Bread",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 1",
+      },
+      "uuid 2": Object {
+        "header": Object {
+          "date": "2013-02-10T00:00:00.000Z",
+          "title": "Salary",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "500",
+            "currency": "€",
+          },
+          Object {
+            "account": "Job",
+            "amount": "-500",
+          },
+        ],
+        "uuid": "uuid 2",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer clears transactions 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer deletes transaction 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer has empty state at startup 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": ReduxAccount {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer opens left panel 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": ReduxAccount {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": true,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer opens transaction panel 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": ReduxAccount {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": true,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer replaces transaction 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Bank": ReduxAccount {
+        "balance": "500",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "500",
+        "debits": "0",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Job": ReduxAccount {
+        "balance": "-500",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-500",
+        "name": "Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Job",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 4": Object {
+        "header": Object {
+          "date": "2013-02-10T00:00:00.000Z",
+          "title": "Salary",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "500",
+            "currency": "€",
+          },
+          Object {
+            "account": "Job",
+            "amount": "-500",
+          },
+        ],
+        "uuid": "uuid 4",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer selects root account 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Assets": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets:Bank",
+        ],
+        "childrenBalance": "142",
+        "childrenCredits": "142",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "Assets",
+        "nbChildrenTransactions": 2,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Assets:Bank": ReduxAccount {
+        "balance": "100",
+        "children": Array [
+          "Assets:Bank:Savings",
+        ],
+        "childrenBalance": "42",
+        "childrenCredits": "42",
+        "childrenDebits": "0",
+        "credits": "100",
+        "debits": "0",
+        "name": "Assets:Bank",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets",
+        ],
+      },
+      "Assets:Bank:Savings": ReduxAccount {
+        "balance": "42",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "42",
+        "debits": "0",
+        "name": "Assets:Bank:Savings",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets:Bank",
+        ],
+      },
+      "Income": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Income:Job",
+        ],
+        "childrenBalance": "-142",
+        "childrenCredits": "0",
+        "childrenDebits": "-142",
+        "credits": "0",
+        "debits": "0",
+        "name": "Income",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Income:Job": ReduxAccount {
+        "balance": "-142",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-142",
+        "name": "Income:Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Income",
+        ],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets",
+          "Income",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 10": Object {
+        "header": Object {
+          "date": "2013-02-10T00:00:00.000Z",
+          "title": "Savings",
+        },
+        "postings": Array [
+          Object {
+            "account": "Assets:Bank",
+            "amount": "100",
+            "currency": "€",
+          },
+          Object {
+            "account": "Assets:Bank:Savings",
+            "amount": "42",
+            "currency": "€",
+          },
+          Object {
+            "account": "Income:Job",
+            "amount": "-142",
+          },
+        ],
+        "uuid": "uuid 10",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+      "Assets",
+      "Assets:Bank",
+      "Assets:Bank:Savings",
+      "Income",
+      "Income:Job",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer sets edited transaction 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Bank": ReduxAccount {
+        "balance": "-3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Expenses": ReduxAccount {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 8": Object {
+        "header": Object {
+          "date": "2013-02-08T00:00:00.000Z",
+          "title": "Bread",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 8",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": "uuid 8",
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": true,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer unselects nested account 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Assets": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets:Bank",
+        ],
+        "childrenBalance": "142",
+        "childrenCredits": "142",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "Assets",
+        "nbChildrenTransactions": 2,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Assets:Bank": ReduxAccount {
+        "balance": "100",
+        "children": Array [
+          "Assets:Bank:Savings",
+        ],
+        "childrenBalance": "42",
+        "childrenCredits": "42",
+        "childrenDebits": "0",
+        "credits": "100",
+        "debits": "0",
+        "name": "Assets:Bank",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets",
+        ],
+      },
+      "Assets:Bank:Savings": ReduxAccount {
+        "balance": "42",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "42",
+        "debits": "0",
+        "name": "Assets:Bank:Savings",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets:Bank",
+        ],
+      },
+      "Income": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Income:Job",
+        ],
+        "childrenBalance": "-142",
+        "childrenCredits": "0",
+        "childrenDebits": "-142",
+        "credits": "0",
+        "debits": "0",
+        "name": "Income",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Income:Job": ReduxAccount {
+        "balance": "-142",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-142",
+        "name": "Income:Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Income",
+        ],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets",
+          "Income",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 12": Object {
+        "header": Object {
+          "date": "2013-02-10T00:00:00.000Z",
+          "title": "Savings",
+        },
+        "postings": Array [
+          Object {
+            "account": "Assets:Bank",
+            "amount": "100",
+            "currency": "€",
+          },
+          Object {
+            "account": "Assets:Bank:Savings",
+            "amount": "42",
+            "currency": "€",
+          },
+          Object {
+            "account": "Income:Job",
+            "amount": "-142",
+          },
+        ],
+        "uuid": "uuid 12",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+      "Income",
+      "Income:Job",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer unselects root account 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Assets": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets:Bank",
+        ],
+        "childrenBalance": "142",
+        "childrenCredits": "142",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "Assets",
+        "nbChildrenTransactions": 2,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Assets:Bank": ReduxAccount {
+        "balance": "100",
+        "children": Array [
+          "Assets:Bank:Savings",
+        ],
+        "childrenBalance": "42",
+        "childrenCredits": "42",
+        "childrenDebits": "0",
+        "credits": "100",
+        "debits": "0",
+        "name": "Assets:Bank",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets",
+        ],
+      },
+      "Assets:Bank:Savings": ReduxAccount {
+        "balance": "42",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "42",
+        "debits": "0",
+        "name": "Assets:Bank:Savings",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets:Bank",
+        ],
+      },
+      "Income": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Income:Job",
+        ],
+        "childrenBalance": "-142",
+        "childrenCredits": "0",
+        "childrenDebits": "-142",
+        "credits": "0",
+        "debits": "0",
+        "name": "Income",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Income:Job": ReduxAccount {
+        "balance": "-142",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-142",
+        "name": "Income:Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Income",
+        ],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Assets",
+          "Income",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 11": Object {
+        "header": Object {
+          "date": "2013-02-10T00:00:00.000Z",
+          "title": "Savings",
+        },
+        "postings": Array [
+          Object {
+            "account": "Assets:Bank",
+            "amount": "100",
+            "currency": "€",
+          },
+          Object {
+            "account": "Assets:Bank:Savings",
+            "amount": "42",
+            "currency": "€",
+          },
+          Object {
+            "account": "Income:Job",
+            "amount": "-142",
+          },
+        ],
+        "uuid": "uuid 11",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer unsets edited transaction 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Bank": ReduxAccount {
+        "balance": "-3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Expenses": ReduxAccount {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 9": Object {
+        "header": Object {
+          "date": "2013-02-08T00:00:00.000Z",
+          "title": "Bread",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 9",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer updates transaction 1`] = `
+Object {
+  "entities": Object {
+    "accounts": Object {
+      "Bank": ReduxAccount {
+        "balance": "-3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Expenses": ReduxAccount {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": ReduxAccount {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "transactions": Object {
+      "uuid 14": Object {
+        "header": Object {
+          "date": "2013-02-08T00:00:00.000Z",
+          "title": "Updated!",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 14",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;

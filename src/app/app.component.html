@@ -1,5 +1,5 @@
 <mat-sidenav-container class="mat-typography">
-  <mat-sidenav #drawer [opened]="isDrawerOpen" (opened)="handleOpen(true)" (closed)="handleOpen(false)">
+  <mat-sidenav #drawer [opened]="isDrawerOpen | async" (opened)="handleOpen(true)" (closed)="handleOpen(false)">
     <app-menu-drawer></app-menu-drawer>
   </mat-sidenav>
 
@@ -12,7 +12,7 @@
 
       <span>Liste des transactions</span>
 
-      <div [hidden]="!isLoading">
+      <div [hidden]="!(isLoading | async)">
           <mat-progress-spinner
             color="accent"
             mode="indeterminate">

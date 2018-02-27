@@ -1,3 +1,4 @@
+import { NgRedux } from '@angular-redux/store';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors,
@@ -8,7 +9,6 @@ import { MatDatepicker } from '@angular/material';
 import Decimal from 'decimal.js';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { AppStateService } from '../../shared/services/app-state/app-state.service';
 import { Transaction, TransactionWithUUID } from '../../shared/models/transaction';
 
 import * as moment from 'moment';
@@ -17,6 +17,13 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { Posting } from '../../shared/models/posting';
+import { ReduxAppState } from '../../shared/models/app-state';
+import {
+  selectEditedTransaction,
+  AppStateActions,
+  allAccountsSelector,
+  isTransactionPanelOpenSelector,
+} from '../../shared/reducers/app-state-reducer';
 
 @Component({
   selector: 'app-edit-transaction',
@@ -33,19 +40,20 @@ export class EditTransactionComponent implements OnInit {
   filteredAccounts: Subject<Account[]> = new Subject();
   formErrors: Observable<string>;
 
-  constructor(private _state: AppStateService, private _formBuilder: FormBuilder) { }
+  constructor(private ngRedux: NgRedux<ReduxAppState>, private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this._state.editedTransactionHotObservable().subscribe( tr => {
+    this.ngRedux.select(selectEditedTransaction).subscribe( tr => {
+      console.log('edit');
       this.transactionToEdit = tr;
       this.init();
     });
 
-    this.isPanelOpen = this._state.isTransactionPanelOpenHotObservable();
+    this.isPanelOpen = this.ngRedux.select(isTransactionPanelOpenSelector);
   }
 
   createTransaction() {
-    this._state.openTransactionPanelColdObservable(true).subscribe();
+    this.ngRedux.dispatch(AppStateActions.openTransactionPanel(true));
     this.init();
   }
 
@@ -108,8 +116,8 @@ export class EditTransactionComponent implements OnInit {
   }
 
   filterAccount(query: any): Observable<Account[]> {
-    return this._state.allAccountsFlattenedHotObservable().map(accounts => {
-      return accounts.filter(a => a.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return this.ngRedux.select(allAccountsSelector).map(accounts => {
+      return Object.values(accounts).filter(a => a.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
     });
   }
 
@@ -121,9 +129,9 @@ export class EditTransactionComponent implements OnInit {
         ...tr,
         uuid: this.transactionToEdit.uuid,
       };
-      this._state.updateTransactionColdObservable(modifiedTransaction).subscribe();
+      this.ngRedux.dispatch(AppStateActions.updateTransaction(modifiedTransaction));
     } else {
-      this._state.addTransactionsColdObservable([tr]).subscribe();
+      this.ngRedux.dispatch(AppStateActions.addTransactions([tr]));
     }
 
     this.closePanel();
@@ -190,12 +198,12 @@ export class EditTransactionComponent implements OnInit {
 
   deleteTransaction() {
     if (this.transactionToEdit) {
-      this._state.deleteTransactionColdObservable(this.transactionToEdit).subscribe();
+      this.ngRedux.dispatch(AppStateActions.deleteTransaction(this.transactionToEdit.uuid));
     }
   }
 
   closePanel() {
-    this._state.setEditedTransactionColdObservable(undefined).subscribe();
+    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(undefined));
   }
 }
 

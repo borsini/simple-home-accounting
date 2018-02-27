@@ -2,4 +2,4 @@
 
 <span>{{(nbTransactionsSelected | async) == 0 ? "" :  "contenant " + (nbTransactionsSelected | async) + " transactions" }}</span>
 
-<app-account-tree [account]="rootAccount | async" [treeLevel]=0></app-account-tree>
+<app-account-tree [accountName]="rootAccount | async" [treeLevel]=0></app-account-tree>

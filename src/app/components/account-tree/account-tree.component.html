@@ -1,16 +1,16 @@
 <ul class="account" *ngIf="account">
 
     <div
-      [ngClass]="{checked:isChecked}"
+      [ngClass]="{checked:(isChecked)}"
       [ngStyle]="{ 'padding-left': (treeLevel * 15) + 'px' }"
       class="account_header">
       <div class="chevron_container" >
-        <mat-icon *ngIf="account.children?.size > 0" class="material-icons" (click)="toggle()">{{ isCollapsed ? 'chevron_right' : 'expand_more' }}  </mat-icon>
+        <mat-icon *ngIf="account.children.length > 0" class="material-icons" (click)="toggle()">{{ isCollapsed ? 'chevron_right' : 'expand_more' }}  </mat-icon>
       </div>
 
       <mat-checkbox [checked]="isChecked" (change)="checkAccount($event.checked)"></mat-checkbox>
 
-      <div class="infos" (click)="checkAccount(!isChecked)">
+      <div class="infos" (click)="checkAccount(isChecked)">
         <span class="account_name">
             {{ account.name.split(':').pop() }}</span>
 
@@ -23,6 +23,6 @@
         <app-account-tree
           [treeLevel]="treeLevel + 1"
           *ngIf="!isCollapsed"
-          [account]='child'></app-account-tree>
+          [accountName]='child'></app-account-tree>
     </li>
 </ul>

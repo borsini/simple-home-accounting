@@ -1,5 +1,5 @@
 import { CdkTableModule } from '@angular/cdk/table';
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   DateAdapter, MAT_DATE_FORMATS, MatAutocompleteModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatDatepickerModule,
@@ -13,11 +13,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AccountTreeComponent } from './components/account-tree/account-tree.component';
 import { AppComponent, DialogResultExampleDialogComponent, DialogTwoOptionsDialogComponent } from './app.component';
 
-import { AppStateService } from './shared/services/app-state/app-state.service';
 import { EditTransactionComponent } from './components/edit-transaction/edit-transaction.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { NgReduxModule, NgRedux, DevToolsExtension } from '@angular-redux/store';
+import { AppState, ReduxAppState } from './shared/models/app-state';
+import { rootReducer, INITIAL_STATE } from './shared/reducers/app-state-reducer';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -56,11 +58,22 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
     MatAutocompleteModule,
     MatNativeDateModule,
     MatCardModule,
+    NgReduxModule,
   ],
   providers : [
-    AppStateService,
     {provide: DateAdapter, useClass: MomentDateAdapter},
     {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
   ],
 })
-export class AppModule { }
+export class AppModule {
+  constructor(
+    private ngRedux: NgRedux<ReduxAppState>,
+    private devTools: DevToolsExtension,
+  ) {
+    this.ngRedux.configureStore(
+      rootReducer,
+      INITIAL_STATE,
+      [],
+      isDevMode() && devTools.isEnabled() ? [devTools.enhancer()] : []);
+  }
+}

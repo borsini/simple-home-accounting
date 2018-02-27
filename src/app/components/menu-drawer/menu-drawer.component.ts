@@ -1,6 +1,9 @@
+import { ReduxAccount } from './../../shared/models/account';
+import { selectedAccountsSelector, selectedTransactionsSelector, rootAccountSelector } from './../../shared/reducers/app-state-reducer';
+import { ReduxAppState } from './../../shared/models/app-state';
+import { NgRedux } from '@angular-redux/store';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { AppStateService } from '../../shared/services/app-state/app-state.service';
 
 @Component({
   selector: 'app-menu-drawer',
@@ -11,12 +14,12 @@ export class MenuDrawerComponent implements OnInit {
 
   nbAccountsSelected: Observable<Number>;
   nbTransactionsSelected: Observable<Number>;
-  rootAccount: Observable<Account | undefined>;
+  rootAccount: Observable<string | undefined>;
 
-  constructor(state: AppStateService) {
-    this.nbAccountsSelected = state.selectedAccountsHotObservable().map( a => a.size);
-    this.nbTransactionsSelected = state.selectedTransactionsHotObservable().map( t => t.length);
-    this.rootAccount = state.rootAccountHotObservable();
+  constructor(private ngRedux: NgRedux<ReduxAppState>) {
+    this.nbAccountsSelected = ngRedux.select(selectedAccountsSelector).map( a => a.length);
+    this.nbTransactionsSelected = ngRedux.select(selectedTransactionsSelector).map( t => t.length);
+    this.rootAccount = ngRedux.select(rootAccountSelector);
   }
 
   ngOnInit() {

@@ -1,3 +1,6 @@
+import { allTransactionsSelector, selectEditedTransaction, AppStateActions } from './../../shared/reducers/app-state-reducer';
+import { ReduxAppState } from './../../shared/models/app-state';
+import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
@@ -8,15 +11,17 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { AppStateService } from '../../shared/services/app-state/app-state.service';
 import { Transaction, TransactionWithUUID } from '../../shared/models/transaction';
 import { Posting } from '../../shared/models/posting';
-import {Subject} from 'rxjs/Subject';
-import {combineLatest} from 'rxjs/observable/combineLatest';
+import { Subject } from 'rxjs/Subject';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 import 'rxjs/add/operator/skipUntil';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/first';
+import 'rxjs/add/observable/merge';
+
+import { selectedTransactionsSelector } from '../../shared/reducers/app-state-reducer';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
 
@@ -66,7 +71,11 @@ export class TransactionRow {
 
 export class TransactionDataSource extends DataSource<TransactionRow> {
 
-    constructor(private _state: AppStateService, private _paginator: MatPaginator, private _sort: MatSort, private _filter: ElementRef) {
+    constructor(
+      private ngRedux: NgRedux<ReduxAppState>,
+      private _paginator: MatPaginator,
+      private _sort: MatSort,
+      private _filter: ElementRef) {
       super();
 
       this._sort.active = 'date';
@@ -78,18 +87,18 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
     connect(): Observable<TransactionRow[]> {
 
       const sortChange = Observable.from<MatSort>(this._sort.sortChange)
-        .flatMap( d => this._state.selectedTransactionsHotObservable());
+        .flatMap( d => this.ngRedux.select(selectedTransactionsSelector));
 
       const pageChange = Observable.from<PageEvent>(this._paginator.page)
-        .flatMap( d => this._state.selectedTransactionsHotObservable());
+        .flatMap( d => this.ngRedux.select(selectedTransactionsSelector));
 
       const filter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
         .debounceTime(200)
         .distinctUntilChanged()
         .do( f => this._paginator.pageIndex = 0)
-        .flatMap( d => this._state.selectedTransactionsHotObservable());
+        .flatMap( d => this.ngRedux.select(selectedTransactionsSelector));
 
-      const selectedTransactionsChanged = this._state.selectedTransactionsHotObservable();
+      const selectedTransactionsChanged = this.ngRedux.select(selectedTransactionsSelector);
 
       return Observable.merge(pageChange, sortChange, filter, selectedTransactionsChanged)
       .debounceTime(150)
@@ -99,7 +108,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
         this._paginator.length = data.length;
         return this.paginateData(data);
       })
-      .map( data => data.map( tr => new TransactionRow(tr, this._state.editedTransactionHotObservable())));
+      .map( data => data.map( tr => new TransactionRow(tr, this.ngRedux.select(selectEditedTransaction))));
     }
 
     disconnect() {}
@@ -166,14 +175,14 @@ export class TransactionsComponent implements OnInit {
 
   private onKeyDownSubject = new Subject();
 
-  constructor(private _state: AppStateService) {
-    this.transactions = _state.selectedTransactionsHotObservable();
+  constructor(private ngRedux: NgRedux<ReduxAppState>) {
+    this.transactions = ngRedux.select(allTransactionsSelector).map(t => Object.values(t));
    }
 
   ngOnInit() {
-    this.dataSource = new TransactionDataSource(this._state, this.paginator, this.sort, this.filter);
+    this.dataSource = new TransactionDataSource(this.ngRedux, this.paginator, this.sort, this.filter);
 
-
+/*
     this.onKeyDownSubject
       .map(_ => {
         return combineLatest(
@@ -187,10 +196,11 @@ export class TransactionsComponent implements OnInit {
       .subscribe(() => {
         //this.filter.nativeElement.focus();
       });
+      */
   }
 
   onTransactionClicked(row: TransactionRow) {
-    this._state.setEditedTransactionColdObservable(row.transaction).subscribe();
+    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction.uuid));
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
