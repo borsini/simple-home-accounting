@@ -167,9 +167,10 @@ const specialCase = (newlySelectedAccounts, allAccounts): string[] => {
 
 const addOrUpdateTransactions = (previous: TransactionMap, transactions: TransactionWithUUID[], clearOldTransactions: boolean)
 : TransactionMap => {
-  const withAmounts = transactions
+  const withAmounts = {};
+  transactions
   .map(t => addMissingAmount(t))
-  .reduce<TransactionMap>( (prev, curr) => ({...prev, [curr.uuid]: curr}), {});
+  .forEach(m => withAmounts[m.uuid] = m);
 
   return {
     ...clearOldTransactions ? {} : previous,
