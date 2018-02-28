@@ -54,6 +54,10 @@ export const selectedAccountsSelector = (s: ReduxAppState) => {
   return s.ui.selectedAccounts;
 };
 
+export const canAutosearchSelector = (s: ReduxAppState) => {
+  return !s.ui.isLeftMenuOpen && !s.ui.isTransactionPanelOpen;
+};
+
 const transactionsUsingAccounts = (accountsNames: string[], allTransactions: TransactionWithUUID[]) => {
   if (accountsNames.find(n => n === ROOT_ACCOUNT)) {
     return allTransactions;

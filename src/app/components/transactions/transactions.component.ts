@@ -1,4 +1,8 @@
-import { allTransactionsSelector, selectEditedTransaction, AppStateActions } from './../../shared/reducers/app-state-reducer';
+import {
+  allTransactionsSelector,
+  selectEditedTransaction,
+  AppStateActions,
+  canAutosearchSelector } from './../../shared/reducers/app-state-reducer';
 import { ReduxAppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
@@ -6,6 +10,8 @@ import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 
 import * as moment from 'moment';
+import { filter } from 'rxjs/operators';
+import 'rxjs/add/observable/concat';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -182,21 +188,10 @@ export class TransactionsComponent implements OnInit {
   ngOnInit() {
     this.dataSource = new TransactionDataSource(this.ngRedux, this.paginator, this.sort, this.filter);
 
-/*
-    this.onKeyDownSubject
-      .map(_ => {
-        return combineLatest(
-          this._state.isLeftMenuOpenHotObservable(),
-          this._state.isTransactionPanelOpenHotObservable(),
-        ).map(([a, b]) => {
-          console.log(a, b);
-          return !a && !b;
-        }).first;
-      })
-      .subscribe(() => {
-        //this.filter.nativeElement.focus();
-      });
-      */
+    this.onKeyDownSubject.asObservable().flatMap(_ => this.ngRedux.select(canAutosearchSelector).take(1))
+    .pipe(filter(a => a))
+    .do(_ => this.filter.nativeElement.focus())
+    .subscribe();
   }
 
   onTransactionClicked(row: TransactionRow) {
