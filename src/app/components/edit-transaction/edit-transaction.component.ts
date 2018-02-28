@@ -44,7 +44,6 @@ export class EditTransactionComponent implements OnInit {
 
   ngOnInit() {
     this.ngRedux.select(selectEditedTransaction).subscribe( tr => {
-      console.log('edit');
       this.transactionToEdit = tr;
       this.init();
     });

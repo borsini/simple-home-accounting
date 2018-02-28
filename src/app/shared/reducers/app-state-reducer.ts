@@ -299,8 +299,6 @@ const selectAccounts = (state: ReduxAppState, shouldSelect: boolean, accounts: s
   const newlySelectedAccounts = [accountsAlreadySelected, accountsWithChildren].reduce(shouldSelect ? unionReducer : differenceReducer);
   const acc = specialCase(newlySelectedAccounts, Object.keys(state.entities.accounts));
 
-  console.log(acc);
-
   return {
         ...state,
         ui: {
@@ -391,39 +389,30 @@ const stateWithNewTransactions = (state: ReduxAppState, transactions: Transactio
 export function rootReducer(lastState: ReduxAppState= INITIAL_STATE, action: AnyAction): ReduxAppState {
   switch (action.type) {
     case AppStateActions.SET_EDITED_TRANSACTION:
-      console.log('SET_EDITED_TRANSACTION');
       return setEditedTransaction(lastState, action.uuid);
 
     case AppStateActions.SELECT_ACCOUNT:
-      console.log('SELECT_ACCOUNT');
       return selectAccounts(lastState, action.isSelected, [action.account]);
 
     case AppStateActions.ADD_TRANSACTIONS:
-      console.log('ADD_TRANSACTIONS');
       return addTransactions(lastState, action.transactions, action.clearOldTransactions);
 
     case AppStateActions.DELETE_TRANSACTION:
-      console.log('DELETE_TRANSACTION');
       return deleteTransaction(lastState, action.id);
 
     case AppStateActions.UPDATE_TRANSACTION:
-      console.log('UPDATE_TRANSACTION');
       return updateTransaction(lastState, action.transaction);
 
     case AppStateActions.OPEN_LEFT_PANEL:
-      console.log('OPEN_LEFT_PANEL');
       return openLeftPanel(lastState, action.open);
 
     case AppStateActions.TOGGLE_LEFT_PANEL:
-      console.log('TOGGLE_LEFT_PANEL');
       return toggleLeftPanel(lastState);
 
     case AppStateActions.OPEN_TRANSACTION_PANEL:
-      console.log('OPEN_TRANSACTION_PANEL');
       return openTransactionPanel(lastState, action.open);
 
     case AppStateActions.SET_IS_LOADING:
-      console.log('SET_IS_LOADING');
       return setIsLoading(lastState, action.isLoading);
   }
 

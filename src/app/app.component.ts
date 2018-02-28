@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
     this.disableDownloadButton = this.ngRedux.select(allTransactionsSelector)
     .map(tr => Object.keys(tr).length === 0);
     this.isDrawerOpen = this.ngRedux.select(isLeftMenuOpenSelector);
-    this.isLoading = this.ngRedux.select(isLoadingSelector).do(console.log);
+    this.isLoading = this.ngRedux.select(isLoadingSelector);
   }
 
   handleOpen(isOpen: boolean) {
