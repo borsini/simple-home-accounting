@@ -1,5 +1,4 @@
 import { Posting } from './posting';
-import * as moment from 'moment';
 
 export interface Transaction {
   readonly header: Header;
@@ -7,7 +6,7 @@ export interface Transaction {
 }
 
 interface Header {
-  readonly date: moment.Moment;
+  readonly date: number;
   readonly title: string;
   readonly tag?: string;
 }

@@ -51,7 +51,7 @@ Object {
     "transactions": Object {
       "uuid 0": Object {
         "header": Object {
-          "date": "2013-02-08T00:00:00.000Z",
+          "date": 1360281600,
           "title": "Bread",
         },
         "postings": Array [
@@ -185,7 +185,7 @@ Object {
     "transactions": Object {
       "uuid 7": Object {
         "header": Object {
-          "date": "2013-02-10T00:00:00.000Z",
+          "date": 1360454400,
           "title": "Savings",
         },
         "postings": Array [
@@ -285,7 +285,7 @@ Object {
     "transactions": Object {
       "uuid 1": Object {
         "header": Object {
-          "date": "2013-02-08T00:00:00.000Z",
+          "date": 1360281600,
           "title": "Bread",
         },
         "postings": Array [
@@ -305,7 +305,7 @@ Object {
       },
       "uuid 2": Object {
         "header": Object {
-          "date": "2013-02-10T00:00:00.000Z",
+          "date": 1360454400,
           "title": "Salary",
         },
         "postings": Array [
@@ -551,7 +551,7 @@ Object {
     "transactions": Object {
       "uuid 4": Object {
         "header": Object {
-          "date": "2013-02-10T00:00:00.000Z",
+          "date": 1360454400,
           "title": "Salary",
         },
         "postings": Array [
@@ -683,7 +683,7 @@ Object {
     "transactions": Object {
       "uuid 10": Object {
         "header": Object {
-          "date": "2013-02-10T00:00:00.000Z",
+          "date": 1360454400,
           "title": "Savings",
         },
         "postings": Array [
@@ -776,7 +776,7 @@ Object {
     "transactions": Object {
       "uuid 8": Object {
         "header": Object {
-          "date": "2013-02-08T00:00:00.000Z",
+          "date": 1360281600,
           "title": "Bread",
         },
         "postings": Array [
@@ -943,7 +943,7 @@ Object {
     "transactions": Object {
       "uuid 12": Object {
         "header": Object {
-          "date": "2013-02-10T00:00:00.000Z",
+          "date": 1360454400,
           "title": "Savings",
         },
         "postings": Array [
@@ -1084,7 +1084,7 @@ Object {
     "transactions": Object {
       "uuid 11": Object {
         "header": Object {
-          "date": "2013-02-10T00:00:00.000Z",
+          "date": 1360454400,
           "title": "Savings",
         },
         "postings": Array [
@@ -1170,7 +1170,7 @@ Object {
     "transactions": Object {
       "uuid 9": Object {
         "header": Object {
-          "date": "2013-02-08T00:00:00.000Z",
+          "date": 1360281600,
           "title": "Bread",
         },
         "postings": Array [
@@ -1253,7 +1253,7 @@ Object {
     "transactions": Object {
       "uuid 15": Object {
         "header": Object {
-          "date": "2013-02-08T00:00:00.000Z",
+          "date": 1360281600,
           "title": "Updated!",
         },
         "postings": Array [

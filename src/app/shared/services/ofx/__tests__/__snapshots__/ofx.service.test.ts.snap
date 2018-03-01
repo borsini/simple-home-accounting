@@ -6,7 +6,7 @@ exports[`OfxService parses file with one transaction 1`] = `
 Array [
   Object {
     "header": Object {
-      "date": "2017-08-24T00:00:00.000Z",
+      "date": 1503532800,
       "tag": "",
       "title": "FNAC      23/08",
     },

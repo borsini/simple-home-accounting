@@ -58,7 +58,7 @@ export class TransactionRow {
     }
 
     get date() {
-      return this.transaction.header.date.format(LEDGER_DATE_FORMAT);
+      return moment.unix(this.transaction.header.date).format(LEDGER_DATE_FORMAT);
     }
 
     get postings() {
@@ -128,8 +128,8 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       if (!this._sort.active || this._sort.direction === '') { return data; }
 
       return data.sort((a, b) => {
-        let propertyA: string | moment.Moment = '';
-        let propertyB: string | moment.Moment = '';
+        let propertyA: string | number = '';
+        let propertyB: string | number = '';
 
         switch (this._sort.active) {
           case 'title': [propertyA, propertyB] = [a.header.title, b.header.title]; break;

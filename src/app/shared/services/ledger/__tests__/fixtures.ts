@@ -13,7 +13,7 @@ export const oneTransactionFile = `
 export const transactions: Transaction[] = [
   {
     header: {
-      date: moment.utc('2013-02-08'),
+      date: moment.utc('2013-02-08').unix(),
       title: 'Transaction title',
     },
     postings: [

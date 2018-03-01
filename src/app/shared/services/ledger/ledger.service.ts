@@ -127,7 +127,7 @@ export class LedgerService {
       return {
         uuid: undefined,
         header : {
-          date: moment.utc(t.header.date, 'YYYY/MM/DD'),
+          date: moment.utc(t.header.date, 'YYYY/MM/DD').unix(),
           title: t.header.title,
           tag: t.header.tag,
         },
@@ -160,7 +160,7 @@ export class LedgerService {
       let out = '';
       transactions.forEach( tr => {
 
-        out += [tr.header.date.format('YYYY/MM/DD'), tr.header.tag, tr.header.title]
+        out += [moment.unix(tr.header.date).format('YYYY/MM/DD'), tr.header.tag, tr.header.title]
           .filter(val => val)
           .join(' ') + '\n';
 

@@ -5,7 +5,7 @@ import { Transaction } from '../../models/transaction';
 export const transactions: Transaction[] = [
   {
     header: {
-      date: moment.utc('2013-02-08'),
+      date: moment.utc('2013-02-08').unix(),
       title: 'Bread',
     },
     postings: [
@@ -23,7 +23,7 @@ export const transactions: Transaction[] = [
   },
   {
     header: {
-      date: moment.utc('2013-02-10'),
+      date: moment.utc('2013-02-10').unix(),
       title: 'Salary',
     },
     postings: [
@@ -41,7 +41,7 @@ export const transactions: Transaction[] = [
 
 export const transactionWithNestedAccounts: Transaction = {
   header: {
-    date: moment.utc('2013-02-10'),
+    date: moment.utc('2013-02-10').unix(),
     title: 'Savings',
   },
   postings: [

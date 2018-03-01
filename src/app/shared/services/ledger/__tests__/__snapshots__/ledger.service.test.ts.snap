@@ -6,7 +6,7 @@ exports[`LedgerService parses file with one transaction 1`] = `
 Array [
   Object {
     "header": Object {
-      "date": "2017-01-13T00:00:00.000Z",
+      "date": 1484265600,
       "tag": "!",
       "title": "Transaction",
     },
