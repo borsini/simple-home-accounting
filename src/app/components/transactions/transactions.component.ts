@@ -172,6 +172,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 export class TransactionsComponent implements OnInit {
 
   transactions: Observable<Transaction[]>;
+  noTransactionsToDisplay: Observable<boolean>;
   dataSource: TransactionDataSource;
   displayedColumns = ['title', 'date', 'movements', 'status'];
 
@@ -187,6 +188,8 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource = new TransactionDataSource(this.ngRedux, this.paginator, this.sort, this.filter);
+    this.noTransactionsToDisplay = this.ngRedux.select(selectedTransactionsSelector)
+    .map(t => t.length === 0);
 
     this.onKeyDownSubject.asObservable().flatMap(_ => this.ngRedux.select(canAutosearchSelector).take(1))
     .pipe(filter(a => a))
