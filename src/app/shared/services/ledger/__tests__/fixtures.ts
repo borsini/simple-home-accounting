@@ -1,5 +1,6 @@
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
+import { Transaction } from '../../../models/transaction';
 
 export const emptyFile = '';
 
@@ -9,7 +10,7 @@ export const oneTransactionFile = `
     * CompteB
 `;
 
-export const transactions = [
+export const transactions: Transaction[] = [
   {
     header: {
       date: moment.utc('2013-02-08'),
@@ -19,7 +20,7 @@ export const transactions = [
       {
         account: 'accountA',
         tag: '!',
-        amount: new Decimal(3.14),
+        amount: '3.14',
         currency: '€',
         comment: 'Comment',
       },

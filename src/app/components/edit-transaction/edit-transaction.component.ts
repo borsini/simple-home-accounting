@@ -153,7 +153,7 @@ export class EditTransactionComponent implements OnInit {
       postings: formModel.postings.map(p => {
         return {
           account: p.account,
-          amount: p.amount ? new Decimal(p.amount) : null,
+          amount: p.amount,
           comment: p.comment,
           currency: p.currency,
           tag: '',

@@ -13,7 +13,7 @@ Array [
     "postings": Array [
       Object {
         "account": "01234567890",
-        "amount": "-18.9",
+        "amount": "-18.90",
         "comment": "PAIEMENT PAR CARTE",
         "currency": "EUR",
         "tag": "",

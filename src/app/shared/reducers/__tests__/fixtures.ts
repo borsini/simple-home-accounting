@@ -2,7 +2,7 @@ import * as moment from 'moment';
 import Decimal from 'decimal.js';
 import { Transaction } from '../../models/transaction';
 
-export const transactions: [Transaction] = [
+export const transactions: Transaction[] = [
   {
     header: {
       date: moment.utc('2013-02-08'),
@@ -12,7 +12,7 @@ export const transactions: [Transaction] = [
       {
         account: 'Bank',
         tag: '!',
-        amount: new Decimal(-3.05),
+        amount: '-3.05',
         currency: '$',
         comment: 'Comment',
       },
@@ -29,7 +29,7 @@ export const transactions: [Transaction] = [
     postings: [
       {
         account: 'Bank',
-        amount: new Decimal(500),
+        amount: '500',
         currency: '€',
       },
       {
@@ -39,7 +39,7 @@ export const transactions: [Transaction] = [
   },
 ];
 
-export const transactionWithNestedAccounts = {
+export const transactionWithNestedAccounts: Transaction = {
   header: {
     date: moment.utc('2013-02-10'),
     title: 'Savings',
@@ -47,12 +47,12 @@ export const transactionWithNestedAccounts = {
   postings: [
     {
       account: 'Assets:Bank',
-      amount: new Decimal(100),
+      amount: '100',
       currency: '€',
     },
     {
       account: 'Assets:Bank:Savings',
-      amount: new Decimal(42),
+      amount: '42',
       currency: '€',
     },
     {

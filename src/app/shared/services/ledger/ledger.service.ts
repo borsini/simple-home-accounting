@@ -139,11 +139,7 @@ export class LedgerService {
             comment: p.comment,
           };
 
-          const a = p.amount ?  (p.sign || '') + p.amount : undefined;
-
-          if (a) {
-            pt.amount = new Decimal(a);
-          }
+          pt.amount = p.amount ?  (p.sign || '') + p.amount : undefined;
 
           return pt;
         }),

@@ -196,7 +196,7 @@ const addMissingAmount = (transaction: TransactionWithUUID): TransactionWithUUID
 
   return {
     ...transaction,
-    postings: [...result.withAmount, { ...result.withoutAmount[0], amount: new Decimal(-result.sum) }],
+    postings: [...result.withAmount, { ...result.withoutAmount[0], amount: new Decimal(-result.sum).toString() }],
   };
 };
 
@@ -226,7 +226,7 @@ const createAccountsFromTransactions = (transactions: Transaction[]): Account[] 
             for (const part of accountParts) {
                 currentAccountName += part;
                 const account = getOrCreateAccount(currentAccountName, lastParent, flatAccounts);
-                addAmountToAccount(account, ps.amount || new Decimal(0), currentAccountName === ps.account);
+                addAmountToAccount(account, ps.amount || '0', currentAccountName === ps.account);
 
                 if (lastParent) {
                     lastParent.children = [lastParent.children, [account.name]].reduce(unionReducer);
@@ -253,11 +253,13 @@ const getOrCreateAccount = (name: string, parent: Account | undefined, accountsM
   return stat;
 };
 
-const addAmountToAccount = (a: Account, amount: Decimal, isFinalAccount: boolean) => {
+const addAmountToAccount = (a: Account, amount: string, isFinalAccount: boolean) => {
+  const decimalAmount = new Decimal(amount);
+
   if (!isFinalAccount) {
       a.childrenBalance = a.childrenBalance.plus(amount);
       a.nbChildrenTransactions ++;
-      if (amount.greaterThan(0)) {
+      if (decimalAmount.greaterThan(0)) {
           a.childrenCredits = a.childrenCredits.plus(amount);
       } else {
           a.childrenDebits = a.childrenDebits.plus(amount);
@@ -266,7 +268,7 @@ const addAmountToAccount = (a: Account, amount: Decimal, isFinalAccount: boolean
       a.balance = a.balance.plus(amount);
       a.nbTransactions++;
 
-      if (amount.greaterThan(0)) {
+      if (decimalAmount.greaterThan(0)) {
         a.credits = a.credits.plus(amount);
       } else {
           a.debits = a.debits.plus(amount);

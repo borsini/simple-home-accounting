@@ -67,7 +67,7 @@ export class OfxService {
               {
                 tag: '',
                 account: acc,
-                amount: new Decimal(a.replace('+', '')),
+                amount: a.replace('+', ''),
                 currency: c,
                 comment: m,
               },

@@ -20,6 +20,7 @@ Array [
       },
       Object {
         "account": "CompteB",
+        "amount": undefined,
         "comment": null,
         "currency": null,
         "tag": "*",
