@@ -155,9 +155,10 @@ export class AppStateActions {
   }
 }
 
-const concatReducer = (prev: [any], curr: [any]) => ([...prev, ...curr]);
-const unionReducer = (prev: [any], curr: [any]) => ([...prev, ...curr.filter(x => !prev.includes(x))]);
-const differenceReducer = (prev: [any], curr: [any]) => ([...prev.filter(x => !curr.includes(x))]);
+export const concatReducer = (prev: any[], curr: any[]) => ([...prev, ...curr]);
+export const unionReducer = (prev: any[], curr: any[]) => ([...prev, ...curr.filter(x => !prev.includes(x))]);
+export const differenceReducer = (prev: any[], curr: any[]) => ([...prev.filter(x => !curr.includes(x))]);
+export const intersectionReducer = (prev: any[], curr: any[]) => (prev.filter(x => curr.indexOf(x) !== -1));
 
 const specialCase = (newlySelectedAccounts, allAccounts): string[] => {
   if (newlySelectedAccounts.length === 1 && newlySelectedAccounts.includes(ROOT_ACCOUNT)) {
