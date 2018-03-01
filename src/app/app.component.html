@@ -10,10 +10,12 @@
           <mat-icon class="material-icons" >menu</mat-icon>
       </button>
 
-      <span>Liste des transactions</span>
+      <span>Simple Home Accounting</span>
+      <span class="app-version">v{{appVersion}}</span>
 
       <div [hidden]="!(isLoading | async)">
           <mat-progress-spinner
+            [diameter]="30"
             color="accent"
             mode="indeterminate">
           </mat-progress-spinner>
@@ -26,11 +28,13 @@
       </button>
 
       <input type="file" accept=".ofx, .ledger, .gnucash" [hidden]="true" id="upload-file" (change)="uploadFileOnChange($event.target.files)" />
-      <label id="filename" class="action_btn" for="upload-file">
-        <mat-icon class="material-icons">file_upload</mat-icon>
-      </label>
 
-      <span class="app-version">{{appVersion}}</span>
+      <button mat-button>
+        <label id="filename" class="action_btn" for="upload-file">
+          <mat-icon class="material-icons">file_upload</mat-icon>
+        </label>
+      </button>
+
     </mat-toolbar>
 
     <div class="content">

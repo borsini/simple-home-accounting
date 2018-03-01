@@ -24,6 +24,11 @@ mat-progress-spinner {
     height:30px;
 }
 
+#filename {
+  display: flex;
+  justify-content: center;
+}
+
 .content {
     flex: 1 1 auto;
     position: relative;/* need this to position inner content */
