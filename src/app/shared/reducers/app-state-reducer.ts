@@ -11,8 +11,10 @@ const ROOT_ACCOUNT = 'ROOT';
 
 export const INITIAL_STATE: AppState = {
   entities: {
-    accounts: { ROOT_ACCOUNT: new Account(ROOT_ACCOUNT) },
     transactions: {},
+  },
+  computed: {
+    accounts: { ROOT_ACCOUNT: new Account(ROOT_ACCOUNT) },
   },
   ui: {
     selectedAccounts: [],
@@ -35,7 +37,7 @@ export const allTransactionsSelector = (s: AppState) => {
 };
 
 export const allAccountsSelector = (s: AppState) => {
-  return s.entities.accounts;
+  return s.computed.accounts;
 };
 
 export const isLeftMenuOpenSelector = (s: AppState) => {
@@ -290,7 +292,7 @@ const setEditedTransaction = (state: AppState, id: string): AppState => {
 };
 
 const allChildren = (state: AppState, a: string): string[] => {
-  const account = state.entities.accounts[a];
+  const account = state.computed.accounts[a];
   const children = account.children.map(c => allChildren(state, c)).reduce(concatReducer, []);
 
   return [a, ...children];
@@ -304,7 +306,7 @@ const selectAccounts = (state: AppState, shouldSelect: boolean, accounts: string
   .reduce(unionReducer, []);
 
   const newlySelectedAccounts = [accountsAlreadySelected, accountsWithChildren].reduce(shouldSelect ? unionReducer : differenceReducer);
-  const acc = specialCase(newlySelectedAccounts, Object.keys(state.entities.accounts));
+  const acc = specialCase(newlySelectedAccounts, Object.keys(state.computed.accounts));
 
   return {
         ...state,
@@ -385,6 +387,8 @@ const stateWithNewTransactions = (state: AppState, transactions: TransactionMap)
     ...state,
     entities: {
       transactions,
+    },
+    computed: {
       accounts: ac,
     },
     ui: {

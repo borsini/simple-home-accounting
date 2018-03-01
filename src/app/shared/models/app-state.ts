@@ -7,8 +7,10 @@ export type AccountMap = { [k: string]: Account };
 
 export interface AppState {
   entities: {
-    accounts: AccountMap;
     transactions: TransactionMap;
+  };
+  computed: {
+    accounts: AccountMap;
   };
   ui: {
     selectedAccounts: string[];

@@ -2,7 +2,7 @@
 
 exports[`rootReducer adds new transaction 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Bank": Account {
         "balance": "-3.05",
@@ -46,6 +46,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 0": Object {
         "header": Object {
@@ -83,7 +85,7 @@ Object {
 
 exports[`rootReducer adds new transactions with nested accounts 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Assets": Account {
         "balance": "0",
@@ -178,6 +180,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 7": Object {
         "header": Object {
@@ -218,7 +222,7 @@ Object {
 
 exports[`rootReducer appends transaction 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Bank": Account {
         "balance": "496.95",
@@ -276,6 +280,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 1": Object {
         "header": Object {
@@ -331,7 +337,7 @@ Object {
 
 exports[`rootReducer clears transactions 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "ROOT": Account {
         "balance": "0",
@@ -346,6 +352,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {},
   },
   "ui": Object {
@@ -362,7 +370,7 @@ Object {
 
 exports[`rootReducer deletes transaction 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "ROOT": Account {
         "balance": "0",
@@ -377,6 +385,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {},
   },
   "ui": Object {
@@ -393,7 +403,7 @@ Object {
 
 exports[`rootReducer has empty state at startup 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "ROOT_ACCOUNT": Account {
         "balance": "0",
@@ -408,6 +418,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {},
   },
   "ui": Object {
@@ -424,7 +436,7 @@ Object {
 
 exports[`rootReducer opens left panel 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "ROOT_ACCOUNT": Account {
         "balance": "0",
@@ -439,6 +451,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {},
   },
   "ui": Object {
@@ -455,7 +469,7 @@ Object {
 
 exports[`rootReducer opens transaction panel 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "ROOT_ACCOUNT": Account {
         "balance": "0",
@@ -470,6 +484,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {},
   },
   "ui": Object {
@@ -486,7 +502,7 @@ Object {
 
 exports[`rootReducer replaces transaction 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Bank": Account {
         "balance": "500",
@@ -530,6 +546,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 4": Object {
         "header": Object {
@@ -565,7 +583,7 @@ Object {
 
 exports[`rootReducer selects root account 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Assets": Account {
         "balance": "0",
@@ -660,6 +678,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 10": Object {
         "header": Object {
@@ -707,7 +727,7 @@ Object {
 
 exports[`rootReducer sets edited transaction 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Bank": Account {
         "balance": "-3.05",
@@ -751,6 +771,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 8": Object {
         "header": Object {
@@ -788,7 +810,7 @@ Object {
 
 exports[`rootReducer unselects nested account 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Assets": Account {
         "balance": "0",
@@ -883,6 +905,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 12": Object {
         "header": Object {
@@ -927,7 +951,7 @@ Object {
 
 exports[`rootReducer unselects root account 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Assets": Account {
         "balance": "0",
@@ -1022,6 +1046,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 11": Object {
         "header": Object {
@@ -1062,7 +1088,7 @@ Object {
 
 exports[`rootReducer unsets edited transaction 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Bank": Account {
         "balance": "-3.05",
@@ -1106,6 +1132,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 9": Object {
         "header": Object {
@@ -1143,7 +1171,7 @@ Object {
 
 exports[`rootReducer updates transaction 1`] = `
 Object {
-  "entities": Object {
+  "computed": Object {
     "accounts": Object {
       "Bank": Account {
         "balance": "-3.05",
@@ -1187,6 +1215,8 @@ Object {
         "nbTransactions": 0,
       },
     },
+  },
+  "entities": Object {
     "transactions": Object {
       "uuid 14": Object {
         "header": Object {
