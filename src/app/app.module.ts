@@ -18,8 +18,8 @@ import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.compon
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { NgReduxModule, NgRedux, DevToolsExtension } from '@angular-redux/store';
-import { AppState } from './shared/models/app-state';
-import { rootReducer, INITIAL_STATE } from './shared/reducers/app-state-reducer';
+import { AppState, TransactionMap } from './shared/models/app-state';
+import { rootReducer, INITIAL_STATE, AppStateActions, allTransactionsSelector } from './shared/reducers/app-state-reducer';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -75,5 +75,35 @@ export class AppModule {
       INITIAL_STATE,
       [],
       isDevMode() && devTools.isEnabled() ? [devTools.enhancer()] : []);
+
+    this.ngRedux.select(allTransactionsSelector)
+    .distinctUntilChanged()
+    .debounceTime(5000)
+    .subscribe( transactions => {
+      console.log('save');
+      saveTransactions(transactions);
+    });
+
+    const t = loadTransactions();
+    if (t) {
+      console.log('restore');
+      this.ngRedux.dispatch(AppStateActions.addTransactions(Object.values(t), true));
+    }
   }
 }
+
+const loadTransactions = (): TransactionMap | undefined => {
+  const serializedTransactions = localStorage.getItem('transactions');
+
+  if (serializedTransactions != null) {
+    const loaded = JSON.parse(serializedTransactions);
+    return loaded;
+  }
+
+  return undefined;
+};
+
+const saveTransactions = (transactions: TransactionMap) => {
+  const serializedTransactions = JSON.stringify(transactions);
+  localStorage.setItem('transactions', serializedTransactions);
+};
