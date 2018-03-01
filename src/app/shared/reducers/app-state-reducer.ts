@@ -2,7 +2,7 @@ import {v4 as uuid } from 'uuid';
 import Decimal from 'decimal.js';
 
 import { AppState, TransactionMap, AccountMap } from './../models/app-state';
-import { ReduxAccount } from '../models/account';
+import { Account } from '../models/account';
 import { Action, AnyAction } from 'redux';
 import { Transaction, TransactionWithUUID } from '../models/transaction';
 import { Posting } from '../models/posting';
@@ -11,7 +11,7 @@ const ROOT_ACCOUNT = 'ROOT';
 
 export const INITIAL_STATE: AppState = {
   entities: {
-    accounts: { ROOT_ACCOUNT: new ReduxAccount(ROOT_ACCOUNT) },
+    accounts: { ROOT_ACCOUNT: new Account(ROOT_ACCOUNT) },
     transactions: {},
   },
   ui: {
@@ -203,7 +203,7 @@ const addMissingAmount = (transaction: TransactionWithUUID): TransactionWithUUID
 const generateAccounts = (transactions: Transaction[]): AccountMap => {
   const accounts = createAccountsFromTransactions(transactions);
   const topAccounts = accounts.filter(a => a.parents.length === 0);
-  const root = new ReduxAccount(ROOT_ACCOUNT);
+  const root = new Account(ROOT_ACCOUNT);
   root.children = topAccounts.map(a => a.name);
   root.childrenBalance = topAccounts
     .map(a => a.childrenBalance.plus(a.balance) )
@@ -215,13 +215,13 @@ const generateAccounts = (transactions: Transaction[]): AccountMap => {
   ].reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
 };
 
-const createAccountsFromTransactions = (transactions: Transaction[]): ReduxAccount[] => {
+const createAccountsFromTransactions = (transactions: Transaction[]): Account[] => {
   const flatAccounts = new Map();
 
     transactions.forEach(tr => {
         tr.postings.forEach(ps => {
             const accountParts = ps.account.split(':');
-            let lastParent: ReduxAccount | undefined;
+            let lastParent: Account | undefined;
             let currentAccountName = '';
             for (const part of accountParts) {
                 currentAccountName += part;
@@ -241,11 +241,11 @@ const createAccountsFromTransactions = (transactions: Transaction[]): ReduxAccou
     return Array.from(flatAccounts.values());
 };
 
-const getOrCreateAccount = (name: string, parent: ReduxAccount | undefined, accountsMap: Map<string, ReduxAccount>): ReduxAccount => {
+const getOrCreateAccount = (name: string, parent: Account | undefined, accountsMap: Map<string, Account>): Account => {
   let stat = accountsMap.get(name);
 
   if (!stat) {
-      stat = new ReduxAccount(name);
+      stat = new Account(name);
       stat.parents = parent ? [parent.name] : [];
       accountsMap.set(name, stat);
   }
@@ -253,7 +253,7 @@ const getOrCreateAccount = (name: string, parent: ReduxAccount | undefined, acco
   return stat;
 };
 
-const addAmountToAccount = (a: ReduxAccount, amount: Decimal, isFinalAccount: boolean) => {
+const addAmountToAccount = (a: Account, amount: Decimal, isFinalAccount: boolean) => {
   if (!isFinalAccount) {
       a.childrenBalance = a.childrenBalance.plus(amount);
       a.nbChildrenTransactions ++;

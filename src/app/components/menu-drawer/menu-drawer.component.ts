@@ -1,4 +1,4 @@
-import { ReduxAccount } from './../../shared/models/account';
+import { Account } from './../../shared/models/account';
 import { selectedAccountsSelector, selectedTransactionsSelector, rootAccountSelector } from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';

@@ -3,7 +3,7 @@ import { selectedAccountsSelector, AppStateActions, allAccountsSelector } from '
 import { NgRedux } from '@angular-redux/store';
 import { AppState } from './../../shared/models/app-state';
 import { Component, Input, OnInit } from '@angular/core';
-import { Account, ReduxAccount } from '../../shared/models/account';
+import { Account } from '../../shared/models/account';
 
 @Component({
   selector: 'app-account-tree',
@@ -20,7 +20,7 @@ export class AccountTreeComponent implements OnInit {
 
   isCollapsed = false;
   isChecked: boolean;
-  account: ReduxAccount;
+  account: Account;
 
   constructor(private ngRedux: NgRedux<AppState>) {
   }

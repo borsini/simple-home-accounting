@@ -1,9 +1,9 @@
 import { Transaction, TransactionWithUUID } from './transaction';
-import { ReduxAccount } from './account';
+import { Account } from './account';
 import * as moment from 'moment';
 
 export type TransactionMap = { [k: string]: TransactionWithUUID };
-export type AccountMap = { [k: string]: ReduxAccount };
+export type AccountMap = { [k: string]: Account };
 
 export interface AppState {
   entities: {

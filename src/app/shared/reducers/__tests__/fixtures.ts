@@ -1,7 +1,6 @@
 import * as moment from 'moment';
 import Decimal from 'decimal.js';
 import { Transaction } from '../../models/transaction';
-import { Account } from '../../models/account';
 
 export const transactions: [Transaction] = [
   {

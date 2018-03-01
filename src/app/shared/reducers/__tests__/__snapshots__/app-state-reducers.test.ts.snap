@@ -4,7 +4,7 @@ exports[`rootReducer adds new transaction 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Bank": ReduxAccount {
+      "Bank": Account {
         "balance": "-3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -17,7 +17,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "Expenses": ReduxAccount {
+      "Expenses": Account {
         "balance": "3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -30,7 +30,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Bank",
@@ -85,7 +85,7 @@ exports[`rootReducer adds new transactions with nested accounts 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Assets": ReduxAccount {
+      "Assets": Account {
         "balance": "0",
         "children": Array [
           "Assets:Bank",
@@ -100,7 +100,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Assets:Bank": ReduxAccount {
+      "Assets:Bank": Account {
         "balance": "100",
         "children": Array [
           "Assets:Bank:Savings",
@@ -117,7 +117,7 @@ Object {
           "Assets",
         ],
       },
-      "Assets:Bank:Savings": ReduxAccount {
+      "Assets:Bank:Savings": Account {
         "balance": "42",
         "children": Array [],
         "childrenBalance": "0",
@@ -132,7 +132,7 @@ Object {
           "Assets:Bank",
         ],
       },
-      "Income": ReduxAccount {
+      "Income": Account {
         "balance": "0",
         "children": Array [
           "Income:Job",
@@ -147,7 +147,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Income:Job": ReduxAccount {
+      "Income:Job": Account {
         "balance": "-142",
         "children": Array [],
         "childrenBalance": "0",
@@ -162,7 +162,7 @@ Object {
           "Income",
         ],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Assets",
@@ -220,7 +220,7 @@ exports[`rootReducer appends transaction 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Bank": ReduxAccount {
+      "Bank": Account {
         "balance": "496.95",
         "children": Array [],
         "childrenBalance": "0",
@@ -233,7 +233,7 @@ Object {
         "nbTransactions": 2,
         "parents": Array [],
       },
-      "Expenses": ReduxAccount {
+      "Expenses": Account {
         "balance": "3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -246,7 +246,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "Job": ReduxAccount {
+      "Job": Account {
         "balance": "-500",
         "children": Array [],
         "childrenBalance": "0",
@@ -259,7 +259,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Bank",
@@ -333,7 +333,7 @@ exports[`rootReducer clears transactions 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [],
         "childrenBalance": "0",
@@ -364,7 +364,7 @@ exports[`rootReducer deletes transaction 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [],
         "childrenBalance": "0",
@@ -395,7 +395,7 @@ exports[`rootReducer has empty state at startup 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "ROOT_ACCOUNT": ReduxAccount {
+      "ROOT_ACCOUNT": Account {
         "balance": "0",
         "children": Array [],
         "childrenBalance": "0",
@@ -426,7 +426,7 @@ exports[`rootReducer opens left panel 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "ROOT_ACCOUNT": ReduxAccount {
+      "ROOT_ACCOUNT": Account {
         "balance": "0",
         "children": Array [],
         "childrenBalance": "0",
@@ -457,7 +457,7 @@ exports[`rootReducer opens transaction panel 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "ROOT_ACCOUNT": ReduxAccount {
+      "ROOT_ACCOUNT": Account {
         "balance": "0",
         "children": Array [],
         "childrenBalance": "0",
@@ -488,7 +488,7 @@ exports[`rootReducer replaces transaction 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Bank": ReduxAccount {
+      "Bank": Account {
         "balance": "500",
         "children": Array [],
         "childrenBalance": "0",
@@ -501,7 +501,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "Job": ReduxAccount {
+      "Job": Account {
         "balance": "-500",
         "children": Array [],
         "childrenBalance": "0",
@@ -514,7 +514,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Bank",
@@ -567,7 +567,7 @@ exports[`rootReducer selects root account 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Assets": ReduxAccount {
+      "Assets": Account {
         "balance": "0",
         "children": Array [
           "Assets:Bank",
@@ -582,7 +582,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Assets:Bank": ReduxAccount {
+      "Assets:Bank": Account {
         "balance": "100",
         "children": Array [
           "Assets:Bank:Savings",
@@ -599,7 +599,7 @@ Object {
           "Assets",
         ],
       },
-      "Assets:Bank:Savings": ReduxAccount {
+      "Assets:Bank:Savings": Account {
         "balance": "42",
         "children": Array [],
         "childrenBalance": "0",
@@ -614,7 +614,7 @@ Object {
           "Assets:Bank",
         ],
       },
-      "Income": ReduxAccount {
+      "Income": Account {
         "balance": "0",
         "children": Array [
           "Income:Job",
@@ -629,7 +629,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Income:Job": ReduxAccount {
+      "Income:Job": Account {
         "balance": "-142",
         "children": Array [],
         "childrenBalance": "0",
@@ -644,7 +644,7 @@ Object {
           "Income",
         ],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Assets",
@@ -709,7 +709,7 @@ exports[`rootReducer sets edited transaction 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Bank": ReduxAccount {
+      "Bank": Account {
         "balance": "-3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -722,7 +722,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "Expenses": ReduxAccount {
+      "Expenses": Account {
         "balance": "3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -735,7 +735,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Bank",
@@ -790,7 +790,7 @@ exports[`rootReducer unselects nested account 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Assets": ReduxAccount {
+      "Assets": Account {
         "balance": "0",
         "children": Array [
           "Assets:Bank",
@@ -805,7 +805,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Assets:Bank": ReduxAccount {
+      "Assets:Bank": Account {
         "balance": "100",
         "children": Array [
           "Assets:Bank:Savings",
@@ -822,7 +822,7 @@ Object {
           "Assets",
         ],
       },
-      "Assets:Bank:Savings": ReduxAccount {
+      "Assets:Bank:Savings": Account {
         "balance": "42",
         "children": Array [],
         "childrenBalance": "0",
@@ -837,7 +837,7 @@ Object {
           "Assets:Bank",
         ],
       },
-      "Income": ReduxAccount {
+      "Income": Account {
         "balance": "0",
         "children": Array [
           "Income:Job",
@@ -852,7 +852,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Income:Job": ReduxAccount {
+      "Income:Job": Account {
         "balance": "-142",
         "children": Array [],
         "childrenBalance": "0",
@@ -867,7 +867,7 @@ Object {
           "Income",
         ],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Assets",
@@ -929,7 +929,7 @@ exports[`rootReducer unselects root account 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Assets": ReduxAccount {
+      "Assets": Account {
         "balance": "0",
         "children": Array [
           "Assets:Bank",
@@ -944,7 +944,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Assets:Bank": ReduxAccount {
+      "Assets:Bank": Account {
         "balance": "100",
         "children": Array [
           "Assets:Bank:Savings",
@@ -961,7 +961,7 @@ Object {
           "Assets",
         ],
       },
-      "Assets:Bank:Savings": ReduxAccount {
+      "Assets:Bank:Savings": Account {
         "balance": "42",
         "children": Array [],
         "childrenBalance": "0",
@@ -976,7 +976,7 @@ Object {
           "Assets:Bank",
         ],
       },
-      "Income": ReduxAccount {
+      "Income": Account {
         "balance": "0",
         "children": Array [
           "Income:Job",
@@ -991,7 +991,7 @@ Object {
         "nbTransactions": 0,
         "parents": Array [],
       },
-      "Income:Job": ReduxAccount {
+      "Income:Job": Account {
         "balance": "-142",
         "children": Array [],
         "childrenBalance": "0",
@@ -1006,7 +1006,7 @@ Object {
           "Income",
         ],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Assets",
@@ -1064,7 +1064,7 @@ exports[`rootReducer unsets edited transaction 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Bank": ReduxAccount {
+      "Bank": Account {
         "balance": "-3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -1077,7 +1077,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "Expenses": ReduxAccount {
+      "Expenses": Account {
         "balance": "3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -1090,7 +1090,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Bank",
@@ -1145,7 +1145,7 @@ exports[`rootReducer updates transaction 1`] = `
 Object {
   "entities": Object {
     "accounts": Object {
-      "Bank": ReduxAccount {
+      "Bank": Account {
         "balance": "-3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -1158,7 +1158,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "Expenses": ReduxAccount {
+      "Expenses": Account {
         "balance": "3.05",
         "children": Array [],
         "childrenBalance": "0",
@@ -1171,7 +1171,7 @@ Object {
         "nbTransactions": 1,
         "parents": Array [],
       },
-      "ROOT": ReduxAccount {
+      "ROOT": Account {
         "balance": "0",
         "children": Array [
           "Bank",

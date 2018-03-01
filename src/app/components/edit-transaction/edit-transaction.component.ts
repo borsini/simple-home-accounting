@@ -24,6 +24,7 @@ import {
   allAccountsSelector,
   isTransactionPanelOpenSelector,
 } from '../../shared/reducers/app-state-reducer';
+import { Account } from '../../shared/models/account';
 
 @Component({
   selector: 'app-edit-transaction',

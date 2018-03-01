@@ -2,7 +2,6 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav } from '@angular/material';
 import * as fileSaver from 'file-saver';
 import { LedgerService } from './shared/services/ledger/ledger.service';
-import { Account } from './shared/models/account';
 import { OfxService } from './shared/services/ofx/ofx.service';
 
 import 'rxjs/add/operator/zip';
