@@ -382,7 +382,7 @@ const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
 
 const stateWithNewTransactions = (state: AppState, transactions: TransactionMap): AppState => {
   const ac = generateAccounts(Object.values(transactions));
-  const sa = [state.ui.selectedAccounts, Object.keys(ac)].reduce(unionReducer);
+  const sa = [state.ui.selectedAccounts, Object.keys(ac)].reduce(intersectionReducer);
 
   return {
     ...state,
@@ -394,6 +394,7 @@ const stateWithNewTransactions = (state: AppState, transactions: TransactionMap)
     },
     ui: {
       ...state.ui,
+      selectedAccounts: sa,
     },
   };
 };

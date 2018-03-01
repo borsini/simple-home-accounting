@@ -808,6 +808,39 @@ Object {
 }
 `;
 
+exports[`rootReducer unselects accounts from deleted transactions 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
 exports[`rootReducer unselects nested account 1`] = `
 Object {
   "computed": Object {
@@ -1218,7 +1251,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 14": Object {
+      "uuid 15": Object {
         "header": Object {
           "date": "2013-02-08T00:00:00.000Z",
           "title": "Updated!",
@@ -1236,7 +1269,7 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 14",
+        "uuid": "uuid 15",
       },
     },
   },

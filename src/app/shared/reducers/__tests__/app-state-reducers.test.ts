@@ -168,6 +168,14 @@ describe(rootReducer.name, () => {
     expect(finalState).toMatchSnapshot();
   });
 
+  it('unselects accounts from deleted transactions', () => {
+    const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactionWithNestedAccounts]));
+    const state2 = rootReducer(state1, AppStateActions.selectAccount('Assets:Bank', true));
+    const finalState = rootReducer(state2, AppStateActions.addTransactions([], true));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
   it('deletes transaction', () => {
     const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
     const transactionId = Object.values(state1.entities.transactions)[0].uuid;
