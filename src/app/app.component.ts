@@ -12,7 +12,7 @@ import { Subject } from 'rxjs/Subject';
 import { Transaction, TransactionWithUUID } from './shared/models/transaction';
 import { GnucashService } from './shared/services/gnucash/gnucash.service';
 import { NgRedux } from '@angular-redux/store';
-import { AppState, ReduxAppState } from './shared/models/app-state';
+import { AppState } from './shared/models/app-state';
 import {
   AppStateActions,
   selectEditedTransaction,
@@ -63,7 +63,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private _ledger: LedgerService,
-    private _ofx: OfxService, private _gnucash: GnucashService, public dialog: MatDialog, private ngRedux: NgRedux<ReduxAppState>) {
+    private _ofx: OfxService, private _gnucash: GnucashService, public dialog: MatDialog, private ngRedux: NgRedux<AppState>) {
     this._flatAccounts = new Map();
     this.appVersion = version;
   }

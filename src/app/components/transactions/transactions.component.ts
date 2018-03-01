@@ -3,7 +3,7 @@ import {
   selectEditedTransaction,
   AppStateActions,
   canAutosearchSelector } from './../../shared/reducers/app-state-reducer';
-import { ReduxAppState } from './../../shared/models/app-state';
+import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
@@ -78,7 +78,7 @@ export class TransactionRow {
 export class TransactionDataSource extends DataSource<TransactionRow> {
 
     constructor(
-      private ngRedux: NgRedux<ReduxAppState>,
+      private ngRedux: NgRedux<AppState>,
       private _paginator: MatPaginator,
       private _sort: MatSort,
       private _filter: ElementRef) {
@@ -181,7 +181,7 @@ export class TransactionsComponent implements OnInit {
 
   private onKeyDownSubject = new Subject();
 
-  constructor(private ngRedux: NgRedux<ReduxAppState>) {
+  constructor(private ngRedux: NgRedux<AppState>) {
     this.transactions = ngRedux.select(allTransactionsSelector).map(t => Object.values(t));
    }
 

@@ -17,7 +17,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { Posting } from '../../shared/models/posting';
-import { ReduxAppState } from '../../shared/models/app-state';
+import { AppState } from '../../shared/models/app-state';
 import {
   selectEditedTransaction,
   AppStateActions,
@@ -40,7 +40,7 @@ export class EditTransactionComponent implements OnInit {
   filteredAccounts: Subject<Account[]> = new Subject();
   formErrors: Observable<string>;
 
-  constructor(private ngRedux: NgRedux<ReduxAppState>, private _formBuilder: FormBuilder) { }
+  constructor(private ngRedux: NgRedux<AppState>, private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.ngRedux.select(selectEditedTransaction).subscribe( tr => {

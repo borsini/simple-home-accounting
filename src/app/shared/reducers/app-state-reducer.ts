@@ -1,7 +1,7 @@
 import {v4 as uuid } from 'uuid';
 import Decimal from 'decimal.js';
 
-import { ReduxAppState, TransactionMap, AccountMap } from './../models/app-state';
+import { AppState, TransactionMap, AccountMap } from './../models/app-state';
 import { ReduxAccount } from '../models/account';
 import { Action, AnyAction } from 'redux';
 import { Transaction, TransactionWithUUID } from '../models/transaction';
@@ -9,7 +9,7 @@ import { Posting } from '../models/posting';
 
 const ROOT_ACCOUNT = 'ROOT';
 
-export const INITIAL_STATE: ReduxAppState = {
+export const INITIAL_STATE: AppState = {
   entities: {
     accounts: { ROOT_ACCOUNT: new ReduxAccount(ROOT_ACCOUNT) },
     transactions: {},
@@ -25,36 +25,36 @@ export const INITIAL_STATE: ReduxAppState = {
   },
 };
 
-export const selectEditedTransaction = (s: ReduxAppState) => {
+export const selectEditedTransaction = (s: AppState) => {
   const id = s.ui.editedTransaction;
   return id ? s.entities.transactions[id] : undefined;
 };
 
-export const allTransactionsSelector = (s: ReduxAppState) => {
+export const allTransactionsSelector = (s: AppState) => {
   return s.entities.transactions;
 };
 
-export const allAccountsSelector = (s: ReduxAppState) => {
+export const allAccountsSelector = (s: AppState) => {
   return s.entities.accounts;
 };
 
-export const isLeftMenuOpenSelector = (s: ReduxAppState) => {
+export const isLeftMenuOpenSelector = (s: AppState) => {
   return s.ui.isLeftMenuOpen;
 };
 
-export const isTransactionPanelOpenSelector = (s: ReduxAppState) => {
+export const isTransactionPanelOpenSelector = (s: AppState) => {
   return s.ui.isTransactionPanelOpen;
 };
 
-export const isLoadingSelector = (s: ReduxAppState) => {
+export const isLoadingSelector = (s: AppState) => {
   return s.ui.isLoading;
 };
 
-export const selectedAccountsSelector = (s: ReduxAppState) => {
+export const selectedAccountsSelector = (s: AppState) => {
   return s.ui.selectedAccounts;
 };
 
-export const canAutosearchSelector = (s: ReduxAppState) => {
+export const canAutosearchSelector = (s: AppState) => {
   return !s.ui.isLeftMenuOpen && !s.ui.isTransactionPanelOpen;
 };
 
@@ -69,11 +69,11 @@ const transactionsUsingAccounts = (accountsNames: string[], allTransactions: Tra
   });
 };
 
-export const selectedTransactionsSelector = (s: ReduxAppState) => {
+export const selectedTransactionsSelector = (s: AppState) => {
   return transactionsUsingAccounts(s.ui.selectedAccounts, Object.values(s.entities.transactions));
 };
 
-export const rootAccountSelector = (s: ReduxAppState) => {
+export const rootAccountSelector = (s: AppState) => {
   return s.ui.rootAccount;
 };
 
@@ -276,7 +276,7 @@ const addAmountToAccount = (a: ReduxAccount, amount: Decimal, isFinalAccount: bo
 
 
 /******************************************************/
-const setEditedTransaction = (state: ReduxAppState, id: string): ReduxAppState => {
+const setEditedTransaction = (state: AppState, id: string): AppState => {
   return {
     ...state,
     ui: {
@@ -287,14 +287,14 @@ const setEditedTransaction = (state: ReduxAppState, id: string): ReduxAppState =
   };
 };
 
-const allChildren = (state: ReduxAppState, a: string): string[] => {
+const allChildren = (state: AppState, a: string): string[] => {
   const account = state.entities.accounts[a];
   const children = account.children.map(c => allChildren(state, c)).reduce(concatReducer, []);
 
   return [a, ...children];
 };
 
-const selectAccounts = (state: ReduxAppState, shouldSelect: boolean, accounts: string[]): ReduxAppState => {
+const selectAccounts = (state: AppState, shouldSelect: boolean, accounts: string[]): AppState => {
   const accountsAlreadySelected = state.ui.selectedAccounts;
 
   const accountsWithChildren = accounts
@@ -313,7 +313,7 @@ const selectAccounts = (state: ReduxAppState, shouldSelect: boolean, accounts: s
       };
 };
 
-const addTransactions = (state: ReduxAppState, transactions: Transaction[], clearOldTransactions: boolean): ReduxAppState => {
+const addTransactions = (state: AppState, transactions: Transaction[], clearOldTransactions: boolean): AppState => {
   const transactionsWithUuid = transactions.map(t => ({
     ...t,
     uuid: uuid(),
@@ -323,7 +323,7 @@ const addTransactions = (state: ReduxAppState, transactions: Transaction[], clea
   return stateWithNewTransactions(state, tr);
 };
 
-const deleteTransaction = (state: ReduxAppState, id: string): ReduxAppState => {
+const deleteTransaction = (state: AppState, id: string): AppState => {
   const tr = Object.entries(state.entities.transactions)
   .filter( e => e[0] !== id)
   .reduce<TransactionMap>( (prev, curr) => ({...prev, [curr[0]]: curr[1]}), {});
@@ -331,7 +331,7 @@ const deleteTransaction = (state: ReduxAppState, id: string): ReduxAppState => {
   return stateWithNewTransactions(state, tr);
 };
 
-const updateTransaction = (state: ReduxAppState, transaction: TransactionWithUUID): ReduxAppState => {
+const updateTransaction = (state: AppState, transaction: TransactionWithUUID): AppState => {
   const tr = {
     ...state.entities.transactions,
     [transaction.uuid]: transaction,
@@ -340,7 +340,7 @@ const updateTransaction = (state: ReduxAppState, transaction: TransactionWithUUI
   return stateWithNewTransactions(state, tr);
 };
 
-const openLeftPanel = (state: ReduxAppState, open: boolean): ReduxAppState => {
+const openLeftPanel = (state: AppState, open: boolean): AppState => {
   return {
     ...state,
     ui: {
@@ -350,11 +350,11 @@ const openLeftPanel = (state: ReduxAppState, open: boolean): ReduxAppState => {
   };
 };
 
-const toggleLeftPanel = (state: ReduxAppState): ReduxAppState => {
+const toggleLeftPanel = (state: AppState): AppState => {
   return openLeftPanel(state, !state.ui.isLeftMenuOpen);
 };
 
-const openTransactionPanel = (state: ReduxAppState, open: boolean): ReduxAppState => {
+const openTransactionPanel = (state: AppState, open: boolean): AppState => {
   return {
     ...state,
     ui: {
@@ -364,7 +364,7 @@ const openTransactionPanel = (state: ReduxAppState, open: boolean): ReduxAppStat
   };
 };
 
-const setIsLoading = (state: ReduxAppState, isLoading: boolean): ReduxAppState => {
+const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
   return {
     ...state,
     ui: {
@@ -375,7 +375,7 @@ const setIsLoading = (state: ReduxAppState, isLoading: boolean): ReduxAppState =
 };
 
 
-const stateWithNewTransactions = (state: ReduxAppState, transactions: TransactionMap): ReduxAppState => {
+const stateWithNewTransactions = (state: AppState, transactions: TransactionMap): AppState => {
   const ac = generateAccounts(Object.values(transactions));
   const sa = [state.ui.selectedAccounts, Object.keys(ac)].reduce(unionReducer);
 
@@ -391,7 +391,7 @@ const stateWithNewTransactions = (state: ReduxAppState, transactions: Transactio
   };
 };
 
-export function rootReducer(lastState: ReduxAppState= INITIAL_STATE, action: AnyAction): ReduxAppState {
+export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyAction): AppState {
   switch (action.type) {
     case AppStateActions.SET_EDITED_TRANSACTION:
       return setEditedTransaction(lastState, action.uuid);

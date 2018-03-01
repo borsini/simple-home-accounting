@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import { selectedAccountsSelector, AppStateActions, allAccountsSelector } from './../../shared/reducers/app-state-reducer';
 import { NgRedux } from '@angular-redux/store';
-import { ReduxAppState } from './../../shared/models/app-state';
+import { AppState } from './../../shared/models/app-state';
 import { Component, Input, OnInit } from '@angular/core';
 import { Account, ReduxAccount } from '../../shared/models/account';
 
@@ -22,7 +22,7 @@ export class AccountTreeComponent implements OnInit {
   isChecked: boolean;
   account: ReduxAccount;
 
-  constructor(private ngRedux: NgRedux<ReduxAppState>) {
+  constructor(private ngRedux: NgRedux<AppState>) {
   }
 
   ngOnInit() {

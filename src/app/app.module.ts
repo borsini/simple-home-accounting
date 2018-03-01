@@ -18,7 +18,7 @@ import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.compon
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { NgReduxModule, NgRedux, DevToolsExtension } from '@angular-redux/store';
-import { AppState, ReduxAppState } from './shared/models/app-state';
+import { AppState } from './shared/models/app-state';
 import { rootReducer, INITIAL_STATE } from './shared/reducers/app-state-reducer';
 
 @NgModule({
@@ -67,7 +67,7 @@ import { rootReducer, INITIAL_STATE } from './shared/reducers/app-state-reducer'
 })
 export class AppModule {
   constructor(
-    private ngRedux: NgRedux<ReduxAppState>,
+    private ngRedux: NgRedux<AppState>,
     private devTools: DevToolsExtension,
   ) {
     this.ngRedux.configureStore(
