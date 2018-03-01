@@ -84,7 +84,7 @@ export class EditTransactionComponent implements OnInit {
 
       // Initialize values
       const title = this.transactionToEdit ? this.transactionToEdit.header.title : '';
-      const date = this.transactionToEdit ? this.transactionToEdit.header.date : moment();
+      const date = this.transactionToEdit ? moment.unix(this.transactionToEdit.header.date) : moment();
       const postings = this.transactionToEdit ? this.transactionToEdit.postings.map( p => {
         return {
           account: p.account,
@@ -146,7 +146,7 @@ export class EditTransactionComponent implements OnInit {
 
     return {
       header: {
-        date: formModel.date,
+        date: formModel.date.unix(),
         tag: '',
         title: formModel.title,
       },
