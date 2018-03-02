@@ -129,8 +129,8 @@ describe(rootReducer.name, () => {
     const transaction = [transactions[0]];
     const action1 = AppStateActions.addTransactions(transaction);
     const state = rootReducer(undefined, action1);
-    const transactionId = Object.values(state.entities.transactions)[0].uuid;
-    const action2 = AppStateActions.setEditedTransaction(transactionId);
+    const transactionWithId = Object.values(state.entities.transactions)[0];
+    const action2 = AppStateActions.setEditedTransaction(transactionWithId);
 
     const finalState = rootReducer(state, action2);
 
@@ -141,8 +141,8 @@ describe(rootReducer.name, () => {
     const transaction = [transactions[0]];
     const action1 = AppStateActions.addTransactions(transaction);
     const state = rootReducer(undefined, action1);
-    const transactionId = Object.values(state.entities.transactions)[0].uuid;
-    const action2 = AppStateActions.setEditedTransaction(transactionId);
+    const transactionWithId = Object.values(state.entities.transactions)[0];
+    const action2 = AppStateActions.setEditedTransaction(transactionWithId);
     const state2 = rootReducer(state, action2);
 
     const finalState = rootReducer(state2, AppStateActions.setEditedTransaction(undefined));
@@ -184,6 +184,24 @@ describe(rootReducer.name, () => {
     expect(finalState).toMatchSnapshot();
   });
 
+  it('unselects edited transaction if deleted', () => {
+    const state = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
+    const transactionWithId = Object.values(state.entities.transactions)[0];
+    const state2 = rootReducer(state, AppStateActions.setEditedTransaction(transactionWithId));
+    const finalState = rootReducer(state2, AppStateActions.deleteTransaction(transactionWithId.uuid));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('keeps edited transaction not deleted', () => {
+    const state = rootReducer(undefined, AppStateActions.addTransactions(transactions));
+    const transactionsWithId = Object.values(state.entities.transactions);
+    const state2 = rootReducer(state, AppStateActions.setEditedTransaction(transactionsWithId[0]));
+    const finalState = rootReducer(state2, AppStateActions.deleteTransaction(transactionsWithId[1].uuid));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
   it('deletes transaction', () => {
     const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
     const transactionId = Object.values(state1.entities.transactions)[0].uuid;
@@ -211,12 +229,6 @@ describe(rootReducer.name, () => {
 
   it('opens left panel', () => {
     const finalState = rootReducer(undefined, AppStateActions.openLeftPanel(true));
-
-    expect(finalState).toMatchSnapshot();
-  });
-
-  it('opens transaction panel', () => {
-    const finalState = rootReducer(undefined, AppStateActions.openTransactionPanel(true));
 
     expect(finalState).toMatchSnapshot();
   });

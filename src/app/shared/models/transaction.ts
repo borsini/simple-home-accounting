@@ -14,3 +14,7 @@ interface Header {
 export interface TransactionWithUUID extends Transaction {
   readonly uuid: string;
 }
+
+export const isTransactionWithUUID = (object: any): object is TransactionWithUUID => {
+  return object && 'uuid' in object;
+};

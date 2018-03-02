@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import { AppState, TransactionMap, AccountMap } from './../models/app-state';
 import { Account } from '../models/account';
 import { Action, AnyAction } from 'redux';
-import { Transaction, TransactionWithUUID } from '../models/transaction';
+import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../models/transaction';
 import { Posting } from '../models/posting';
 
 const ROOT_ACCOUNT = 'ROOT';
@@ -21,15 +21,13 @@ export const INITIAL_STATE: AppState = {
     rootAccount: ROOT_ACCOUNT,
     editedTransaction: undefined,
     isLeftMenuOpen: false,
-    isTransactionPanelOpen: false,
     persistedAt: undefined,
     isLoading: false,
   },
 };
 
 export const selectEditedTransaction = (s: AppState) => {
-  const id = s.ui.editedTransaction;
-  return id ? s.entities.transactions[id] : undefined;
+  return s.ui.editedTransaction;
 };
 
 export const allTransactionsSelector = (s: AppState) => {
@@ -45,7 +43,7 @@ export const isLeftMenuOpenSelector = (s: AppState) => {
 };
 
 export const isTransactionPanelOpenSelector = (s: AppState) => {
-  return s.ui.isTransactionPanelOpen;
+  return s.ui.editedTransaction !== undefined;
 };
 
 export const isLoadingSelector = (s: AppState) => {
@@ -57,7 +55,7 @@ export const selectedAccountsSelector = (s: AppState) => {
 };
 
 export const canAutosearchSelector = (s: AppState) => {
-  return !s.ui.isLeftMenuOpen && !s.ui.isTransactionPanelOpen;
+  return !s.ui.isLeftMenuOpen && !isTransactionPanelOpenSelector(s);
 };
 
 const transactionsUsingAccounts = (accountsNames: string[], allTransactions: TransactionWithUUID[]) => {
@@ -87,12 +85,11 @@ export class AppStateActions {
   static readonly UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
   static readonly OPEN_LEFT_PANEL = 'OPEN_LEFT_PANEL';
   static readonly TOGGLE_LEFT_PANEL = 'TOGGLE_LEFT_PANEL';
-  static readonly OPEN_TRANSACTION_PANEL = 'OPEN_TRANSACTION_PANEL';
   static readonly SET_IS_LOADING = 'SET_IS_LOADING';
 
-  static setEditedTransaction(id: string | undefined): AnyAction {
+  static setEditedTransaction(t: Transaction | TransactionWithUUID | undefined): AnyAction {
     return {
-      uuid: id,
+      transaction: t,
       type: AppStateActions.SET_EDITED_TRANSACTION,
     };
   }
@@ -137,13 +134,6 @@ export class AppStateActions {
   static toggleLeftPanel(): AnyAction {
     return {
       type: AppStateActions.TOGGLE_LEFT_PANEL,
-    };
-  }
-
-  static openTransactionPanel(open: boolean): AnyAction {
-    return {
-      open,
-      type: AppStateActions.OPEN_TRANSACTION_PANEL,
     };
   }
 
@@ -281,13 +271,12 @@ const addAmountToAccount = (a: Account, amount: string, isFinalAccount: boolean)
 
 
 /******************************************************/
-const setEditedTransaction = (state: AppState, id: string): AppState => {
+const setEditedTransaction = (state: AppState, t: Transaction | TransactionWithUUID | undefined): AppState => {
   return {
     ...state,
     ui: {
       ...state.ui,
-      isTransactionPanelOpen: id ? true : false,
-      editedTransaction: id,
+      editedTransaction: t,
     },
   };
 };
@@ -358,16 +347,6 @@ const toggleLeftPanel = (state: AppState): AppState => {
   return openLeftPanel(state, !state.ui.isLeftMenuOpen);
 };
 
-const openTransactionPanel = (state: AppState, open: boolean): AppState => {
-  return {
-    ...state,
-    ui: {
-      ...state.ui,
-      isTransactionPanelOpen: open,
-    },
-  };
-};
-
 const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
   return {
     ...state,
@@ -379,26 +358,34 @@ const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
 };
 
 
-const stateWithNewTransactions = (state: AppState, transactions: TransactionMap): AppState => {
-  const newAccounts = generateAccounts(Object.values(transactions));
+const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
+  const transactions = Object.values(transactionMap);
+  const newAccounts = generateAccounts(transactions);
   const newAccountsKeys = Object.keys(newAccounts);
   const previouslySelected = state.ui.selectedAccounts;
 
-  const sa = previouslySelected.length === 0
+  // Unselect accounts if they dont exist anymore
+  const newSelectedAccounts = previouslySelected.length === 0
   ? newAccountsKeys
   : [previouslySelected, newAccountsKeys].reduce(intersectionReducer);
+
+  // Unselect transaction if it doesnt exist anymore
+  const previouslyEdited = state.ui.editedTransaction;
+  const newEdited = isTransactionWithUUID(previouslyEdited)
+  && transactions.includes(previouslyEdited) ? previouslyEdited : undefined;
 
   return {
     ...state,
     entities: {
-      transactions,
+      transactions: transactionMap,
     },
     computed: {
       accounts: newAccounts,
     },
     ui: {
       ...state.ui,
-      selectedAccounts: sa,
+      selectedAccounts: newSelectedAccounts,
+      editedTransaction: newEdited,
     },
   };
 };
@@ -406,7 +393,7 @@ const stateWithNewTransactions = (state: AppState, transactions: TransactionMap)
 export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyAction): AppState {
   switch (action.type) {
     case AppStateActions.SET_EDITED_TRANSACTION:
-      return setEditedTransaction(lastState, action.uuid);
+      return setEditedTransaction(lastState, action.transaction);
 
     case AppStateActions.SELECT_ACCOUNT:
       return selectAccounts(lastState, action.isSelected, [action.account]);
@@ -425,9 +412,6 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
 
     case AppStateActions.TOGGLE_LEFT_PANEL:
       return toggleLeftPanel(lastState);
-
-    case AppStateActions.OPEN_TRANSACTION_PANEL:
-      return openTransactionPanel(lastState, action.open);
 
     case AppStateActions.SET_IS_LOADING:
       return setIsLoading(lastState, action.isLoading);

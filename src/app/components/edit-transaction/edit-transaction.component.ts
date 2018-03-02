@@ -9,7 +9,7 @@ import { MatDatepicker } from '@angular/material';
 import Decimal from 'decimal.js';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Transaction, TransactionWithUUID } from '../../shared/models/transaction';
+import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../../shared/models/transaction';
 
 import * as moment from 'moment';
 import 'rxjs/add/observable/concat';
@@ -35,7 +35,7 @@ export class EditTransactionComponent implements OnInit {
 
   @ViewChild(MatDatepicker) myDatepicker: MatDatepicker<Date>;
 
-  transactionToEdit: TransactionWithUUID | undefined;
+  transactionToEdit?: TransactionWithUUID | Transaction;
   isPanelOpen: Observable<boolean>;
   group: FormGroup;
   filteredAccounts: Subject<Account[]> = new Subject();
@@ -53,7 +53,13 @@ export class EditTransactionComponent implements OnInit {
   }
 
   createTransaction() {
-    this.ngRedux.dispatch(AppStateActions.openTransactionPanel(true));
+    this.ngRedux.dispatch(AppStateActions.setEditedTransaction({
+      header: {
+        date: moment.utc().unix(),
+        title: '',
+      },
+      postings: [],
+    }));
     this.init();
   }
 
@@ -124,7 +130,9 @@ export class EditTransactionComponent implements OnInit {
   onSubmit() {
     const tr = this.prepareTransaction();
 
-    if (this.transactionToEdit) {
+    if (!this.transactionToEdit) { return; }
+
+    if (isTransactionWithUUID(this.transactionToEdit)) {
       const modifiedTransaction = {
         ...tr,
         uuid: this.transactionToEdit.uuid,
@@ -197,7 +205,7 @@ export class EditTransactionComponent implements OnInit {
   }
 
   deleteTransaction() {
-    if (this.transactionToEdit) {
+    if (isTransactionWithUUID(this.transactionToEdit)) {
       this.ngRedux.dispatch(AppStateActions.deleteTransaction(this.transactionToEdit.uuid));
     }
   }

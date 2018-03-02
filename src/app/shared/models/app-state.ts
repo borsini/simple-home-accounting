@@ -15,9 +15,8 @@ export interface AppState {
   ui: {
     selectedAccounts: string[];
     rootAccount: string;
-    editedTransaction?: string;
+    editedTransaction?: Transaction | TransactionWithUUID;
     isLeftMenuOpen: boolean;
-    isTransactionPanelOpen: boolean;
     persistedAt?: moment.Moment;
     isLoading: boolean,
   };

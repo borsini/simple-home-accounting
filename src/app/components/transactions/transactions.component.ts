@@ -17,7 +17,7 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { Transaction, TransactionWithUUID } from '../../shared/models/transaction';
+import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../../shared/models/transaction';
 import { Posting } from '../../shared/models/posting';
 import { Subject } from 'rxjs/Subject';
 import { combineLatest } from 'rxjs/observable/combineLatest';
@@ -51,7 +51,7 @@ export class PostingRow {
 
 export class TransactionRow {
 
-    constructor(public transaction: TransactionWithUUID, private _selectedTransaction: Observable<TransactionWithUUID | undefined>) {}
+    constructor(public transaction: TransactionWithUUID, private _selectedTransactionUUID: Observable<string>) {}
 
     get title() {
       return this.transaction.header.title;
@@ -71,7 +71,7 @@ export class TransactionRow {
     }
 
     get isSelected(): Observable<boolean> {
-      return this._selectedTransaction.map(tr => this.transaction === tr);
+      return this._selectedTransactionUUID.map(uuid => this.transaction.uuid === uuid);
     }
   }
 
@@ -98,7 +98,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       const pageChange = Observable.from<PageEvent>(this._paginator.page)
         .flatMap( d => this.ngRedux.select(selectedTransactionsSelector));
 
-      const filter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
+      const keyUpFilter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
         .debounceTime(200)
         .distinctUntilChanged()
         .do( f => this._paginator.pageIndex = 0)
@@ -106,7 +106,11 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
       const selectedTransactionsChanged = this.ngRedux.select(selectedTransactionsSelector);
 
-      return Observable.merge(pageChange, sortChange, filter, selectedTransactionsChanged)
+      const selectedUUID = this.ngRedux.select(selectEditedTransaction)
+      .pipe(filter(t => isTransactionWithUUID(t)))
+      .map(t => (t as TransactionWithUUID).uuid);
+
+      return Observable.merge(pageChange, sortChange, keyUpFilter, selectedTransactionsChanged)
       .debounceTime(150)
       .map( data => this.filterData(this._filter.nativeElement.value, data) )
       .map( data => this.sortData(data))
@@ -114,7 +118,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
         this._paginator.length = data.length;
         return this.paginateData(data);
       })
-      .map( data => data.map( tr => new TransactionRow(tr, this.ngRedux.select(selectEditedTransaction))));
+      .map( data => data.map( tr => new TransactionRow(tr, selectedUUID)));
     }
 
     disconnect() {}
@@ -198,7 +202,7 @@ export class TransactionsComponent implements OnInit {
   }
 
   onTransactionClicked(row: TransactionRow) {
-    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction.uuid));
+    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction));
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
