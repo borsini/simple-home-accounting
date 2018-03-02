@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
   private _flatAccounts: Map<String, Account>;
 
   isLoading: Observable<boolean>;
-  disableDownloadButton: Observable<boolean>;
+  showDownloadButton: Observable<boolean>;
   isDrawerOpen: Observable<boolean>;
   title = 'app';
   appVersion: string;
@@ -68,8 +68,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.disableDownloadButton = this.ngRedux.select(allTransactionsSelector)
-    .map(tr => Object.keys(tr).length === 0);
+    this.showDownloadButton = this.ngRedux.select(allTransactionsSelector)
+    .map(tr => Object.keys(tr).length > 0);
     this.isDrawerOpen = this.ngRedux.select(isLeftMenuOpenSelector);
     this.isLoading = this.ngRedux.select(isLoadingSelector);
   }

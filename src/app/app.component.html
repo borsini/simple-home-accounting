@@ -23,7 +23,7 @@
 
       <span class="example-spacer"></span>
 
-      <button mat-button (click)="saveLedgerClicked()" [disabled]="disableDownloadButton | async">
+      <button mat-button (click)="saveLedgerClicked()" *ngIf="showDownloadButton | async">
           <mat-icon class="material-icons">save</mat-icon>
       </button>
 
