@@ -329,9 +329,8 @@ const addTransactions = (state: AppState, transactions: Transaction[], clearOldT
 };
 
 const deleteTransaction = (state: AppState, id: string): AppState => {
-  const tr = Object.entries(state.entities.transactions)
-  .filter( e => e[0] !== id)
-  .reduce<TransactionMap>( (prev, curr) => ({...prev, [curr[0]]: curr[1]}), {});
+  const tr = Object.assign({}, state.entities.transactions);
+  delete tr[id];
 
   return stateWithNewTransactions(state, tr);
 };
