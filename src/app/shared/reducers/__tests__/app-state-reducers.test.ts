@@ -79,6 +79,14 @@ describe(rootReducer.name, () => {
     expect(state).toMatchSnapshot();
   });
 
+  it('does not select new accounts if one is already selected', () => {
+    const action = AppStateActions.addTransactions([transactions[0]]);
+    const state1 = rootReducer(undefined, action);
+    const finalState = rootReducer(state1, AppStateActions.addTransactions([transactions[1]]));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
   it('appends transaction', () => {
     const action = AppStateActions.addTransactions([transactions[0]]);
     const state1 = rootReducer(undefined, action);

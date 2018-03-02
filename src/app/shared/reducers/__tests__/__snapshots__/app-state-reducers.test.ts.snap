@@ -78,7 +78,11 @@ Object {
     "isTransactionPanelOpen": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
+    "selectedAccounts": Array [
+      "ROOT",
+      "Bank",
+      "Expenses",
+    ],
   },
 }
 `;
@@ -183,7 +187,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 7": Object {
+      "uuid 9": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Savings",
@@ -204,7 +208,7 @@ Object {
             "amount": "-142",
           },
         ],
-        "uuid": "uuid 7",
+        "uuid": "uuid 9",
       },
     },
   },
@@ -215,12 +219,208 @@ Object {
     "isTransactionPanelOpen": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
+    "selectedAccounts": Array [
+      "ROOT",
+      "Assets",
+      "Assets:Bank",
+      "Assets:Bank:Savings",
+      "Income",
+      "Income:Job",
+    ],
   },
 }
 `;
 
 exports[`rootReducer appends transaction 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "Bank": Account {
+        "balance": "496.95",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "500",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 2,
+        "parents": Array [],
+      },
+      "Expenses": Account {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Job": Account {
+        "balance": "-500",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-500",
+        "name": "Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+          "Job",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+  },
+  "entities": Object {
+    "transactions": Object {
+      "uuid 3": Object {
+        "header": Object {
+          "date": 1360281600,
+          "title": "Bread",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 3",
+      },
+      "uuid 4": Object {
+        "header": Object {
+          "date": 1360454400,
+          "title": "Salary",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "500",
+            "currency": "€",
+          },
+          Object {
+            "account": "Job",
+            "amount": "-500",
+          },
+        ],
+        "uuid": "uuid 4",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+      "Bank",
+      "Expenses",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer clears transactions 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer deletes transaction 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer does not select new accounts if one is already selected 1`] = `
 Object {
   "computed": Object {
     "accounts": Object {
@@ -330,73 +530,11 @@ Object {
     "isTransactionPanelOpen": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
-  },
-}
-`;
-
-exports[`rootReducer clears transactions 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-  },
-  "entities": Object {
-    "transactions": Object {},
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "isTransactionPanelOpen": false,
-    "persistedAt": undefined,
-    "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
-  },
-}
-`;
-
-exports[`rootReducer deletes transaction 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-  },
-  "entities": Object {
-    "transactions": Object {},
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "isTransactionPanelOpen": false,
-    "persistedAt": undefined,
-    "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
+    "selectedAccounts": Array [
+      "ROOT",
+      "Bank",
+      "Expenses",
+    ],
   },
 }
 `;
@@ -549,7 +687,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 4": Object {
+      "uuid 6": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -565,144 +703,7 @@ Object {
             "amount": "-500",
           },
         ],
-        "uuid": "uuid 4",
-      },
-    },
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "isTransactionPanelOpen": false,
-    "persistedAt": undefined,
-    "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
-  },
-}
-`;
-
-exports[`rootReducer selects root account 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "Assets": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets:Bank",
-        ],
-        "childrenBalance": "142",
-        "childrenCredits": "142",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "Assets",
-        "nbChildrenTransactions": 2,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Assets:Bank": Account {
-        "balance": "100",
-        "children": Array [
-          "Assets:Bank:Savings",
-        ],
-        "childrenBalance": "42",
-        "childrenCredits": "42",
-        "childrenDebits": "0",
-        "credits": "100",
-        "debits": "0",
-        "name": "Assets:Bank",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets",
-        ],
-      },
-      "Assets:Bank:Savings": Account {
-        "balance": "42",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "42",
-        "debits": "0",
-        "name": "Assets:Bank:Savings",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets:Bank",
-        ],
-      },
-      "Income": Account {
-        "balance": "0",
-        "children": Array [
-          "Income:Job",
-        ],
-        "childrenBalance": "-142",
-        "childrenCredits": "0",
-        "childrenDebits": "-142",
-        "credits": "0",
-        "debits": "0",
-        "name": "Income",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Income:Job": Account {
-        "balance": "-142",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "-142",
-        "name": "Income:Job",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Income",
-        ],
-      },
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets",
-          "Income",
-        ],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-  },
-  "entities": Object {
-    "transactions": Object {
-      "uuid 10": Object {
-        "header": Object {
-          "date": 1360454400,
-          "title": "Savings",
-        },
-        "postings": Array [
-          Object {
-            "account": "Assets:Bank",
-            "amount": "100",
-            "currency": "€",
-          },
-          Object {
-            "account": "Assets:Bank:Savings",
-            "amount": "42",
-            "currency": "€",
-          },
-          Object {
-            "account": "Income:Job",
-            "amount": "-142",
-          },
-        ],
-        "uuid": "uuid 10",
+        "uuid": "uuid 6",
       },
     },
   },
@@ -715,133 +716,13 @@ Object {
     "rootAccount": "ROOT",
     "selectedAccounts": Array [
       "ROOT",
-      "Assets",
-      "Assets:Bank",
-      "Assets:Bank:Savings",
-      "Income",
-      "Income:Job",
+      "Bank",
     ],
   },
 }
 `;
 
-exports[`rootReducer sets edited transaction 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "Bank": Account {
-        "balance": "-3.05",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "-3.05",
-        "name": "Bank",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [],
-      },
-      "Expenses": Account {
-        "balance": "3.05",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "3.05",
-        "debits": "0",
-        "name": "Expenses",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [],
-      },
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [
-          "Bank",
-          "Expenses",
-        ],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-  },
-  "entities": Object {
-    "transactions": Object {
-      "uuid 8": Object {
-        "header": Object {
-          "date": 1360281600,
-          "title": "Bread",
-        },
-        "postings": Array [
-          Object {
-            "account": "Bank",
-            "amount": "-3.05",
-            "comment": "Comment",
-            "currency": "$",
-            "tag": "!",
-          },
-          Object {
-            "account": "Expenses",
-            "amount": "3.05",
-          },
-        ],
-        "uuid": "uuid 8",
-      },
-    },
-  },
-  "ui": Object {
-    "editedTransaction": "uuid 8",
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "isTransactionPanelOpen": true,
-    "persistedAt": undefined,
-    "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
-  },
-}
-`;
-
-exports[`rootReducer unselects accounts from deleted transactions 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-  },
-  "entities": Object {
-    "transactions": Object {},
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "isTransactionPanelOpen": false,
-    "persistedAt": undefined,
-    "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
-  },
-}
-`;
-
-exports[`rootReducer unselects nested account 1`] = `
+exports[`rootReducer selects root account 1`] = `
 Object {
   "computed": Object {
     "accounts": Object {
@@ -975,6 +856,272 @@ Object {
     "rootAccount": "ROOT",
     "selectedAccounts": Array [
       "ROOT",
+      "Assets",
+      "Assets:Bank",
+      "Assets:Bank:Savings",
+      "Income",
+      "Income:Job",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer sets edited transaction 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "Bank": Account {
+        "balance": "-3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Expenses": Account {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+  },
+  "entities": Object {
+    "transactions": Object {
+      "uuid 10": Object {
+        "header": Object {
+          "date": 1360281600,
+          "title": "Bread",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 10",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": "uuid 10",
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": true,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+      "Bank",
+      "Expenses",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer unselects accounts from deleted transactions 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer unselects nested account 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "Assets": Account {
+        "balance": "0",
+        "children": Array [
+          "Assets:Bank",
+        ],
+        "childrenBalance": "142",
+        "childrenCredits": "142",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "Assets",
+        "nbChildrenTransactions": 2,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Assets:Bank": Account {
+        "balance": "100",
+        "children": Array [
+          "Assets:Bank:Savings",
+        ],
+        "childrenBalance": "42",
+        "childrenCredits": "42",
+        "childrenDebits": "0",
+        "credits": "100",
+        "debits": "0",
+        "name": "Assets:Bank",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets",
+        ],
+      },
+      "Assets:Bank:Savings": Account {
+        "balance": "42",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "42",
+        "debits": "0",
+        "name": "Assets:Bank:Savings",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Assets:Bank",
+        ],
+      },
+      "Income": Account {
+        "balance": "0",
+        "children": Array [
+          "Income:Job",
+        ],
+        "childrenBalance": "-142",
+        "childrenCredits": "0",
+        "childrenDebits": "-142",
+        "credits": "0",
+        "debits": "0",
+        "name": "Income",
+        "nbChildrenTransactions": 1,
+        "nbTransactions": 0,
+        "parents": Array [],
+      },
+      "Income:Job": Account {
+        "balance": "-142",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-142",
+        "name": "Income:Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [
+          "Income",
+        ],
+      },
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [
+          "Assets",
+          "Income",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+  },
+  "entities": Object {
+    "transactions": Object {
+      "uuid 14": Object {
+        "header": Object {
+          "date": 1360454400,
+          "title": "Savings",
+        },
+        "postings": Array [
+          Object {
+            "account": "Assets:Bank",
+            "amount": "100",
+            "currency": "€",
+          },
+          Object {
+            "account": "Assets:Bank:Savings",
+            "amount": "42",
+            "currency": "€",
+          },
+          Object {
+            "account": "Income:Job",
+            "amount": "-142",
+          },
+        ],
+        "uuid": "uuid 14",
+      },
+    },
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "isTransactionPanelOpen": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
       "Income",
       "Income:Job",
     ],
@@ -1082,7 +1229,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 11": Object {
+      "uuid 13": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Savings",
@@ -1103,7 +1250,7 @@ Object {
             "amount": "-142",
           },
         ],
-        "uuid": "uuid 11",
+        "uuid": "uuid 13",
       },
     },
   },
@@ -1168,7 +1315,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 9": Object {
+      "uuid 11": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -1186,7 +1333,7 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 9",
+        "uuid": "uuid 11",
       },
     },
   },
@@ -1197,7 +1344,11 @@ Object {
     "isTransactionPanelOpen": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
+    "selectedAccounts": Array [
+      "ROOT",
+      "Bank",
+      "Expenses",
+    ],
   },
 }
 `;
@@ -1251,7 +1402,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 15": Object {
+      "uuid 17": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Updated!",
@@ -1269,7 +1420,7 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 15",
+        "uuid": "uuid 17",
       },
     },
   },
@@ -1280,7 +1431,11 @@ Object {
     "isTransactionPanelOpen": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
+    "selectedAccounts": Array [
+      "ROOT",
+      "Bank",
+      "Expenses",
+    ],
   },
 }
 `;
