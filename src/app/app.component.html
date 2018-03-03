@@ -45,6 +45,10 @@
         </label>
       </button>
 
+      <button mat-button color="warn" (click)="resetClicked()" [disabled]="!(showResetButton | async)">
+          <mat-icon class="material-icons">delete_forever</mat-icon>
+      </button>
+
     </mat-toolbar>
 
     <div class="content">

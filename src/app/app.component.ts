@@ -18,7 +18,7 @@ import {
   allTransactionsSelector,
   isLeftMenuOpenSelector,
   isLoadingSelector,
-  invalidTransactionsSelector} from './shared/reducers/app-state-reducer';
+  invalidTransactionsSelector } from './shared/reducers/app-state-reducer';
 
 const { version } = require('../../package.json');
 import * as moment from 'moment';
@@ -59,6 +59,7 @@ export class AppComponent implements OnInit {
 
   isLoading: Observable<boolean>;
   showDownloadButton: Observable<boolean>;
+  showResetButton: Observable<boolean>;
   nbUndosAvailable: Observable<number>;
   nbRedosAvailable: Observable<number>;
   isDrawerOpen: Observable<boolean>;
@@ -79,6 +80,9 @@ export class AppComponent implements OnInit {
     this.showDownloadButton = this.ngRedux.select(presentSelector(allTransactionsSelector)).zip(
       this.ngRedux.select(presentSelector(invalidTransactionsSelector)))
       .map(zip => Object.keys(zip[0]).length > 0 && zip[1].length === 0);
+
+    this.showResetButton = this.ngRedux.select(presentSelector(allTransactionsSelector))
+    .map(trs => Object.keys(trs).length > 0);
 
     const t = pastSelector(this.ngRedux.getState());
     this.nbUndosAvailable = this.ngRedux.select<AppState[]>(pastSelector).map(p => p.length);
@@ -159,6 +163,10 @@ export class AppComponent implements OnInit {
 
   redoClicked() {
     this.ngRedux.dispatch(UndoRedoActions.redo());
+  }
+
+  resetClicked() {
+    this.ngRedux.dispatch(AppStateActions.addTransactions([], true));
   }
 
   private readAndParseTransactionsFromFile(file: File): Observable<Transaction[]> {
