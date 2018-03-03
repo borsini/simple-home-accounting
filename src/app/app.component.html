@@ -23,17 +23,17 @@
 
       <span class="example-spacer"></span>
 
-      <button mat-button (click)="undoClicked()" *ngIf="nbUndosAvailable | async">
+      <button mat-button (click)="undoClicked()" [disabled]="(nbUndosAvailable | async) === 0">
         <mat-icon class="material-icons">undo</mat-icon>
-        {{ nbUndosAvailable | async }}
+        {{ (nbUndosAvailable | async) || '' }}
     </button>
 
-    <button mat-button (click)="redoClicked()" *ngIf="nbRedosAvailable | async">
+    <button mat-button (click)="redoClicked()" [disabled]="(nbRedosAvailable | async) === 0">
       <mat-icon class="material-icons">redo</mat-icon>
-      {{ nbRedosAvailable | async }}
+      {{ (nbRedosAvailable | async) || '' }}
   </button>
 
-      <button mat-button (click)="saveLedgerClicked()" *ngIf="showDownloadButton | async">
+      <button mat-button (click)="saveLedgerClicked()" [disabled]="!(showDownloadButton | async)">
           <mat-icon class="material-icons">save</mat-icon>
       </button>
 

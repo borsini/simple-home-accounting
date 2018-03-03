@@ -232,4 +232,17 @@ describe(rootReducer.name, () => {
 
     expect(finalState).toMatchSnapshot();
   });
+
+  it('computes invalid transaction', () => {
+    const transactionWithoutPostings = {
+      header: {
+        date: 1520080726,
+        title: 'Titre',
+      },
+      postings: [],
+    };
+    const finalState = rootReducer(undefined, AppStateActions.addTransactions([transactionWithoutPostings]));
+
+    expect(finalState).toMatchSnapshot();
+  });
 });

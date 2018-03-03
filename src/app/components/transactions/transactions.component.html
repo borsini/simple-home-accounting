@@ -46,7 +46,6 @@
   <ng-container cdkColumnDef="status">
       <mat-header-cell *cdkHeaderCellDef [ngClass]="'shrink_cell'"> Statut </mat-header-cell>
       <mat-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'">
-        <mat-icon class="material-icons">{{row.isComplete ? 'check_circle' : 'error'}}</mat-icon>
       </mat-cell>
     </ng-container>
 
@@ -54,6 +53,7 @@
   <mat-row
     *cdkRowDef="let row; columns: displayedColumns;"
     (click)=onTransactionClicked(row)
+    [ngClass]="{invalid:(row.isInvalid | async) === true}"
     [ngClass]="{highlight:(row.isSelected | async) == true}">
   </mat-row>
 

@@ -2,7 +2,8 @@ import {
   allTransactionsSelector,
   selectEditedTransaction,
   AppStateActions,
-  canAutosearchSelector } from './../../shared/reducers/app-state-reducer';
+  canAutosearchSelector,
+  invalidTransactionsSelector} from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
@@ -52,7 +53,10 @@ export class PostingRow {
 
 export class TransactionRow {
 
-    constructor(public transaction: TransactionWithUUID, private _selectedTransactionUUID: Observable<string>) {}
+    constructor(
+      public transaction: TransactionWithUUID,
+      private _selectedTransactionUUID: Observable<string>,
+      private invalidTransactions: Observable<string[]>) {}
 
     get title() {
       return this.transaction.header.title;
@@ -66,9 +70,8 @@ export class TransactionRow {
       return this.transaction.postings.map(p => new PostingRow(p));
     }
 
-    get isComplete() {
-      return this.transaction.header.title !== undefined &&
-      this.transaction.postings.length > 1;
+    get isInvalid(): Observable<boolean> {
+      return this.invalidTransactions.map(trs => trs.includes(this.transaction.uuid));
     }
 
     get isSelected(): Observable<boolean> {
@@ -111,6 +114,8 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       .pipe(filter(t => isTransactionWithUUID(t)))
       .map(t => (t as TransactionWithUUID).uuid);
 
+      const invalidTransactions = this.ngRedux.select(presentSelector(invalidTransactionsSelector));
+
       return Observable.merge(pageChange, sortChange, keyUpFilter, selectedTransactionsChanged)
       .debounceTime(150)
       .map( data => this.filterData(this._filter.nativeElement.value, data) )
@@ -119,7 +124,10 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
         this._paginator.length = data.length;
         return this.paginateData(data);
       })
-      .map( data => data.map( tr => new TransactionRow(tr, selectedUUID)));
+      .map( data => data.map( tr => new TransactionRow(
+        tr,
+        selectedUUID,
+        invalidTransactions)));
     }
 
     disconnect() {}

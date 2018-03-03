@@ -17,7 +17,8 @@ import {
   selectEditedTransaction,
   allTransactionsSelector,
   isLeftMenuOpenSelector,
-  isLoadingSelector } from './shared/reducers/app-state-reducer';
+  isLoadingSelector,
+  invalidTransactionsSelector} from './shared/reducers/app-state-reducer';
 
 const { version } = require('../../package.json');
 import * as moment from 'moment';
@@ -75,9 +76,10 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.showDownloadButton = this.ngRedux.select(presentSelector(allTransactionsSelector))
-    .map(tr => Object.keys(tr).length > 0);
-
+    this.showDownloadButton = this.ngRedux.select(presentSelector(allTransactionsSelector)).zip(
+      this.ngRedux.select(presentSelector(invalidTransactionsSelector)))
+      .do(console.log)
+      .map(zip => Object.keys(zip[0]).length > 0 && zip[1].length === 0);
 
     const t = pastSelector(this.ngRedux.getState());
     this.nbUndosAvailable = this.ngRedux.select<AppState[]>(pastSelector).map(p => p.length);

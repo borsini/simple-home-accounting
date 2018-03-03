@@ -15,6 +15,7 @@ export const INITIAL_STATE: AppState = {
   },
   computed: {
     accounts: { ROOT_ACCOUNT: new Account(ROOT_ACCOUNT) },
+    invalidTransactions: [],
   },
   ui: {
     selectedAccounts: [],
@@ -75,6 +76,10 @@ export const selectedTransactionsSelector = (s: AppState) => {
 
 export const rootAccountSelector = (s: AppState) => {
   return s.ui.rootAccount;
+};
+
+export const invalidTransactionsSelector = (s: AppState) => {
+  return s.computed.invalidTransactions;
 };
 
 export class AppStateActions {
@@ -374,6 +379,11 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
   const newEdited = isTransactionWithUUID(previouslyEdited)
   && transactions.includes(previouslyEdited) ? previouslyEdited : undefined;
 
+  // Check if transactions are valid
+  const newInvalidTransactions = transactions.filter(t =>
+    t.header.title === undefined ||
+    t.postings.length < 2).map(t2 => t2.uuid);
+
   return {
     ...state,
     entities: {
@@ -381,6 +391,7 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
     },
     computed: {
       accounts: newAccounts,
+      invalidTransactions: newInvalidTransactions,
     },
     ui: {
       ...state.ui,

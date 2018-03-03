@@ -46,6 +46,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -183,6 +184,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -289,6 +291,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -364,9 +367,56 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [
+      "ROOT",
+    ],
+  },
+}
+`;
+
+exports[`rootReducer computes invalid transaction 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [
+      "uuid 2",
+    ],
+  },
+  "entities": Object {
+    "transactions": Object {
+      "uuid 2": Object {
+        "header": Object {
+          "date": 1520080726,
+          "title": "Titre",
+        },
+        "postings": Array [],
+        "uuid": "uuid 2",
+      },
+    },
   },
   "ui": Object {
     "editedTransaction": undefined,
@@ -398,6 +448,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {},
@@ -475,6 +526,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -550,6 +602,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {},
@@ -611,6 +664,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -687,6 +741,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {},
@@ -748,6 +803,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -882,6 +938,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -974,6 +1031,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -1050,6 +1108,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {},
@@ -1084,6 +1143,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {},
@@ -1198,6 +1258,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -1338,6 +1399,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -1423,6 +1485,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {
@@ -1509,6 +1572,7 @@ Object {
         "nbTransactions": 0,
       },
     },
+    "invalidTransactions": Array [],
   },
   "entities": Object {
     "transactions": Object {

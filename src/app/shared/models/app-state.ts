@@ -11,6 +11,7 @@ export interface AppState {
   };
   computed: {
     accounts: AccountMap;
+    invalidTransactions: string[],
   };
   ui: {
     selectedAccounts: string[];
