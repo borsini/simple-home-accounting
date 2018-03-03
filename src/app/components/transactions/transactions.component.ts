@@ -3,11 +3,12 @@ import {
   selectEditedTransaction,
   AppStateActions,
   canAutosearchSelector,
-  invalidTransactionsSelector} from './../../shared/reducers/app-state-reducer';
+  invalidTransactionsSelector,
+  filtersSelector } from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 
 import * as moment from 'moment';
@@ -84,8 +85,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
     constructor(
       private ngRedux: NgRedux<UndoRedoState<AppState>>,
       private _paginator: MatPaginator,
-      private _sort: MatSort,
-      private _filter: ElementRef) {
+      private _sort: MatSort) {
       super();
 
       this._sort.active = 'date';
@@ -102,9 +102,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       const pageChange = Observable.from<PageEvent>(this._paginator.page)
         .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
 
-      const keyUpFilter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
-        .debounceTime(200)
-        .distinctUntilChanged()
+      const filtersChange = this.ngRedux.select(presentSelector(filtersSelector))
         .do( f => this._paginator.pageIndex = 0)
         .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
 
@@ -116,9 +114,9 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
       const invalidTransactions = this.ngRedux.select(presentSelector(invalidTransactionsSelector));
 
-      return Observable.merge(pageChange, sortChange, keyUpFilter, selectedTransactionsChanged)
+      return Observable.merge(pageChange, sortChange, filtersChange, selectedTransactionsChanged)
       .debounceTime(150)
-      .map( data => this.filterData(this._filter.nativeElement.value, data) )
+      .map( data => this.filterData(this.ngRedux.getState().present.ui.filters.input, data) )
       .map( data => this.sortData(data))
       .map( data => {
         this._paginator.length = data.length;
@@ -191,30 +189,20 @@ export class TransactionsComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('filter') filter: ElementRef;
-
-  private onKeyDownSubject = new Subject();
 
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) {
     this.transactions = ngRedux.select(presentSelector(allTransactionsSelector)).map(t => Object.values(t));
    }
 
   ngOnInit() {
-    this.dataSource = new TransactionDataSource(this.ngRedux, this.paginator, this.sort, this.filter);
+    this.dataSource = new TransactionDataSource(this.ngRedux, this.paginator, this.sort);
     this.noTransactionsToDisplay = this.ngRedux.select(presentSelector(selectedTransactionsSelector))
     .map(t => t.length === 0);
-
-    this.onKeyDownSubject.asObservable().flatMap(_ => this.ngRedux.select(presentSelector(canAutosearchSelector)).take(1))
-    .pipe(filter(a => a))
-    .do(_ => this.filter.nativeElement.focus())
-    .subscribe();
   }
 
   onTransactionClicked(row: TransactionRow) {
     this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction));
   }
 
-  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-    this.onKeyDownSubject.next();
-  }
+
 }

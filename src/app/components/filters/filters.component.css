@@ -1,0 +1,7 @@
+.hidden {
+  display: none;
+}
+
+mat-input-container {
+  width:100%;
+}

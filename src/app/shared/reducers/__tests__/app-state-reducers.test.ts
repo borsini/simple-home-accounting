@@ -245,4 +245,10 @@ describe(rootReducer.name, () => {
 
     expect(finalState).toMatchSnapshot();
   });
+
+  it('saves current input', () => {
+    const finalState = rootReducer(undefined, AppStateActions.setInputFilter('my input'));
+
+    expect(finalState).toMatchSnapshot();
+  });
 });

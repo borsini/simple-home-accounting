@@ -20,5 +20,8 @@ export interface AppState {
     isLeftMenuOpen: boolean;
     persistedAt?: moment.Moment;
     isLoading: boolean,
+    filters: {
+      input: string,
+    },
   };
 }

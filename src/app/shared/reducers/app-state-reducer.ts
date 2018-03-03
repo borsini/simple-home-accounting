@@ -24,6 +24,9 @@ export const INITIAL_STATE: AppState = {
     isLeftMenuOpen: false,
     persistedAt: undefined,
     isLoading: false,
+    filters: {
+      input: '',
+    },
   },
 };
 
@@ -82,6 +85,10 @@ export const invalidTransactionsSelector = (s: AppState) => {
   return s.computed.invalidTransactions;
 };
 
+export const filtersSelector = (s: AppState) => {
+  return s.ui.filters;
+};
+
 export class AppStateActions {
   static readonly ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
   static readonly SET_EDITED_TRANSACTION = 'SET_EDITED_TRANSACTION';
@@ -91,6 +98,7 @@ export class AppStateActions {
   static readonly OPEN_LEFT_PANEL = 'OPEN_LEFT_PANEL';
   static readonly TOGGLE_LEFT_PANEL = 'TOGGLE_LEFT_PANEL';
   static readonly SET_IS_LOADING = 'SET_IS_LOADING';
+  static readonly SET_INPUT_FILTER = 'SET_INPUT_FILTER';
 
   static setEditedTransaction(t: Transaction | TransactionWithUUID | undefined): AnyAction {
     return {
@@ -146,6 +154,13 @@ export class AppStateActions {
     return {
       isLoading,
       type: AppStateActions.SET_IS_LOADING,
+    };
+  }
+
+  static setInputFilter(input: string): AnyAction {
+    return {
+      input,
+      type: AppStateActions.SET_INPUT_FILTER,
     };
   }
 }
@@ -362,6 +377,18 @@ const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
   };
 };
 
+const setInputFilter = (state: AppState, input: string): AppState => {
+  return {
+    ...state,
+    ui: {
+      ...state.ui,
+      filters: {
+        ...state.ui.filters,
+        input,
+      },
+    },
+  };
+};
 
 const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
   const transactions = Object.values(transactionMap);
@@ -426,6 +453,9 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
 
     case AppStateActions.SET_IS_LOADING:
       return setIsLoading(lastState, action.isLoading);
+
+    case AppStateActions.SET_INPUT_FILTER:
+      return setInputFilter(lastState, action.input);
   }
 
   return lastState;

@@ -1,6 +1,4 @@
-<mat-input-container floatPlaceholder="never" [class.hidden]="noTransactionsToDisplay | async">
-    <input matInput #filter [disabled]="(transactions | async).length == 0" placeholder="Titre, date ou montant...">
-</mat-input-container>
+<app-filters></app-filters>
 
   <mat-paginator #paginator [class.hidden]="noTransactionsToDisplay | async"
   [pageIndex]="0"

@@ -30,6 +30,7 @@ import { AppState, TransactionMap } from './shared/models/app-state';
 import { rootReducer, INITIAL_STATE, AppStateActions, allTransactionsSelector } from './shared/reducers/app-state-reducer';
 
 import { undoRedoReducer, UndoRedoState, presentSelector } from './shared/reducers/undo-redo-reducer';
+import { FiltersComponent } from './components/filters/filters.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -41,6 +42,7 @@ import { undoRedoReducer, UndoRedoState, presentSelector } from './shared/reduce
     DialogResultExampleDialogComponent,
     DialogTwoOptionsDialogComponent,
     EditTransactionComponent,
+    FiltersComponent,
   ],
   entryComponents: [
     DialogResultExampleDialogComponent,
