@@ -4,6 +4,7 @@ import { NgRedux } from '@angular-redux/store';
 import { AppState } from './../../shared/models/app-state';
 import { Component, Input, OnInit } from '@angular/core';
 import { Account } from '../../shared/models/account';
+import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
 @Component({
   selector: 'app-account-tree',
@@ -22,14 +23,14 @@ export class AccountTreeComponent implements OnInit {
   isChecked: boolean;
   account: Account;
 
-  constructor(private ngRedux: NgRedux<AppState>) {
+  constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) {
   }
 
   ngOnInit() {
-    this.ngRedux.select(selectedAccountsSelector)
+    this.ngRedux.select(presentSelector(selectedAccountsSelector))
     .map(accounts => accounts.includes(this.accountName))
     .do(c => { this.isChecked = c; }).subscribe();
-    this.ngRedux.select(allAccountsSelector)
+    this.ngRedux.select(presentSelector(allAccountsSelector))
     .map(accounts => accounts[this.accountName])
     .do(a => this.account = a)
     .subscribe();

@@ -28,6 +28,7 @@ import 'rxjs/add/operator/first';
 import 'rxjs/add/observable/merge';
 
 import { selectedTransactionsSelector } from '../../shared/reducers/app-state-reducer';
+import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
 
@@ -78,7 +79,7 @@ export class TransactionRow {
 export class TransactionDataSource extends DataSource<TransactionRow> {
 
     constructor(
-      private ngRedux: NgRedux<AppState>,
+      private ngRedux: NgRedux<UndoRedoState<AppState>>,
       private _paginator: MatPaginator,
       private _sort: MatSort,
       private _filter: ElementRef) {
@@ -93,20 +94,20 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
     connect(): Observable<TransactionRow[]> {
 
       const sortChange = Observable.from<MatSort>(this._sort.sortChange)
-        .flatMap( d => this.ngRedux.select(selectedTransactionsSelector));
+        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
 
       const pageChange = Observable.from<PageEvent>(this._paginator.page)
-        .flatMap( d => this.ngRedux.select(selectedTransactionsSelector));
+        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
 
       const keyUpFilter = Observable.fromEvent(this._filter.nativeElement, 'keyup')
         .debounceTime(200)
         .distinctUntilChanged()
         .do( f => this._paginator.pageIndex = 0)
-        .flatMap( d => this.ngRedux.select(selectedTransactionsSelector));
+        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
 
-      const selectedTransactionsChanged = this.ngRedux.select(selectedTransactionsSelector);
+      const selectedTransactionsChanged = this.ngRedux.select(presentSelector(selectedTransactionsSelector));
 
-      const selectedUUID = this.ngRedux.select(selectEditedTransaction)
+      const selectedUUID = this.ngRedux.select(presentSelector(selectEditedTransaction))
       .pipe(filter(t => isTransactionWithUUID(t)))
       .map(t => (t as TransactionWithUUID).uuid);
 
@@ -186,16 +187,16 @@ export class TransactionsComponent implements OnInit {
 
   private onKeyDownSubject = new Subject();
 
-  constructor(private ngRedux: NgRedux<AppState>) {
-    this.transactions = ngRedux.select(allTransactionsSelector).map(t => Object.values(t));
+  constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) {
+    this.transactions = ngRedux.select(presentSelector(allTransactionsSelector)).map(t => Object.values(t));
    }
 
   ngOnInit() {
     this.dataSource = new TransactionDataSource(this.ngRedux, this.paginator, this.sort, this.filter);
-    this.noTransactionsToDisplay = this.ngRedux.select(selectedTransactionsSelector)
+    this.noTransactionsToDisplay = this.ngRedux.select(presentSelector(selectedTransactionsSelector))
     .map(t => t.length === 0);
 
-    this.onKeyDownSubject.asObservable().flatMap(_ => this.ngRedux.select(canAutosearchSelector).take(1))
+    this.onKeyDownSubject.asObservable().flatMap(_ => this.ngRedux.select(presentSelector(canAutosearchSelector)).take(1))
     .pipe(filter(a => a))
     .do(_ => this.filter.nativeElement.focus())
     .subscribe();

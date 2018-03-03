@@ -4,8 +4,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   DateAdapter, MAT_DATE_FORMATS, MatAutocompleteModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatDatepickerModule,
   MatIconModule,
-  MatDialogModule, MatFormFieldModule, MatInputModule, MatNativeDateModule, MatPaginatorModule, MatProgressSpinnerModule, MatSidenavModule, MatSortModule,
-  MatTableModule, MatToolbarModule,
+  MatDialogModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatNativeDateModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule,
+  MatSidenavModule,
+  MatSortModule,
+  MatTableModule,
+  MatToolbarModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,6 +28,8 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 import { NgReduxModule, NgRedux, DevToolsExtension } from '@angular-redux/store';
 import { AppState, TransactionMap } from './shared/models/app-state';
 import { rootReducer, INITIAL_STATE, AppStateActions, allTransactionsSelector } from './shared/reducers/app-state-reducer';
+
+import { undoRedoReducer, UndoRedoState, presentSelector } from './shared/reducers/undo-redo-reducer';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -67,16 +77,24 @@ import { rootReducer, INITIAL_STATE, AppStateActions, allTransactionsSelector } 
 })
 export class AppModule {
   constructor(
-    private ngRedux: NgRedux<AppState>,
+    private ngRedux: NgRedux<UndoRedoState<AppState>>,
     private devTools: DevToolsExtension,
   ) {
     this.ngRedux.configureStore(
-      rootReducer,
-      INITIAL_STATE,
+      undoRedoReducer<AppState>(rootReducer, [
+        AppStateActions.ADD_TRANSACTIONS,
+        AppStateActions.DELETE_TRANSACTION,
+        AppStateActions.UPDATE_TRANSACTION,
+      ]),
+      {
+       past: [],
+       present: INITIAL_STATE,
+       future: [],
+      },
       [],
       isDevMode() && devTools.isEnabled() ? [devTools.enhancer()] : []);
 
-    this.ngRedux.select(allTransactionsSelector)
+    this.ngRedux.select(presentSelector(allTransactionsSelector))
     .distinctUntilChanged()
     .debounceTime(5000)
     .subscribe( transactions => {

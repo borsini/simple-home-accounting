@@ -21,6 +21,8 @@ import {
 
 const { version } = require('../../package.json');
 import * as moment from 'moment';
+import { UndoRedoState, presentSelector, pastSelector, futureSelector, UndoRedoActions } from './shared/reducers/undo-redo-reducer';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dialog-result-example-dialog',
@@ -56,22 +58,33 @@ export class AppComponent implements OnInit {
 
   isLoading: Observable<boolean>;
   showDownloadButton: Observable<boolean>;
+  nbUndosAvailable: Observable<number>;
+  nbRedosAvailable: Observable<number>;
   isDrawerOpen: Observable<boolean>;
   title = 'app';
   appVersion: string;
 
   constructor(
     private _ledger: LedgerService,
-    private _ofx: OfxService, private _gnucash: GnucashService, public dialog: MatDialog, private ngRedux: NgRedux<AppState>) {
+    private _ofx: OfxService,
+    private _gnucash: GnucashService,
+    public dialog: MatDialog,
+    private ngRedux: NgRedux<UndoRedoState<AppState>>) {
     this._flatAccounts = new Map();
     this.appVersion = version;
   }
 
   ngOnInit() {
-    this.showDownloadButton = this.ngRedux.select(allTransactionsSelector)
+    this.showDownloadButton = this.ngRedux.select(presentSelector(allTransactionsSelector))
     .map(tr => Object.keys(tr).length > 0);
-    this.isDrawerOpen = this.ngRedux.select(isLeftMenuOpenSelector);
-    this.isLoading = this.ngRedux.select(isLoadingSelector);
+
+
+    const t = pastSelector(this.ngRedux.getState());
+    this.nbUndosAvailable = this.ngRedux.select<AppState[]>(pastSelector).map(p => p.length);
+    this.nbRedosAvailable = this.ngRedux.select<AppState[]>(futureSelector).map(p => p.length);
+
+    this.isDrawerOpen = this.ngRedux.select(presentSelector(isLeftMenuOpenSelector));
+    this.isLoading = this.ngRedux.select(presentSelector(isLoadingSelector));
   }
 
   handleOpen(isOpen: boolean) {
@@ -103,7 +116,7 @@ export class AppComponent implements OnInit {
   }
 
   userWantsToClearOldTransactions(): Observable<boolean> {
-    return this.ngRedux.select(allTransactionsSelector).take(1)
+    return this.ngRedux.select(presentSelector(allTransactionsSelector)).take(1)
       .map( tr => Object.keys(tr).length)
       .flatMap( count => {
         if (count > 0) {
@@ -130,13 +143,21 @@ export class AppComponent implements OnInit {
   }
 
   saveLedgerClicked() {
-    this.ngRedux.select(allTransactionsSelector)
+    this.ngRedux.select(presentSelector(allTransactionsSelector))
     .flatMap(tr => this._ledger.generateLedgerString(Object.values(tr)))
     .do(ledger => {
       const blob = new Blob([ledger], {type: 'text/plain;charset=utf-8'});
       fileSaver.saveAs(blob, 'accounts.ledger');
     })
     .subscribe();
+  }
+
+  undoClicked() {
+    this.ngRedux.dispatch(UndoRedoActions.undo());
+  }
+
+  redoClicked() {
+    this.ngRedux.dispatch(UndoRedoActions.redo());
   }
 
   private readAndParseTransactionsFromFile(file: File): Observable<Transaction[]> {

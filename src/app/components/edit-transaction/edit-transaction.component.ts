@@ -25,6 +25,7 @@ import {
   isTransactionPanelOpenSelector,
 } from '../../shared/reducers/app-state-reducer';
 import { Account } from '../../shared/models/account';
+import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
 @Component({
   selector: 'app-edit-transaction',
@@ -41,15 +42,15 @@ export class EditTransactionComponent implements OnInit {
   filteredAccounts: Subject<Account[]> = new Subject();
   formErrors: Observable<string>;
 
-  constructor(private ngRedux: NgRedux<AppState>, private _formBuilder: FormBuilder) { }
+  constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>, private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.ngRedux.select(selectEditedTransaction).subscribe( tr => {
+    this.ngRedux.select(presentSelector(selectEditedTransaction)).subscribe( tr => {
       this.transactionToEdit = tr;
       this.init();
     });
 
-    this.isPanelOpen = this.ngRedux.select(isTransactionPanelOpenSelector);
+    this.isPanelOpen = this.ngRedux.select(presentSelector(isTransactionPanelOpenSelector));
   }
 
   createTransaction() {
@@ -122,7 +123,7 @@ export class EditTransactionComponent implements OnInit {
   }
 
   filterAccount(query: any): Observable<Account[]> {
-    return this.ngRedux.select(allAccountsSelector).map(accounts => {
+    return this.ngRedux.select(presentSelector(allAccountsSelector)).map(accounts => {
       return Object.values(accounts).filter(a => a.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
     });
   }
