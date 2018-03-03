@@ -26,6 +26,7 @@ export const INITIAL_STATE: AppState = {
     isLoading: false,
     filters: {
       input: '',
+      showOnlyInvalid: false,
     },
   },
 };
@@ -99,6 +100,7 @@ export class AppStateActions {
   static readonly TOGGLE_LEFT_PANEL = 'TOGGLE_LEFT_PANEL';
   static readonly SET_IS_LOADING = 'SET_IS_LOADING';
   static readonly SET_INPUT_FILTER = 'SET_INPUT_FILTER';
+  static readonly SHOW_ONLY_INVALID = 'SHOW_ONLY_INVALID';
 
   static setEditedTransaction(t: Transaction | TransactionWithUUID | undefined): AnyAction {
     return {
@@ -161,6 +163,13 @@ export class AppStateActions {
     return {
       input,
       type: AppStateActions.SET_INPUT_FILTER,
+    };
+  }
+
+  static showOnlyInvalid(show: boolean): AnyAction {
+    return {
+      show,
+      type: AppStateActions.SHOW_ONLY_INVALID,
     };
   }
 }
@@ -390,6 +399,19 @@ const setInputFilter = (state: AppState, input: string): AppState => {
   };
 };
 
+const showOnlyInvalid = (state: AppState, show: boolean): AppState => {
+  return {
+    ...state,
+    ui: {
+      ...state.ui,
+      filters: {
+        ...state.ui.filters,
+        showOnlyInvalid: show,
+      },
+    },
+  };
+};
+
 const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
   const transactions = Object.values(transactionMap);
   const newAccounts = generateAccounts(transactions);
@@ -456,6 +478,9 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
 
     case AppStateActions.SET_INPUT_FILTER:
       return setInputFilter(lastState, action.input);
+
+    case AppStateActions.SHOW_ONLY_INVALID:
+      return showOnlyInvalid(lastState, action.show);
   }
 
   return lastState;

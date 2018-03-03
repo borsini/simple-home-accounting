@@ -1,5 +1,7 @@
-<div>
-  <mat-input-container floatPlaceholder="never" [class.hidden]="noTransactionsToDisplay | async">
+<div id="filters_container" [class.hidden]="shouldHideFilters | async">
+  <mat-input-container floatPlaceholder="never">
       <input matInput #filter placeholder="Titre, date ou montant...">
   </mat-input-container>
+
+  <mat-checkbox [disabled]="(invalidCount | async) === 0" [checked]="showOnlyInvalid | async" (change)="checkOnlyInvalid($event.checked)">Seulement les transactions invalides ({{ invalidCount | async }})</mat-checkbox>
 </div>

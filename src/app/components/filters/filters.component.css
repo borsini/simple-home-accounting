@@ -1,7 +1,17 @@
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 mat-input-container {
-  width:100%;
+  flex:1;
+}
+
+#filters_container {
+  padding: 6px;
+  display: flex;
+  align-items: center;
+}
+
+#filters_container > * {
+  margin: 6px;
 }

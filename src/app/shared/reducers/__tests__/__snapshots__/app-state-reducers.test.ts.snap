@@ -76,6 +76,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -220,6 +221,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -345,6 +347,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -385,6 +388,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -434,6 +438,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -472,6 +477,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -592,6 +598,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -632,6 +639,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -737,6 +745,7 @@ Object {
     },
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -777,6 +786,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": true,
     "isLoading": false,
@@ -861,6 +871,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -900,6 +911,44 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "my input",
+      "showOnlyInvalid": false,
+    },
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "rootAccount": "ROOT",
+    "selectedAccounts": Array [],
+  },
+}
+`;
+
+exports[`rootReducer saves show invalid preference 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "editedTransaction": undefined,
+    "filters": Object {
+      "input": "",
+      "showOnlyInvalid": true,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1040,6 +1089,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1152,6 +1202,7 @@ Object {
     },
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1192,6 +1243,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1230,6 +1282,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1372,6 +1425,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1516,6 +1570,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1602,6 +1657,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
@@ -1692,6 +1748,7 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,

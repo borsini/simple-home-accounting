@@ -22,6 +22,7 @@ export interface AppState {
     isLoading: boolean,
     filters: {
       input: string,
+      showOnlyInvalid: boolean,
     },
   };
 }

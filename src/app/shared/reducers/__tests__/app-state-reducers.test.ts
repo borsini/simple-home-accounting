@@ -251,4 +251,10 @@ describe(rootReducer.name, () => {
 
     expect(finalState).toMatchSnapshot();
   });
+
+  it('saves show invalid preference', () => {
+    const finalState = rootReducer(undefined, AppStateActions.showOnlyInvalid(true));
+
+    expect(finalState).toMatchSnapshot();
+  });
 });

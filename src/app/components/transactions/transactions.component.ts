@@ -116,7 +116,19 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
       return Observable.merge(pageChange, sortChange, filtersChange, selectedTransactionsChanged)
       .debounceTime(150)
-      .map( data => this.filterData(this.ngRedux.getState().present.ui.filters.input, data) )
+      .map( data => {
+        const state = this.ngRedux.getState();
+        const filters = state.present.ui.filters;
+
+        return this.filterInput(filters.input, data);
+      })
+      .map( data => {
+        const state = this.ngRedux.getState();
+        const filters = state.present.ui.filters;
+        const invalid = state.present.computed.invalidTransactions;
+
+        return this.filterInvalid(filters.showOnlyInvalid, data, invalid);
+      })
       .map( data => this.sortData(data))
       .map( data => {
         this._paginator.length = data.length;
@@ -154,7 +166,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       });
     }
 
-    filterData(query: string, data: TransactionWithUUID[]): TransactionWithUUID[] {
+    filterInput(query: string, data: TransactionWithUUID[]): TransactionWithUUID[] {
       if (query !== undefined && query !== '' ) {
         return data.filter( tr => {
           const words = query.split(' ').filter(s => s !== '').map( s => s.toLowerCase());
@@ -173,6 +185,13 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
         return data;
       }
     }
+
+    filterInvalid(showOnlyInvalid: boolean, data: TransactionWithUUID[], invalidTransaction: string[]): TransactionWithUUID[] {
+        return data.filter( tr => {
+          if (!showOnlyInvalid) { return true; }
+          return invalidTransaction.includes(tr.uuid);
+        });
+      }
   }
 
 @Component({
@@ -203,6 +222,4 @@ export class TransactionsComponent implements OnInit {
   onTransactionClicked(row: TransactionRow) {
     this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction));
   }
-
-
 }
