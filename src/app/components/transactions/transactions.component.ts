@@ -204,7 +204,7 @@ export class TransactionsComponent implements OnInit {
   transactions: Observable<Transaction[]>;
   noTransactionsToDisplay: Observable<boolean>;
   dataSource: TransactionDataSource;
-  displayedColumns = ['title', 'date', 'movements', 'status'];
+  displayedColumns = ['title', 'date', 'movements'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;

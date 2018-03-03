@@ -40,13 +40,6 @@
     </mat-cell>
   </ng-container>
 
-  <!-- Name Column -->
-  <ng-container cdkColumnDef="status">
-      <mat-header-cell *cdkHeaderCellDef [ngClass]="'shrink_cell'"> Statut </mat-header-cell>
-      <mat-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'">
-      </mat-cell>
-    </ng-container>
-
   <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row
     *cdkRowDef="let row; columns: displayedColumns;"
