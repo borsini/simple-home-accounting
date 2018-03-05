@@ -30,16 +30,9 @@ export class FiltersComponent implements OnInit {
   minDate: Observable<moment.Moment | undefined>;
   maxDate: Observable<moment.Moment | undefined>;
 
-  private onKeyDownSubject = new Subject();
-
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) { }
 
   ngOnInit() {
-    this.onKeyDownSubject.asObservable().flatMap(_ => this.ngRedux.select(presentSelector(canAutosearchSelector)).take(1))
-    .pipe(filter(a => a))
-    .do(_ => this.filter.nativeElement.focus())
-    .subscribe();
-
     fromEvent(this.filter.nativeElement, 'keyup')
     .debounceTime(200)
     .do(_ => this.ngRedux.dispatch(AppStateActions.setInputFilter(this.filter.nativeElement.value)))
@@ -54,10 +47,6 @@ export class FiltersComponent implements OnInit {
 
     this.minDate = minAndMax.map(result => result.min ? moment.unix(result.min) : undefined);
     this.maxDate = minAndMax.map(result => result.max ? moment.unix(result.max) : undefined);
-  }
-
-  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-    this.onKeyDownSubject.next();
   }
 
   checkOnlyInvalid(check: boolean) {
