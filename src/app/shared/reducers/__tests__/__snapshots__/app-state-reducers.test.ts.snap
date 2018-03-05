@@ -76,17 +76,17 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+        "Expenses",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-      "Expenses",
-    ],
   },
 }
 `;
@@ -221,20 +221,20 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Assets",
+        "Assets:Bank",
+        "Assets:Bank:Savings",
+        "Income",
+        "Income:Job",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Assets",
-      "Assets:Bank",
-      "Assets:Bank:Savings",
-      "Income",
-      "Income:Job",
-    ],
   },
 }
 `;
@@ -347,17 +347,17 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+        "Expenses",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-      "Expenses",
-    ],
   },
 }
 `;
@@ -388,15 +388,15 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-    ],
   },
 }
 `;
@@ -438,15 +438,15 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-    ],
   },
 }
 `;
@@ -477,15 +477,15 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-    ],
   },
 }
 `;
@@ -598,17 +598,17 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+        "Expenses",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-      "Expenses",
-    ],
   },
 }
 `;
@@ -639,13 +639,13 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
   },
 }
 `;
@@ -745,17 +745,17 @@ Object {
     },
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+        "Expenses",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-      "Expenses",
-    ],
   },
 }
 `;
@@ -786,13 +786,13 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": true,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
   },
 }
 `;
@@ -871,16 +871,16 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-    ],
   },
 }
 `;
@@ -911,13 +911,13 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "my input",
+      "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
   },
 }
 `;
@@ -948,13 +948,13 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [],
       "showOnlyInvalid": true,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
   },
 }
 `;
@@ -1089,20 +1089,20 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Assets",
+        "Assets:Bank",
+        "Assets:Bank:Savings",
+        "Income",
+        "Income:Job",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Assets",
-      "Assets:Bank",
-      "Assets:Bank:Savings",
-      "Income",
-      "Income:Job",
-    ],
   },
 }
 `;
@@ -1202,17 +1202,17 @@ Object {
     },
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+        "Expenses",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-      "Expenses",
-    ],
   },
 }
 `;
@@ -1243,15 +1243,15 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-    ],
   },
 }
 `;
@@ -1282,15 +1282,15 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-    ],
   },
 }
 `;
@@ -1425,17 +1425,17 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Income",
+        "Income:Job",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Income",
-      "Income:Job",
-    ],
   },
 }
 `;
@@ -1570,13 +1570,13 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [],
   },
 }
 `;
@@ -1657,17 +1657,17 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+        "Expenses",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-      "Expenses",
-    ],
   },
 }
 `;
@@ -1748,17 +1748,17 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "selectedAccounts": Array [
+        "ROOT",
+        "Bank",
+        "Expenses",
+      ],
       "showOnlyInvalid": false,
     },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
     "rootAccount": "ROOT",
-    "selectedAccounts": Array [
-      "ROOT",
-      "Bank",
-      "Expenses",
-    ],
   },
 }
 `;

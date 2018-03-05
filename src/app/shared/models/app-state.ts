@@ -14,13 +14,13 @@ export interface AppState {
     invalidTransactions: string[],
   };
   ui: {
-    selectedAccounts: string[];
     rootAccount: string;
     editedTransaction?: Transaction | TransactionWithUUID;
     isLeftMenuOpen: boolean;
     persistedAt?: moment.Moment;
     isLoading: boolean,
     filters: {
+      selectedAccounts: string[];
       input: string,
       showOnlyInvalid: boolean,
     },

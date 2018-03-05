@@ -18,13 +18,13 @@ export const INITIAL_STATE: AppState = {
     invalidTransactions: [],
   },
   ui: {
-    selectedAccounts: [],
     rootAccount: ROOT_ACCOUNT,
     editedTransaction: undefined,
     isLeftMenuOpen: false,
     persistedAt: undefined,
     isLoading: false,
     filters: {
+      selectedAccounts: [],
       input: '',
       showOnlyInvalid: false,
     },
@@ -56,7 +56,7 @@ export const isLoadingSelector = (s: AppState) => {
 };
 
 export const selectedAccountsSelector = (s: AppState) => {
-  return s.ui.selectedAccounts;
+  return s.ui.filters.selectedAccounts;
 };
 
 export const canAutosearchSelector = (s: AppState) => {
@@ -75,7 +75,7 @@ const transactionsUsingAccounts = (accountsNames: string[], allTransactions: Tra
 };
 
 export const selectedTransactionsSelector = (s: AppState) => {
-  return transactionsUsingAccounts(s.ui.selectedAccounts, Object.values(s.entities.transactions));
+  return transactionsUsingAccounts(s.ui.filters.selectedAccounts, Object.values(s.entities.transactions));
 };
 
 export const rootAccountSelector = (s: AppState) => {
@@ -318,7 +318,7 @@ const allChildren = (state: AppState, a: string): string[] => {
 };
 
 const selectAccounts = (state: AppState, shouldSelect: boolean, accounts: string[]): AppState => {
-  const accountsAlreadySelected = state.ui.selectedAccounts;
+  const accountsAlreadySelected = state.ui.filters.selectedAccounts;
 
   const accountsWithChildren = accounts
   .map(a => allChildren(state, a))
@@ -331,7 +331,10 @@ const selectAccounts = (state: AppState, shouldSelect: boolean, accounts: string
         ...state,
         ui: {
           ...state.ui,
-          selectedAccounts: acc,
+          filters: {
+            ...state.ui.filters,
+            selectedAccounts: acc,
+          },
         },
       };
 };
@@ -416,7 +419,7 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
   const transactions = Object.values(transactionMap);
   const newAccounts = generateAccounts(transactions);
   const newAccountsKeys = Object.keys(newAccounts);
-  const previouslySelected = state.ui.selectedAccounts;
+  const previouslySelected = state.ui.filters.selectedAccounts;
 
   // Unselect accounts if they dont exist anymore
   const newSelectedAccounts = previouslySelected.length === 0
@@ -444,8 +447,11 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
     },
     ui: {
       ...state.ui,
-      selectedAccounts: newSelectedAccounts,
       editedTransaction: newEdited,
+      filters: {
+        ...state.ui.filters,
+        selectedAccounts: newSelectedAccounts,
+      },
     },
   };
 };
