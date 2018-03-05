@@ -4,7 +4,8 @@ import {
   AppStateActions,
   canAutosearchSelector,
   invalidTransactionsSelector,
-  filtersSelector } from './../../shared/reducers/app-state-reducer';
+  filtersSelector,
+  minAndMaxAllowedDateSelector } from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
@@ -108,14 +109,24 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
       const selectedTransactionsChanged = this.ngRedux.select(presentSelector(selectedTransactionsSelector));
 
+      const datesChanged = this.ngRedux.select(presentSelector(minAndMaxAllowedDateSelector))
+      .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
+
       const selectedUUID = this.ngRedux.select(presentSelector(selectEditedTransaction))
       .pipe(filter(t => isTransactionWithUUID(t)))
       .map(t => (t as TransactionWithUUID).uuid);
 
       const invalidTransactions = this.ngRedux.select(presentSelector(invalidTransactionsSelector));
 
-      return Observable.merge(pageChange, sortChange, filtersChange, selectedTransactionsChanged)
+      return Observable.merge(pageChange, sortChange, filtersChange, datesChanged, selectedTransactionsChanged)
       .debounceTime(150)
+      .map( data => {
+        const state = this.ngRedux.getState();
+        const minDate = state.present.ui.filters.minDate;
+        const maxDate = state.present.ui.filters.maxDate;
+
+        return this.filterDates(minDate, maxDate, data);
+      })
       .map( data => {
         const state = this.ngRedux.getState();
         const filters = state.present.ui.filters;
@@ -164,6 +175,10 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
         return (valueA < valueB ? -1 : 1) * (this._sort.direction === 'asc' ? 1 : -1);
       });
+    }
+
+    filterDates(start: number | undefined, end: number | undefined, data: TransactionWithUUID[]): TransactionWithUUID[] {
+      return data.filter(t => (!start || t.header.date >= start) && (!end || t.header.date <= end));
     }
 
     filterInput(query: string, data: TransactionWithUUID[]): TransactionWithUUID[] {

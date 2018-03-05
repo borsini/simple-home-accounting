@@ -8,10 +8,12 @@ import {
   AppStateActions,
   filtersSelector,
   selectedTransactionsSelector,
-  invalidSelectedTransactionsSelector } from '../../shared/reducers/app-state-reducer';
+  invalidSelectedTransactionsSelector,
+  minAndMaxAllowedDateSelector } from '../../shared/reducers/app-state-reducer';
 import { filter } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Observable } from 'rxjs/Observable';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-filters',
@@ -25,6 +27,8 @@ export class FiltersComponent implements OnInit {
   showOnlyInvalid: Observable<boolean>;
   invalidCount: Observable<number>;
   shouldHideFilters: Observable<boolean>;
+  minDate: Observable<moment.Moment | undefined>;
+  maxDate: Observable<moment.Moment | undefined>;
 
   private onKeyDownSubject = new Subject();
 
@@ -45,6 +49,11 @@ export class FiltersComponent implements OnInit {
     this.invalidCount = this.ngRedux.select(presentSelector(invalidSelectedTransactionsSelector)).map(i => i.length);
     this.shouldHideFilters = this.ngRedux.select(presentSelector(selectedTransactionsSelector))
     .map(t => t.length === 0);
+
+    const minAndMax = this.ngRedux.select(presentSelector(minAndMaxAllowedDateSelector));
+
+    this.minDate = minAndMax.map(result => result.min ? moment.unix(result.min) : undefined);
+    this.maxDate = minAndMax.map(result => result.max ? moment.unix(result.max) : undefined);
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
@@ -53,5 +62,13 @@ export class FiltersComponent implements OnInit {
 
   checkOnlyInvalid(check: boolean) {
     this.ngRedux.dispatch(AppStateActions.showOnlyInvalid(check));
+  }
+
+  startDateChanged(date: moment.Moment) {
+    this.ngRedux.dispatch(AppStateActions.setMinDate(date && date.isValid() ? date.unix() : undefined));
+  }
+
+  endDateChanged(date: moment.Moment) {
+    this.ngRedux.dispatch(AppStateActions.setMaxDate(date && date.isValid() ? date.unix() : undefined));
   }
 }

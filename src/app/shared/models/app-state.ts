@@ -23,6 +23,8 @@ export interface AppState {
       selectedAccounts: string[];
       input: string,
       showOnlyInvalid: boolean,
+      minDate?: number,
+      maxDate?: number,
     },
   };
 }

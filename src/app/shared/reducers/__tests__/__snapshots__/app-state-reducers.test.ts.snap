@@ -76,6 +76,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",
@@ -221,6 +223,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Assets",
@@ -347,6 +351,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",
@@ -388,6 +394,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
       ],
@@ -438,6 +446,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
       ],
@@ -477,6 +487,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
       ],
@@ -598,6 +610,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",
@@ -639,6 +653,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
@@ -745,6 +761,8 @@ Object {
     },
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",
@@ -786,6 +804,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
@@ -871,6 +891,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",
@@ -911,6 +933,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "my input",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
@@ -948,6 +972,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [],
       "showOnlyInvalid": true,
     },
@@ -1089,6 +1115,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Assets",
@@ -1202,6 +1230,8 @@ Object {
     },
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",
@@ -1243,6 +1273,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
       ],
@@ -1282,6 +1314,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
       ],
@@ -1425,6 +1459,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Income",
@@ -1570,6 +1606,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [],
       "showOnlyInvalid": false,
     },
@@ -1657,6 +1695,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",
@@ -1748,6 +1788,8 @@ Object {
     "editedTransaction": undefined,
     "filters": Object {
       "input": "",
+      "maxDate": undefined,
+      "minDate": undefined,
       "selectedAccounts": Array [
         "ROOT",
         "Bank",

@@ -27,6 +27,8 @@ export const INITIAL_STATE: AppState = {
       selectedAccounts: [],
       input: '',
       showOnlyInvalid: false,
+      minDate: undefined,
+      maxDate: undefined,
     },
   },
 };
@@ -95,6 +97,16 @@ export const filtersSelector = (s: AppState) => {
   return s.ui.filters;
 };
 
+export const minAndMaxAllowedDateSelector = (s: AppState) =>  {
+  return Object.values(s.entities.transactions).reduce<{min?: number, max?: number}>(
+    (prev, curr) => ({
+        min: prev.min ? Math.min(prev.min!, curr.header.date) : curr.header.date,
+        max: prev.max ? Math.max(prev.max!, curr.header.date) : curr.header.date,
+      }),
+    {},
+  );
+};
+
 export class AppStateActions {
   static readonly ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
   static readonly SET_EDITED_TRANSACTION = 'SET_EDITED_TRANSACTION';
@@ -106,6 +118,8 @@ export class AppStateActions {
   static readonly SET_IS_LOADING = 'SET_IS_LOADING';
   static readonly SET_INPUT_FILTER = 'SET_INPUT_FILTER';
   static readonly SHOW_ONLY_INVALID = 'SHOW_ONLY_INVALID';
+  static readonly SET_MIN_DATE = 'SET_MIN_DATE';
+  static readonly SET_MAX_DATE = 'SET_MAX_DATE';
 
   static setEditedTransaction(t: Transaction | TransactionWithUUID | undefined): AnyAction {
     return {
@@ -175,6 +189,20 @@ export class AppStateActions {
     return {
       show,
       type: AppStateActions.SHOW_ONLY_INVALID,
+    };
+  }
+
+  static setMinDate(date: number | undefined): AnyAction {
+    return {
+      date,
+      type: AppStateActions.SET_MIN_DATE,
+    };
+  }
+
+  static setMaxDate(date: number | undefined): AnyAction {
+    return {
+      date,
+      type: AppStateActions.SET_MAX_DATE,
     };
   }
 }
@@ -420,6 +448,33 @@ const showOnlyInvalid = (state: AppState, show: boolean): AppState => {
   };
 };
 
+
+const setMinDate = (state: AppState, date: number | undefined): AppState => {
+  return {
+    ...state,
+    ui: {
+      ...state.ui,
+      filters: {
+        ...state.ui.filters,
+        minDate: date,
+      },
+    },
+  };
+};
+
+const setMaxDate = (state: AppState, date: number | undefined): AppState => {
+  return {
+    ...state,
+    ui: {
+      ...state.ui,
+      filters: {
+        ...state.ui.filters,
+        maxDate: date,
+      },
+    },
+  };
+};
+
 const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
   const transactions = Object.values(transactionMap);
   const newAccounts = generateAccounts(transactions);
@@ -492,6 +547,12 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
 
     case AppStateActions.SHOW_ONLY_INVALID:
       return showOnlyInvalid(lastState, action.show);
+
+    case AppStateActions.SET_MIN_DATE:
+      return setMinDate(lastState, action.date);
+
+    case AppStateActions.SET_MAX_DATE:
+      return setMaxDate(lastState, action.date);
   }
 
   return lastState;

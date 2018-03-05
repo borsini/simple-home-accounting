@@ -3,5 +3,20 @@
       <input matInput #filter placeholder="Titre, date ou montant...">
   </mat-input-container>
 
-  <mat-checkbox [disabled]="(invalidCount | async) === 0" [checked]="showOnlyInvalid | async" (change)="checkOnlyInvalid($event.checked)">Seulement les transactions invalides ({{ invalidCount | async }})</mat-checkbox>
+  <div id="filtersSecondLine">
+    <mat-checkbox [disabled]="(invalidCount | async) === 0" [checked]="showOnlyInvalid | async" (change)="checkOnlyInvalid($event.checked)">Seulement les transactions invalides ({{ invalidCount | async }})</mat-checkbox>
+
+    <mat-form-field>
+      <input matInput [min]="minDate | async" [max]="maxDate | async" [matDatepicker]="startPicker" placeholder="Date début" (dateInput)="startDateChanged($event.value)">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput [min]="minDate | async" [max]="maxDate | async" [matDatepicker]="endPicker" placeholder="Date fin" (dateInput)="endDateChanged($event.value)">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+  </div>
 </div>
