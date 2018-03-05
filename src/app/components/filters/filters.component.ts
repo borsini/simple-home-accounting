@@ -7,8 +7,8 @@ import {
   canAutosearchSelector,
   AppStateActions,
   filtersSelector,
-  invalidTransactionsSelector,
-  selectedTransactionsSelector } from '../../shared/reducers/app-state-reducer';
+  selectedTransactionsSelector,
+  invalidSelectedTransactionsSelector } from '../../shared/reducers/app-state-reducer';
 import { filter } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Observable } from 'rxjs/Observable';
@@ -42,7 +42,7 @@ export class FiltersComponent implements OnInit {
     .subscribe();
 
     this.showOnlyInvalid = this.ngRedux.select(presentSelector(filtersSelector)).map(f => f.showOnlyInvalid);
-    this.invalidCount = this.ngRedux.select(presentSelector(invalidTransactionsSelector)).map(i => i.length);
+    this.invalidCount = this.ngRedux.select(presentSelector(invalidSelectedTransactionsSelector)).map(i => i.length);
     this.shouldHideFilters = this.ngRedux.select(presentSelector(selectedTransactionsSelector))
     .map(t => t.length === 0);
   }

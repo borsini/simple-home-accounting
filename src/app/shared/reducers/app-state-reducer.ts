@@ -86,6 +86,11 @@ export const invalidTransactionsSelector = (s: AppState) => {
   return s.computed.invalidTransactions;
 };
 
+export const invalidSelectedTransactionsSelector = (s: AppState) => {
+  const selectedTransactions = selectedTransactionsSelector(s).map(tr => tr.uuid);
+  return [selectedTransactions, s.computed.invalidTransactions].reduce(intersectionReducer);
+};
+
 export const filtersSelector = (s: AppState) => {
   return s.ui.filters;
 };
