@@ -1,7 +1,18 @@
 import {v4 as uuid } from 'uuid';
 import Decimal from 'decimal.js';
 
-import { AppState, TransactionMap, AccountMap, Tab, Tabs, Ui, Filters } from './../models/app-state';
+import {
+  AppState,
+  TransactionMap,
+  AccountMap,
+  Tab,
+  Tabs,
+  Ui,
+  Filters,
+  Stats,
+  DebitCreditLine,
+  DebitCreditRepartition,
+} from './../models/app-state';
 import { Account } from '../models/account';
 import { Action, AnyAction } from 'redux';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../models/transaction';
@@ -32,6 +43,10 @@ export const INITIAL_STATE: AppState = {
           maxDate: undefined,
         },
         isClosable: false,
+        stats: {
+          accountLevel: 10,
+          areActivated: false,
+        },
       },
     },
     isLeftMenuOpen: false,
@@ -50,8 +65,8 @@ export class AppStateActions {
   static readonly SHOW_ONLY_INVALID = 'SHOW_ONLY_INVALID';
   static readonly SET_MIN_DATE = 'SET_MIN_DATE';
   static readonly SET_MAX_DATE = 'SET_MAX_DATE';
-  static readonly OPEN_TAB = 'OPEN_TAB';
-  static readonly CLOSE_TAB = 'CLOSE_TAB';
+  static readonly ACTIVATE_STATS = 'ACTIVATE_STATS';
+  static readonly SET_STATS_LEVEL = 'SET_STATS_LEVEL';
 
   static setEditedTransaction(t: Transaction | TransactionWithUUID | undefined, tab: string): AnyAction {
     return {
@@ -122,18 +137,19 @@ export class AppStateActions {
     };
   }
 
-  static openTab(accounts: string[]): AnyAction {
+  static activateStats(areActivated: boolean, tab: string): AnyAction {
     return {
-      accounts,
-      open,
-      type: AppStateActions.OPEN_TAB,
+      areActivated,
+      type: AppStateActions.ACTIVATE_STATS,
+      tab,
     };
   }
 
-  static closeTab(tab: string): AnyAction {
+  static setStatsLevel(level: number, tab: string): AnyAction {
     return {
+      level,
+      type: AppStateActions.SET_STATS_LEVEL,
       tab,
-      type: AppStateActions.CLOSE_TAB,
     };
   }
 }
@@ -363,6 +379,10 @@ const createTab = (selectedAccounts: string[]): Tab => ({
     showOnlyInvalid: false,
   },
   isClosable: true,
+  stats: {
+    areActivated: false,
+    accountLevel: 1,
+  },
 });
 
 const openTab = (state: AppState, accounts: string[]): AppState => {
@@ -406,6 +426,44 @@ const updateUi = (ui: Ui, newTransactions: string[], newAccounts: string[]): Ui 
   };
 };
 
+const activateStats = (state: AppState, areActivated: boolean, tab: string): AppState => {
+  return {
+    ...state,
+    ui: {
+      ...state.ui,
+      tabs: {
+        ...state.ui.tabs,
+        [tab]: {
+          ...state.ui.tabs[tab],
+          stats: {
+            ...state.ui.tabs[tab].stats,
+            areActivated,
+          },
+        },
+      },
+    },
+  };
+};
+
+const setStatsLevel = (state: AppState, accountLevel: number, tab: string): AppState => {
+  return {
+    ...state,
+    ui: {
+      ...state.ui,
+      tabs: {
+        ...state.ui.tabs,
+        [tab]: {
+          ...state.ui.tabs[tab],
+          stats: {
+            ...state.ui.tabs[tab].stats,
+            accountLevel,
+          },
+        },
+      },
+    },
+  };
+};
+
 const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
   const transactions = Object.values(transactionMap);
   const newAccounts = generateAccounts(transactions);
@@ -425,11 +483,54 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
       transactions: transactionMap,
     },
     computed: {
+      ...state.computed,
       accounts: newAccounts,
       invalidTransactions: newInvalidTransactions,
     },
     ui,
   };
+};
+
+const computeRepartitionForTransaction = (t: TransactionWithUUID): DebitCreditRepartition => {
+  return addMissingAmount(t).postings.reduce(
+    (repartition: DebitCreditRepartition, p: Posting) => {
+
+      const line: DebitCreditLine = repartition[p.account] || { debits: '0', credits: '0', account: p.account };
+      const amount = new Decimal(p.amount!);
+
+      const newLine = {
+        debits: amount.isNegative() ? new Decimal(line.debits).plus(amount) : line.debits,
+        credits: amount.isPositive() ? new Decimal(line.credits).plus(amount) : line.credits,
+        account: line.account,
+      };
+      return {
+        ...repartition,
+        [p.account]: newLine,
+      };
+    },
+    {},
+  );
+};
+
+const computeRepartitionForTransactions = (transactions: TransactionWithUUID[], level: number): DebitCreditRepartition => {
+  const repartition: DebitCreditRepartition = {};
+
+  transactions.map(computeRepartitionForTransaction)
+  .forEach( r => {
+    Object.keys(r).forEach( account => {
+      const newLine: DebitCreditLine = r[account];
+      const accountShrinked = account.split(':').slice(0, level).join(':');
+      const existingLine: DebitCreditLine = repartition[accountShrinked] || { debits: '0', credits: '0', account };
+
+      repartition[accountShrinked] = {
+        debits: new Decimal(newLine.debits).plus(existingLine.debits).toString(),
+        credits: new Decimal(newLine.credits).plus(existingLine.credits).toString(),
+        account: accountShrinked,
+      };
+    });
+  });
+
+  return repartition;
 };
 
 export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyAction): AppState {
@@ -458,14 +559,11 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
     case AppStateActions.SET_MIN_DATE:
       return setMinDate(lastState, action.date, action.tab);
 
-    case AppStateActions.SET_MAX_DATE:
-      return setMaxDate(lastState, action.date, action.tab);
+    case AppStateActions.ACTIVATE_STATS:
+      return activateStats(lastState, action.areActivated, action.tab);
 
-    case AppStateActions.OPEN_TAB:
-      return openTab(lastState, action.accounts);
-
-    case AppStateActions.CLOSE_TAB:
-      return closeTab(lastState, action.tab);
+    case AppStateActions.SET_STATS_LEVEL:
+      return setStatsLevel(lastState, action.level, action.tab);
   }
 
   return lastState;

@@ -1,0 +1,19 @@
+<div>
+    <mat-slide-toggle (change)="onStatsChecked($event.checked)">
+        Activer les statistiques
+    </mat-slide-toggle>
+
+    <mat-slider thumbLabel tickInterval="1" min="1" [max]="maxLevel | async" (change)="sliderChanged($event.value)"></mat-slider>
+    <div>
+      <table>
+          <thead><th>Compte</th><th>Crédits</th><th>Débits</th></thead>
+          <tr *ngFor="let line of (repartition | async)">
+              <td>{{ line.account }}</td>
+              <td class="credits">{{ line.credits || '' }}</td>
+              <td class="debits">{{ line.debits || '' }}</td>
+          </tr>
+      </table>
+
+    </div>
+
+</div>

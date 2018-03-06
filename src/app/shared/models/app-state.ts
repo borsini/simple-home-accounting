@@ -24,6 +24,24 @@ export interface Tab {
   editedTransaction?: Transaction | TransactionWithUUID;
   filters: Filters;
   isClosable: boolean;
+  stats: {
+    areActivated: boolean,
+    accountLevel: number,
+  };
+}
+
+export interface Stats {
+  repartition: DebitCreditRepartition;
+}
+
+export interface DebitCreditRepartition {
+  [k: string]: DebitCreditLine;
+}
+
+export interface DebitCreditLine {
+  account: string;
+  debits: string;
+  credits: string;
 }
 
 export interface AppState {

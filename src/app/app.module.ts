@@ -15,6 +15,8 @@ import {
   MatTableModule,
   MatToolbarModule,
   MatTabsModule,
+  MatSliderModule,
+  MatSlideToggleModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,6 +38,7 @@ import {
 import { undoRedoReducer, UndoRedoState, presentSelector } from './shared/reducers/undo-redo-reducer';
 import { FiltersComponent } from './components/filters/filters.component';
 import { AccountComponent } from './components/account/account.component';
+import { StatsComponent } from './components/stats/stats.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -49,6 +52,7 @@ import { AccountComponent } from './components/account/account.component';
     EditTransactionComponent,
     FiltersComponent,
     AccountComponent,
+    StatsComponent,
   ],
   entryComponents: [
     DialogResultExampleDialogComponent,
@@ -78,6 +82,8 @@ import { AccountComponent } from './components/account/account.component';
     MatCardModule,
     NgReduxModule,
     MatTabsModule,
+    MatSliderModule,
+    MatSlideToggleModule,
   ],
   providers : [
     {provide: DateAdapter, useClass: MomentDateAdapter},

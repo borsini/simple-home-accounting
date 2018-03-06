@@ -1,6 +1,8 @@
 <app-filters tabId="{{tabId}}"></app-filters>
 
-  <mat-paginator #paginator [class.hidden]="noTransactionsToDisplay | async"
+<app-stats></app-stats>
+
+<mat-paginator #paginator [class.hidden]="noTransactionsToDisplay | async"
   [pageIndex]="0"
   [pageSize]="25"
   [pageSizeOptions]="[10, 25, 50]">
