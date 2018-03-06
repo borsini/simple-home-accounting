@@ -88,7 +88,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -238,7 +237,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -363,7 +361,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -404,7 +401,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -456,7 +452,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -497,7 +492,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -622,7 +616,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -661,7 +654,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -773,7 +765,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -812,7 +803,6 @@ Object {
     "isLeftMenuOpen": true,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -902,7 +892,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -941,7 +930,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -980,7 +968,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1130,7 +1117,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1242,7 +1228,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1283,7 +1268,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1324,7 +1308,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1462,7 +1445,6 @@ Object {
       "maxDate": undefined,
       "minDate": undefined,
       "selectedAccounts": Array [
-        "ROOT",
         "Income",
         "Income:Job",
       ],
@@ -1471,7 +1453,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1614,7 +1595,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1707,7 +1687,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;
@@ -1800,7 +1779,6 @@ Object {
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-    "rootAccount": "ROOT",
   },
 }
 `;

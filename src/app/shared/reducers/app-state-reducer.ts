@@ -18,7 +18,6 @@ export const INITIAL_STATE: AppState = {
     invalidTransactions: [],
   },
   ui: {
-    rootAccount: ROOT_ACCOUNT,
     editedTransaction: undefined,
     isLeftMenuOpen: false,
     persistedAt: undefined,
@@ -120,7 +119,7 @@ export const selectedTransactionsSelector = (s: AppState) => {
 };
 
 export const rootAccountSelector = (s: AppState) => {
-  return s.ui.rootAccount;
+  return ROOT_ACCOUNT;
 };
 
 export const invalidTransactionsSelector = (s: AppState) => {
@@ -251,12 +250,14 @@ export const unionReducer = (prev: any[], curr: any[]) => ([...prev, ...curr.fil
 export const differenceReducer = (prev: any[], curr: any[]) => ([...prev.filter(x => !curr.includes(x))]);
 export const intersectionReducer = (prev: any[], curr: any[]) => (prev.filter(x => curr.indexOf(x) !== -1));
 
-const specialCase = (newlySelectedAccounts, allAccounts): string[] => {
-  if (newlySelectedAccounts.length === 1 && newlySelectedAccounts.includes(ROOT_ACCOUNT)) {
-    return [];
+const selectOrUnselectAccounts = (newlySelectedAccounts: string[], allAccounts: string[]): string[] => {
+  // Unselect root account if some accounts are unchecked
+  if (newlySelectedAccounts.includes(ROOT_ACCOUNT) && newlySelectedAccounts.length !== allAccounts.length) {
+    return newlySelectedAccounts.filter(a => a !== ROOT_ACCOUNT);
   }
 
-  if (newlySelectedAccounts.length === allAccounts.length - 1 && !newlySelectedAccounts.includes(ROOT_ACCOUNT)) {
+  // Select root account if all other accounts are checked
+  if (! newlySelectedAccounts.includes(ROOT_ACCOUNT) && newlySelectedAccounts.length === allAccounts.length - 1) {
     return [ROOT_ACCOUNT, ...newlySelectedAccounts];
   }
 
@@ -397,7 +398,7 @@ const selectAccounts = (state: AppState, shouldSelect: boolean, accounts: string
   .reduce(unionReducer, []);
 
   const newlySelectedAccounts = [accountsAlreadySelected, accountsWithChildren].reduce(shouldSelect ? unionReducer : differenceReducer);
-  const acc = specialCase(newlySelectedAccounts, Object.keys(state.computed.accounts));
+  const acc = selectOrUnselectAccounts(newlySelectedAccounts, Object.keys(state.computed.accounts));
 
   return {
         ...state,
@@ -429,11 +430,7 @@ const deleteTransaction = (state: AppState, id: string): AppState => {
 };
 
 const updateTransaction = (state: AppState, transaction: TransactionWithUUID): AppState => {
-  const tr = {
-    ...state.entities.transactions,
-    [transaction.uuid]: transaction,
-  };
-
+  const tr = addOrUpdateTransactions(state.entities.transactions, [transaction], false);
   return stateWithNewTransactions(state, tr);
 };
 

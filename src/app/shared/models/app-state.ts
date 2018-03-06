@@ -14,7 +14,6 @@ export interface AppState {
     invalidTransactions: string[],
   };
   ui: {
-    rootAccount: string;
     editedTransaction?: Transaction | TransactionWithUUID;
     isLeftMenuOpen: boolean;
     persistedAt?: moment.Moment;
