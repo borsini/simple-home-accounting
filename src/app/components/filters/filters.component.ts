@@ -9,7 +9,8 @@ import {
   filtersSelector,
   selectedTransactionsSelector,
   invalidSelectedTransactionsSelector,
-  minAndMaxAllowedDateSelector } from '../../shared/reducers/app-state-reducer';
+  minAndMaxAllowedDateSelector,
+  allTransactionsSelector} from '../../shared/reducers/app-state-reducer';
 import { filter } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Observable } from 'rxjs/Observable';
@@ -40,8 +41,8 @@ export class FiltersComponent implements OnInit {
 
     this.showOnlyInvalid = this.ngRedux.select(presentSelector(filtersSelector)).map(f => f.showOnlyInvalid);
     this.invalidCount = this.ngRedux.select(presentSelector(invalidSelectedTransactionsSelector)).map(i => i.length);
-    this.shouldHideFilters = this.ngRedux.select(presentSelector(selectedTransactionsSelector))
-    .map(t => t.length === 0);
+    this.shouldHideFilters = this.ngRedux.select(presentSelector(allTransactionsSelector))
+    .map(t => Object.keys(t).length === 0);
 
     const minAndMax = this.ngRedux.select(presentSelector(minAndMaxAllowedDateSelector));
 
