@@ -3,9 +3,7 @@ import {
   selectEditedTransaction,
   AppStateActions,
   canAutosearchSelector,
-  invalidTransactionsSelector,
-  filtersSelector,
-  minAndMaxAllowedDateSelector } from './../../shared/reducers/app-state-reducer';
+  invalidTransactionsSelector } from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
@@ -103,14 +101,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       const pageChange = Observable.from<PageEvent>(this._paginator.page)
         .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
 
-      const filtersChange = this.ngRedux.select(presentSelector(filtersSelector))
-        .do( f => this._paginator.pageIndex = 0)
-        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
-
       const selectedTransactionsChanged = this.ngRedux.select(presentSelector(selectedTransactionsSelector));
-
-      const datesChanged = this.ngRedux.select(presentSelector(minAndMaxAllowedDateSelector))
-      .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
 
       const selectedUUID = this.ngRedux.select(presentSelector(selectEditedTransaction))
       .pipe(filter(t => isTransactionWithUUID(t)))
@@ -118,28 +109,8 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
       const invalidTransactions = this.ngRedux.select(presentSelector(invalidTransactionsSelector));
 
-      return Observable.merge(pageChange, sortChange, filtersChange, datesChanged, selectedTransactionsChanged)
+      return Observable.merge(pageChange, sortChange, selectedTransactionsChanged)
       .debounceTime(150)
-      .map( data => {
-        const state = this.ngRedux.getState();
-        const minDate = state.present.ui.filters.minDate;
-        const maxDate = state.present.ui.filters.maxDate;
-
-        return this.filterDates(minDate, maxDate, data);
-      })
-      .map( data => {
-        const state = this.ngRedux.getState();
-        const filters = state.present.ui.filters;
-
-        return this.filterInput(filters.input, data);
-      })
-      .map( data => {
-        const state = this.ngRedux.getState();
-        const filters = state.present.ui.filters;
-        const invalid = state.present.computed.invalidTransactions;
-
-        return this.filterInvalid(filters.showOnlyInvalid, data, invalid);
-      })
       .map( data => this.sortData(data))
       .map( data => {
         this._paginator.length = data.length;
@@ -176,37 +147,6 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
         return (valueA < valueB ? -1 : 1) * (this._sort.direction === 'asc' ? 1 : -1);
       });
     }
-
-    filterDates(start: number | undefined, end: number | undefined, data: TransactionWithUUID[]): TransactionWithUUID[] {
-      return data.filter(t => (!start || t.header.date >= start) && (!end || t.header.date <= end));
-    }
-
-    filterInput(query: string, data: TransactionWithUUID[]): TransactionWithUUID[] {
-      if (query !== undefined && query !== '' ) {
-        return data.filter( tr => {
-          const words = query.split(' ').filter(s => s !== '').map( s => s.toLowerCase());
-
-          return words.some( word => {
-            let titleMatches, amountOrAccountMatches = false;
-            titleMatches = tr.header.title && tr.header.title.toLowerCase().indexOf(word) >= 0;
-            amountOrAccountMatches = tr.postings.some( p => {
-                return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount !== undefined && p.amount.toString().indexOf(word) >= 0);
-            });
-
-            return titleMatches || amountOrAccountMatches;
-          });
-        });
-      } else {
-        return data;
-      }
-    }
-
-    filterInvalid(showOnlyInvalid: boolean, data: TransactionWithUUID[], invalidTransaction: string[]): TransactionWithUUID[] {
-        return data.filter( tr => {
-          if (!showOnlyInvalid) { return true; }
-          return invalidTransaction.includes(tr.uuid);
-        });
-      }
   }
 
 @Component({

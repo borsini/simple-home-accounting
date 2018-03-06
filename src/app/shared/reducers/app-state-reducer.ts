@@ -65,19 +65,58 @@ export const canAutosearchSelector = (s: AppState) => {
   return !s.ui.isLeftMenuOpen && !isTransactionPanelOpenSelector(s);
 };
 
-const transactionsUsingAccounts = (accountsNames: string[], allTransactions: TransactionWithUUID[]) => {
+const doesTransactionUseAccountsFilter = (accountsNames: string[]) => (tr: TransactionWithUUID): boolean => {
   if (accountsNames.find(n => n === ROOT_ACCOUNT)) {
-    return allTransactions;
+    return true;
+  }
+  return tr.postings.some( p => accountsNames.indexOf(p.account) !== -1 );
+};
+
+const doesTransactionContainInput = (query: string) => (tr: TransactionWithUUID): boolean => {
+  if (query === undefined || query === '' ) {
+    return true;
   }
 
-  return allTransactions
-    .filter(tr => {
-    return tr.postings.some( p => accountsNames.indexOf(p.account) !== -1 );
+  const words = query.split(' ').filter(s => s !== '').map( s => s.toLowerCase());
+
+  return words.some( word => {
+    let titleMatches, amountOrAccountMatches = false;
+    titleMatches = tr.header.title && tr.header.title.toLowerCase().indexOf(word) >= 0;
+    amountOrAccountMatches = tr.postings.some( p => {
+        return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount !== undefined && p.amount.toString().indexOf(word) >= 0);
+    });
+
+    return titleMatches || amountOrAccountMatches;
   });
 };
 
+const isTransactionBetweenDates = (start: number | undefined, end: number | undefined) => (tr: TransactionWithUUID): boolean => {
+  return (!start || tr.header.date >= start) && (!end || tr.header.date <= end);
+};
+
+const isTransactionOnlyInvalid = (onlyInvalid: boolean, invalidIds: string[]) => (tr: TransactionWithUUID): boolean => {
+    if (!onlyInvalid) { return true; }
+    return invalidIds.includes(tr.uuid);
+};
+
+type Validator<T> = (T) => boolean;
+
+const AND = <U>(validators: Validator<U>[]): Validator<U> => {
+  return (obj: U) => validators.every(v => v(obj));
+};
+
 export const selectedTransactionsSelector = (s: AppState) => {
-  return transactionsUsingAccounts(s.ui.filters.selectedAccounts, Object.values(s.entities.transactions));
+  const filters = s.ui.filters;
+  const allTransactions = Object.values(s.entities.transactions);
+
+  const accountFilter = doesTransactionUseAccountsFilter(filters.selectedAccounts);
+  const inputFilter = doesTransactionContainInput(filters.input);
+  const datesFilter = isTransactionBetweenDates(filters.minDate, filters.maxDate);
+  const onlyInvalidFilter = isTransactionOnlyInvalid(filters.showOnlyInvalid, s.computed.invalidTransactions);
+
+  const finalFilter = AND([accountFilter, inputFilter, datesFilter, onlyInvalidFilter]);
+
+  return allTransactions.filter(finalFilter);
 };
 
 export const rootAccountSelector = (s: AppState) => {
