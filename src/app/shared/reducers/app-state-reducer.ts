@@ -55,6 +55,139 @@ export const INITIAL_STATE: AppState = {
   },
 };
 
+<<<<<<< HEAD
+=======
+export const selectEditedTransaction = (s: AppState) => {
+  return s.ui.editedTransaction;
+};
+
+export const allTransactionsSelector = (s: AppState) => {
+  return s.entities.transactions;
+};
+
+export const allAccountsSelector = (s: AppState) => {
+  return s.computed.accounts;
+};
+
+export const isLeftMenuOpenSelector = (s: AppState) => {
+  return s.ui.isLeftMenuOpen;
+};
+
+export const isTransactionPanelOpenSelector = (s: AppState) => {
+  return s.ui.editedTransaction !== undefined;
+};
+
+export const isLoadingSelector = (s: AppState) => {
+  return s.ui.isLoading;
+};
+
+export const selectedAccountsSelector = (s: AppState) => {
+  return s.ui.filters.selectedAccounts;
+};
+
+export const canAutosearchSelector = (s: AppState) => {
+  return !s.ui.isLeftMenuOpen && !isTransactionPanelOpenSelector(s);
+};
+
+const doesTransactionUseAccountsFilter = (accountsNames: string[]) => (tr: TransactionWithUUID): boolean => {
+  if (accountsNames.find(n => n === ROOT_ACCOUNT)) {
+    return true;
+  }
+  return tr.postings.some( p => accountsNames.indexOf(p.account) !== -1 );
+};
+
+const doesTransactionContainInput = (query: string) => (tr: TransactionWithUUID): boolean => {
+  if (query === undefined || query === '' ) {
+    return true;
+  }
+
+  const words = query.split(' ').filter(s => s !== '').map( s => s.toLowerCase());
+
+  return words.some( word => {
+    let titleMatches, amountOrAccountMatches = false;
+    titleMatches = tr.header.title && tr.header.title.toLowerCase().indexOf(word) >= 0;
+    amountOrAccountMatches = tr.postings.some( p => {
+        return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount !== undefined && p.amount.toString().indexOf(word) >= 0);
+    });
+
+    return titleMatches || amountOrAccountMatches;
+  });
+};
+
+const isTransactionBetweenDates = (start: number | undefined, end: number | undefined) => (tr: TransactionWithUUID): boolean => {
+  return (!start || tr.header.date >= start) && (!end || tr.header.date <= end);
+};
+
+const isTransactionOnlyInvalid = (onlyInvalid: boolean, invalidIds: string[]) => (tr: TransactionWithUUID): boolean => {
+    if (!onlyInvalid) { return true; }
+    return invalidIds.includes(tr.uuid);
+};
+
+type Validator<T> = (T) => boolean;
+
+const AND = <U>(validators: Validator<U>[]): Validator<U> => {
+  return (obj: U) => validators.every(v => v(obj));
+};
+
+export const selectedTransactionsSelector = (s: AppState) => {
+  const filters = s.ui.filters;
+  const allTransactions = Object.values(s.entities.transactions);
+
+  const accountFilter = doesTransactionUseAccountsFilter(filters.selectedAccounts);
+  const inputFilter = doesTransactionContainInput(filters.input);
+  const datesFilter = isTransactionBetweenDates(filters.minDate, filters.maxDate);
+  const onlyInvalidFilter = isTransactionOnlyInvalid(filters.showOnlyInvalid, s.computed.invalidTransactions);
+
+  const finalFilter = AND([accountFilter, inputFilter, datesFilter, onlyInvalidFilter]);
+
+  return allTransactions.filter(finalFilter);
+};
+
+export const rootAccountSelector = (s: AppState) => {
+  return ROOT_ACCOUNT;
+};
+
+export const invalidTransactionsSelector = (s: AppState) => {
+  return s.computed.invalidTransactions;
+};
+
+export const invalidSelectedTransactionsSelector = (s: AppState) => {
+  const selectedTransactions = selectedTransactionsSelector(s).map(tr => tr.uuid);
+  return [selectedTransactions, s.computed.invalidTransactions].reduce(intersectionReducer);
+};
+
+export const filtersSelector = (s: AppState) => {
+  return s.ui.filters;
+};
+
+export const minAndMaxAllowedDateSelector = (s: AppState) =>  {
+  return Object.values(s.entities.transactions).reduce<{min?: number, max?: number}>(
+    (prev, curr) => ({
+        min: prev.min ? Math.min(prev.min!, curr.header.date) : curr.header.date,
+        max: prev.max ? Math.max(prev.max!, curr.header.date) : curr.header.date,
+      }),
+    {},
+  );
+};
+
+export const statsRepartitionSelector = (s: AppState): DebitCreditRepartition => {
+  if (!s.ui.stats.areActivated) {
+    return {};
+  }
+
+  const transactions = selectedTransactionsSelector(s);
+  const level = s.ui.stats.accountLevel;
+  return computeRepartitionForTransactions(transactions, level);
+};
+
+const computeMaxLevel = (accounts: string[]) => accounts.reduce((prev, curr) => Math.max(prev, curr.split(':').length), 0);
+
+export const maxLevelSelector = (s: AppState): number => {
+  const a = selectedAccountsSelector(s);
+  return computeMaxLevel(selectedAccountsSelector(s));
+};
+
+>>>>>>> feat: add sorting to stats data table
 export class AppStateActions {
   static readonly ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
   static readonly SET_EDITED_TRANSACTION = 'SET_EDITED_TRANSACTION';
@@ -426,7 +559,11 @@ const updateUi = (ui: Ui, newTransactions: string[], newAccounts: string[]): Ui 
   };
 };
 
+<<<<<<< HEAD
 const activateStats = (state: AppState, areActivated: boolean, tab: string): AppState => {
+=======
+const activateStats = (state: AppState, areActivated: boolean): AppState => {
+>>>>>>> feat: add sorting to stats data table
   return {
     ...state,
     ui: {

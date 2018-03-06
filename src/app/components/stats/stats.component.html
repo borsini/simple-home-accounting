@@ -5,15 +5,30 @@
 
     <mat-slider thumbLabel tickInterval="1" min="1" [max]="maxLevel | async" (change)="sliderChanged($event.value)"></mat-slider>
     <div>
-      <table>
-          <thead><th>Compte</th><th>Crédits</th><th>Débits</th></thead>
-          <tr *ngFor="let line of (repartition | async)">
-              <td>{{ line.account }}</td>
-              <td class="credits">{{ line.credits || '' }}</td>
-              <td class="debits">{{ line.debits || '' }}</td>
-          </tr>
-      </table>
+      <mat-table #table [dataSource]="dataSource" matSort>
 
+        <ng-container cdkColumnDef="account">
+          <mat-header-cell *cdkHeaderCellDef mat-sort-header> Account </mat-header-cell>
+          <mat-cell *cdkCellDef="let line">{{line.account}}</mat-cell>
+        </ng-container>
+
+        <ng-container cdkColumnDef="debits">
+          <mat-header-cell *cdkHeaderCellDef mat-sort-header> Debits </mat-header-cell>
+          <mat-cell *cdkCellDef="let row"> {{row.debits}} </mat-cell>
+        </ng-container>
+
+        <ng-container cdkColumnDef="credits">
+          <mat-header-cell *cdkHeaderCellDef mat-sort-header> Credits </mat-header-cell>
+          <mat-cell *cdkCellDef="let row"> {{row.credits}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row
+            *cdkRowDef="let row; columns: displayedColumns;"
+            >
+          </mat-row>
+
+      </mat-table>
     </div>
 
 </div>
