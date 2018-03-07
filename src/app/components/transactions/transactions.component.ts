@@ -36,14 +36,18 @@ const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
 
 export class PostingRow {
 
-  constructor(private _posting: Posting) {}
+  private decimalAmount: Decimal;
+
+  constructor(private _posting: Posting) {
+    this.decimalAmount = new Decimal(this._posting.amount || 0);
+  }
 
   get account() {
     return this._posting.account;
   }
 
   get amount() {
-    return this._posting.amount;
+    return this.decimalAmount.toFixed(2);
   }
 
   get currency() {
