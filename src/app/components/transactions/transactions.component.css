@@ -44,6 +44,14 @@ mat-cell {
     background: #cccccc;
 }
 
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
+
 mat-row {
     cursor: pointer;
 }

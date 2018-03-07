@@ -50,6 +50,9 @@ export class PostingRow {
     return this._posting.currency;
   }
 
+  get isPositive() {
+    return new Decimal(this._posting.amount || 0).isPositive();
+  }
 }
 
 export class TransactionRow {

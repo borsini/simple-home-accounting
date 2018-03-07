@@ -31,7 +31,12 @@
     <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell'">
         <div *ngFor="let p of (row.postings | async).slice(0,2)" class="posting">
           <span class="posting_left">{{p.account}}</span>
-          <span class="posting_right" *ngIf="p.amount != 0">{{p.amount}}{{p.currency}}</span>
+          <span
+            class="posting_right"
+            *ngIf="p.amount != 0"
+            [ngClass]="{positive:p.isPositive == true, negative:p.isPositive == false}">
+              {{p.amount}}{{p.currency}}
+          </span>
         </div>
 
         <div *ngIf="(row.postings | async).length > 2" class="posting">
