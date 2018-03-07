@@ -3,13 +3,14 @@ import {
   selectEditedTransaction,
   AppStateActions,
   canAutosearchSelector,
-  invalidTransactionsSelector } from './../../shared/reducers/app-state-reducer';
+  invalidTransactionsSelector,
+  selectedAccountsSelector} from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
-
+import Decimal from 'decimal.js';
 import * as moment from 'moment';
 import { filter } from 'rxjs/operators';
 import 'rxjs/add/observable/concat';
@@ -56,7 +57,8 @@ export class TransactionRow {
     constructor(
       public transaction: TransactionWithUUID,
       private _selectedTransactionUUID: Observable<string>,
-      private invalidTransactions: Observable<string[]>) {}
+      private invalidTransactions: Observable<string[]>,
+      private selectedAccounts: Observable<string[]>) {}
 
     get title() {
       return this.transaction.header.title;
@@ -66,8 +68,28 @@ export class TransactionRow {
       return moment.unix(this.transaction.header.date).format(LEDGER_DATE_FORMAT);
     }
 
-    get postings() {
-      return this.transaction.postings.map(p => new PostingRow(p));
+    inverseAmount(p: Posting): Posting {
+      return {
+        ...p,
+        amount: p.amount && new Decimal(p.amount).neg().toString(),
+      };
+    }
+
+    postingsToDisplay(selectedAccounts: string[]): Posting[] {
+      if (selectedAccounts.length === 1) {
+        const postingsWithoutSameAccount = this.transaction.postings.filter( p => p.account !== selectedAccounts[0]);
+        if (postingsWithoutSameAccount) {
+          return postingsWithoutSameAccount.map(this.inverseAmount);
+        }
+      }
+
+      return this.transaction.postings;
+    }
+
+    get postings(): Observable<PostingRow[]> {
+      return this.selectedAccounts.map(sa => {
+        return this.postingsToDisplay(sa).map(p => new PostingRow(p));
+      });
     }
 
     get isInvalid(): Observable<boolean> {
@@ -108,7 +130,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       .map(t => (t as TransactionWithUUID).uuid);
 
       const invalidTransactions = this.ngRedux.select(presentSelector(invalidTransactionsSelector));
-
+      const selectedAccounts = this.ngRedux.select(presentSelector(selectedAccountsSelector));
       return Observable.merge(pageChange, sortChange, selectedTransactionsChanged)
       .debounceTime(150)
       .map( data => this.sortData(data))
@@ -119,7 +141,9 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       .map( data => data.map( tr => new TransactionRow(
         tr,
         selectedUUID,
-        invalidTransactions)));
+        invalidTransactions,
+        selectedAccounts,
+      )));
     }
 
     disconnect() {}

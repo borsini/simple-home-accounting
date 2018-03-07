@@ -29,13 +29,13 @@
   <ng-container cdkColumnDef="movements">
     <mat-header-cell *cdkHeaderCellDef [ngClass]="'grow_cell'"> Mouvements </mat-header-cell>
     <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell'">
-        <div *ngFor="let p of row.postings.slice(0,2)" class="posting">
+        <div *ngFor="let p of (row.postings | async).slice(0,2)" class="posting">
           <span class="posting_left">{{p.account}}</span>
           <span class="posting_right" *ngIf="p.amount != 0">{{p.amount}}{{p.currency}}</span>
         </div>
 
-        <div *ngIf="row.postings.length > 2" class="posting">
-          et {{ row.postings.length - 2 }} supplémentaire(s)
+        <div *ngIf="(row.postings | async).length > 2" class="posting">
+          et {{ (row.postings | async).length - 2 }} supplémentaire(s)
         </div>
     </mat-cell>
   </ng-container>
