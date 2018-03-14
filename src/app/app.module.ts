@@ -39,6 +39,7 @@ import { undoRedoReducer, UndoRedoState, presentSelector } from './shared/reduce
 import { FiltersComponent } from './components/filters/filters.component';
 import { AccountComponent } from './components/account/account.component';
 import { StatsComponent } from './components/stats/stats.component';
+import { ChartComponent } from './components/chart/chart.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -53,6 +54,7 @@ import { StatsComponent } from './components/stats/stats.component';
     FiltersComponent,
     AccountComponent,
     StatsComponent,
+    ChartComponent,
   ],
   entryComponents: [
     DialogResultExampleDialogComponent,
