@@ -4,6 +4,9 @@
     </mat-slide-toggle>
 
     <mat-slider thumbLabel tickInterval="1" min="1" [max]="maxLevel | async" (change)="sliderChanged($event.value)"></mat-slider>
+
+    <app-chart [configuration]="chartConfiguration | async"></app-chart>
+
     <div>
       <mat-table #table [dataSource]="dataSource" matSort>
 
@@ -31,5 +34,4 @@
       </mat-table>
     </div>
 
-    <app-chart configuration="chartConfiguration"></app-chart>
 </div>

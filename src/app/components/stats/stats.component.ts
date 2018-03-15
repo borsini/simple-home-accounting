@@ -10,7 +10,20 @@ import { from } from 'rxjs/observable/from';
 import { concat } from 'rxjs/observable/concat';
 import { of } from 'rxjs/observable/of';
 import { combineLatest } from 'rxjs/observable/combineLatest';
-import { ChartConfiguration } from 'chart.js';
+import { ChartConfiguration, PositionType } from 'chart.js';
+import Decimal from 'decimal.js';
+
+const colors = [
+  '#2B303A',
+  '#92DCE5',
+  '#EEE5E9',
+  '#76877D',
+  '#D64933',
+  '#FF101F',
+  '#B2DDF7',
+  '#76877D',
+  '#81D6E3',
+];
 
 @Component({
   selector: 'app-stats',
@@ -31,34 +44,47 @@ export class StatsComponent implements OnInit {
     this.maxLevel = this.ngRedux.select(presentSelector(maxLevelSelector));
     this.dataSource = new RepartitionDataSource(this.ngRedux, this.sort);
     this.chartConfiguration = this.ngRedux.select(presentSelector(statsRepartitionSelector))
-    .map(r => ({
-      type: 'bar',
-      data: {
-          labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-          datasets: [{
-              label: '# of Votes',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)'
-              ],
-              borderColor: [
-                  'rgba(255,99,132,1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)'
-              ],
-              borderWidth: 1
-          }]
-      },
-      options: {},
-    }));
+    .map(r => {
+      const sortedDebits = Object.values(r)
+      .map( c => ({ label: c.account, data: c.debits}))
+      .sort( (a, b) => new Decimal(a.data).comparedTo(new Decimal(b.data)))
+      .filter( c => (new Decimal(c.data).isZero));
+
+      const maxEntries = 10;
+      const reducedDebits = [
+        ...sortedDebits.slice(0, maxEntries),
+        ...[
+          sortedDebits.slice(maxEntries)
+          .reduce((prev, curr) => ({
+            ...prev,
+            data: new Decimal(prev.data).plus(curr.data).toString(),
+          }), { label: 'Autres', data: '0'}),
+        ],
+      ];
+
+      const labels = reducedDebits.map(c => c.label);
+
+      return {
+        type: 'doughnut',
+        data: {
+            labels,
+            datasets: [{
+                label: '# of Votes',
+                data: reducedDebits.map(l => Number(l.data)),
+                backgroundColor: colors,
+                borderWidth: 1,
+            }],
+        },
+        options: {
+          legend: {
+            position: 'right' as PositionType,
+          },
+          animation: {
+            duration: 500,
+          },
+        },
+      };
+    });
   }
 
   onStatsChecked(checked: boolean) {
