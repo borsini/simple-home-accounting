@@ -1,5 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors,
   Validators,
@@ -19,11 +19,14 @@ import 'rxjs/add/operator/mergeMap';
 import { Posting } from '../../shared/models/posting';
 import { AppState } from '../../shared/models/app-state';
 import {
-  selectEditedTransaction,
   AppStateActions,
-  allAccountsSelector,
-  isTransactionPanelOpenSelector,
 } from '../../shared/reducers/app-state-reducer';
+import {
+  editedTransactionSelector,
+  isTransactionPanelOpenSelector,
+  allAccountsSelector,
+  tabsSelector,
+} from '../../shared/selectors/selectors';
 import { Account } from '../../shared/models/account';
 import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
@@ -34,6 +37,7 @@ import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-
 })
 export class EditTransactionComponent implements OnInit {
 
+  @Input() tabId: string;
   @ViewChild(MatDatepicker) myDatepicker: MatDatepicker<Date>;
 
   transactionToEdit?: TransactionWithUUID | Transaction;
@@ -45,12 +49,12 @@ export class EditTransactionComponent implements OnInit {
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>, private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.ngRedux.select(presentSelector(selectEditedTransaction)).subscribe( tr => {
+    this.ngRedux.select(presentSelector(editedTransactionSelector(this.tabId))).subscribe( tr => {
       this.transactionToEdit = tr;
       this.init();
     });
 
-    this.isPanelOpen = this.ngRedux.select(presentSelector(isTransactionPanelOpenSelector));
+    this.isPanelOpen = this.ngRedux.select(presentSelector(isTransactionPanelOpenSelector(this.tabId)));
   }
 
   createTransaction() {
@@ -60,7 +64,7 @@ export class EditTransactionComponent implements OnInit {
         title: '',
       },
       postings: [],
-    }));
+    }, this.tabId));
     this.init();
   }
 
@@ -212,7 +216,7 @@ export class EditTransactionComponent implements OnInit {
   }
 
   closePanel() {
-    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(undefined));
+    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(undefined, this.tabId));
   }
 }
 

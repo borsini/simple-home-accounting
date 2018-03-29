@@ -1,16 +1,16 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, Input } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { presentSelector, UndoRedoState } from '../../shared/reducers/undo-redo-reducer';
 import { NgRedux } from '@angular-redux/store';
 import { AppState } from '../../shared/models/app-state';
+import { AppStateActions } from '../../shared/reducers/app-state-reducer';
 import {
-  canAutosearchSelector,
-  AppStateActions,
+  allTransactionsSelector,
   filtersSelector,
   selectedTransactionsSelector,
   invalidSelectedTransactionsSelector,
   minAndMaxAllowedDateSelector,
-  allTransactionsSelector} from '../../shared/reducers/app-state-reducer';
+} from '../../shared/selectors/selectors';
 import { filter } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Observable } from 'rxjs/Observable';
@@ -23,6 +23,7 @@ import * as moment from 'moment';
 })
 export class FiltersComponent implements OnInit {
 
+  @Input() tabId;
   @ViewChild('filter') filter: ElementRef;
 
   showOnlyInvalid: Observable<boolean>;
@@ -36,11 +37,11 @@ export class FiltersComponent implements OnInit {
   ngOnInit() {
     fromEvent(this.filter.nativeElement, 'keyup')
     .debounceTime(200)
-    .do(_ => this.ngRedux.dispatch(AppStateActions.setInputFilter(this.filter.nativeElement.value)))
+    .do(_ => this.ngRedux.dispatch(AppStateActions.setInputFilter(this.filter.nativeElement.value, this.tabId)))
     .subscribe();
 
-    this.showOnlyInvalid = this.ngRedux.select(presentSelector(filtersSelector)).map(f => f.showOnlyInvalid);
-    this.invalidCount = this.ngRedux.select(presentSelector(invalidSelectedTransactionsSelector)).map(i => i.length);
+    this.showOnlyInvalid = this.ngRedux.select(presentSelector(filtersSelector(this.tabId))).map(f => f.showOnlyInvalid);
+    this.invalidCount = this.ngRedux.select(presentSelector(invalidSelectedTransactionsSelector(this.tabId))).map(i => i.length);
     this.shouldHideFilters = this.ngRedux.select(presentSelector(allTransactionsSelector))
     .map(t => Object.keys(t).length === 0);
 
@@ -51,14 +52,14 @@ export class FiltersComponent implements OnInit {
   }
 
   checkOnlyInvalid(check: boolean) {
-    this.ngRedux.dispatch(AppStateActions.showOnlyInvalid(check));
+    this.ngRedux.dispatch(AppStateActions.showOnlyInvalid(check, this.tabId));
   }
 
   startDateChanged(date: moment.Moment) {
-    this.ngRedux.dispatch(AppStateActions.setMinDate(date && date.isValid() ? date.unix() : undefined));
+    this.ngRedux.dispatch(AppStateActions.setMinDate(date && date.isValid() ? date.unix() : undefined, this.tabId));
   }
 
   endDateChanged(date: moment.Moment) {
-    this.ngRedux.dispatch(AppStateActions.setMaxDate(date && date.isValid() ? date.unix() : undefined));
+    this.ngRedux.dispatch(AppStateActions.setMaxDate(date && date.isValid() ? date.unix() : undefined, this.tabId));
   }
 }

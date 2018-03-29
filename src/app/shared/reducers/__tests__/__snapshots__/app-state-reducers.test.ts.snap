@@ -73,21 +73,119 @@ Object {
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-        "Expenses",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer adds new transaction with missing amount 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "Bank": Account {
+        "balance": "1000",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "1000",
+        "debits": "0",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Job": Account {
+        "balance": "-1000",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-1000",
+        "name": "Job",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Job",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {
+      "uuid 1": Object {
+        "header": Object {
+          "date": 1360454400,
+          "title": "Salary",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "1000",
+            "currency": "€",
+          },
+          Object {
+            "account": "Job",
+            "amount": "-1000",
+          },
+        ],
+        "uuid": "uuid 1",
+      },
+    },
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -193,7 +291,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 9": Object {
+      "uuid 10": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Savings",
@@ -214,29 +312,30 @@ Object {
             "amount": "-142",
           },
         ],
-        "uuid": "uuid 9",
+        "uuid": "uuid 10",
       },
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Assets",
-        "Assets:Bank",
-        "Assets:Bank:Savings",
-        "Income",
-        "Income:Job",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -305,7 +404,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 3": Object {
+      "uuid 4": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -323,9 +422,9 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 3",
+        "uuid": "uuid 4",
       },
-      "uuid 4": Object {
+      "uuid 5": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -341,26 +440,30 @@ Object {
             "amount": "-500",
           },
         ],
-        "uuid": "uuid 4",
+        "uuid": "uuid 5",
       },
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-        "Expenses",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -388,19 +491,102 @@ Object {
     "transactions": Object {},
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer closes a tab 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {},
+  },
+}
+`;
+
+exports[`rootReducer closes tab if no more accounts 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -423,35 +609,41 @@ Object {
       },
     },
     "invalidTransactions": Array [
-      "uuid 2",
+      "uuid 1",
     ],
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 2": Object {
+      "uuid 1": Object {
         "header": Object {
           "date": 1520080726,
           "title": "Titre",
         },
         "postings": Array [],
-        "uuid": "uuid 2",
+        "uuid": "uuid 1",
       },
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -479,19 +671,128 @@ Object {
     "transactions": Object {},
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer does not close an unknown tab 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer does not open an existing tab 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+      "uuid 3": Object {
+        "filters": Object {
+          "input": "",
+          "showOnlyInvalid": false,
+        },
+        "id": "uuid 3",
+        "isClosable": true,
+        "selectedAccounts": Array [
+          "Account",
+        ],
+      },
+    },
   },
 }
 `;
@@ -560,7 +861,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 1": Object {
+      "uuid 2": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -578,9 +879,9 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 1",
+        "uuid": "uuid 2",
       },
-      "uuid 2": Object {
+      "uuid 3": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -596,26 +897,30 @@ Object {
             "amount": "-500",
           },
         ],
-        "uuid": "uuid 2",
+        "uuid": "uuid 3",
       },
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-        "Expenses",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -643,17 +948,25 @@ Object {
     "transactions": Object {},
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -708,7 +1021,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 17": Object {
+      "uuid 16": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -726,50 +1039,54 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 17",
+        "uuid": "uuid 16",
       },
     },
   },
   "ui": Object {
-    "editedTransaction": Object {
-      "header": Object {
-        "date": 1360281600,
-        "title": "Bread",
-      },
-      "postings": Array [
-        Object {
-          "account": "Bank",
-          "amount": "-3.05",
-          "comment": "Comment",
-          "currency": "$",
-          "tag": "!",
-        },
-        Object {
-          "account": "Expenses",
-          "amount": "3.05",
-        },
-      ],
-      "uuid": "uuid 17",
-    },
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-        "Expenses",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": Object {
+          "header": Object {
+            "date": 1360281600,
+            "title": "Bread",
+          },
+          "postings": Array [
+            Object {
+              "account": "Bank",
+              "amount": "-3.05",
+              "comment": "Comment",
+              "currency": "$",
+              "tag": "!",
+            },
+            Object {
+              "account": "Expenses",
+              "amount": "3.05",
+            },
+          ],
+          "uuid": "uuid 16",
+        },
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
 
-exports[`rootReducer opens left panel 1`] = `
+exports[`rootReducer opens a tab 1`] = `
 Object {
   "computed": Object {
     "accounts": Object {
@@ -792,17 +1109,36 @@ Object {
     "transactions": Object {},
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [],
-      "showOnlyInvalid": false,
-    },
-    "isLeftMenuOpen": true,
+    "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+      "uuid 2": Object {
+        "filters": Object {
+          "input": "",
+          "showOnlyInvalid": false,
+        },
+        "id": "uuid 2",
+        "isClosable": true,
+        "selectedAccounts": Array [
+          "Account:Sub account",
+        ],
+      },
+    },
   },
 }
 `;
@@ -857,7 +1193,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 6": Object {
+      "uuid 7": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -873,25 +1209,30 @@ Object {
             "amount": "-500",
           },
         ],
-        "uuid": "uuid 6",
+        "uuid": "uuid 7",
       },
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -919,17 +1260,117 @@ Object {
     "transactions": Object {},
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "my input",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "my input",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer saves max date 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": 1520080726,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer saves min date 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": 1520080726,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -957,649 +1398,30 @@ Object {
     "transactions": Object {},
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [],
-      "showOnlyInvalid": true,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
-  },
-}
-`;
-
-exports[`rootReducer selects root account 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "Assets": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets:Bank",
-        ],
-        "childrenBalance": "142",
-        "childrenCredits": "142",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "Assets",
-        "nbChildrenTransactions": 2,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Assets:Bank": Account {
-        "balance": "100",
-        "children": Array [
-          "Assets:Bank:Savings",
-        ],
-        "childrenBalance": "42",
-        "childrenCredits": "42",
-        "childrenDebits": "0",
-        "credits": "100",
-        "debits": "0",
-        "name": "Assets:Bank",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets",
-        ],
-      },
-      "Assets:Bank:Savings": Account {
-        "balance": "42",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "42",
-        "debits": "0",
-        "name": "Assets:Bank:Savings",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets:Bank",
-        ],
-      },
-      "Income": Account {
-        "balance": "0",
-        "children": Array [
-          "Income:Job",
-        ],
-        "childrenBalance": "-142",
-        "childrenCredits": "0",
-        "childrenDebits": "-142",
-        "credits": "0",
-        "debits": "0",
-        "name": "Income",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Income:Job": Account {
-        "balance": "-142",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "-142",
-        "name": "Income:Job",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Income",
-        ],
-      },
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets",
-          "Income",
-        ],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-    "invalidTransactions": Array [],
-  },
-  "entities": Object {
-    "transactions": Object {
-      "uuid 12": Object {
-        "header": Object {
-          "date": 1360454400,
-          "title": "Savings",
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": true,
         },
-        "postings": Array [
-          Object {
-            "account": "Assets:Bank",
-            "amount": "100",
-            "currency": "€",
-          },
-          Object {
-            "account": "Assets:Bank:Savings",
-            "amount": "42",
-            "currency": "€",
-          },
-          Object {
-            "account": "Income:Job",
-            "amount": "-142",
-          },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
         ],
-        "uuid": "uuid 12",
       },
     },
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Assets",
-        "Assets:Bank",
-        "Assets:Bank:Savings",
-        "Income",
-        "Income:Job",
-      ],
-      "showOnlyInvalid": false,
-    },
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "persistedAt": undefined,
   },
 }
 `;
 
 exports[`rootReducer sets edited transaction 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "Bank": Account {
-        "balance": "-3.05",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "-3.05",
-        "name": "Bank",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [],
-      },
-      "Expenses": Account {
-        "balance": "3.05",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "3.05",
-        "debits": "0",
-        "name": "Expenses",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [],
-      },
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [
-          "Bank",
-          "Expenses",
-        ],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-    "invalidTransactions": Array [],
-  },
-  "entities": Object {
-    "transactions": Object {
-      "uuid 10": Object {
-        "header": Object {
-          "date": 1360281600,
-          "title": "Bread",
-        },
-        "postings": Array [
-          Object {
-            "account": "Bank",
-            "amount": "-3.05",
-            "comment": "Comment",
-            "currency": "$",
-            "tag": "!",
-          },
-          Object {
-            "account": "Expenses",
-            "amount": "3.05",
-          },
-        ],
-        "uuid": "uuid 10",
-      },
-    },
-  },
-  "ui": Object {
-    "editedTransaction": Object {
-      "header": Object {
-        "date": 1360281600,
-        "title": "Bread",
-      },
-      "postings": Array [
-        Object {
-          "account": "Bank",
-          "amount": "-3.05",
-          "comment": "Comment",
-          "currency": "$",
-          "tag": "!",
-        },
-        Object {
-          "account": "Expenses",
-          "amount": "3.05",
-        },
-      ],
-      "uuid": "uuid 10",
-    },
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-        "Expenses",
-      ],
-      "showOnlyInvalid": false,
-    },
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "persistedAt": undefined,
-  },
-}
-`;
-
-exports[`rootReducer unselects accounts from deleted transactions 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-    "invalidTransactions": Array [],
-  },
-  "entities": Object {
-    "transactions": Object {},
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-      ],
-      "showOnlyInvalid": false,
-    },
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "persistedAt": undefined,
-  },
-}
-`;
-
-exports[`rootReducer unselects edited transaction if deleted 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-    "invalidTransactions": Array [],
-  },
-  "entities": Object {
-    "transactions": Object {},
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-      ],
-      "showOnlyInvalid": false,
-    },
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "persistedAt": undefined,
-  },
-}
-`;
-
-exports[`rootReducer unselects nested account 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "Assets": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets:Bank",
-        ],
-        "childrenBalance": "142",
-        "childrenCredits": "142",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "Assets",
-        "nbChildrenTransactions": 2,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Assets:Bank": Account {
-        "balance": "100",
-        "children": Array [
-          "Assets:Bank:Savings",
-        ],
-        "childrenBalance": "42",
-        "childrenCredits": "42",
-        "childrenDebits": "0",
-        "credits": "100",
-        "debits": "0",
-        "name": "Assets:Bank",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets",
-        ],
-      },
-      "Assets:Bank:Savings": Account {
-        "balance": "42",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "42",
-        "debits": "0",
-        "name": "Assets:Bank:Savings",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets:Bank",
-        ],
-      },
-      "Income": Account {
-        "balance": "0",
-        "children": Array [
-          "Income:Job",
-        ],
-        "childrenBalance": "-142",
-        "childrenCredits": "0",
-        "childrenDebits": "-142",
-        "credits": "0",
-        "debits": "0",
-        "name": "Income",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Income:Job": Account {
-        "balance": "-142",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "-142",
-        "name": "Income:Job",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Income",
-        ],
-      },
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets",
-          "Income",
-        ],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-    "invalidTransactions": Array [],
-  },
-  "entities": Object {
-    "transactions": Object {
-      "uuid 14": Object {
-        "header": Object {
-          "date": 1360454400,
-          "title": "Savings",
-        },
-        "postings": Array [
-          Object {
-            "account": "Assets:Bank",
-            "amount": "100",
-            "currency": "€",
-          },
-          Object {
-            "account": "Assets:Bank:Savings",
-            "amount": "42",
-            "currency": "€",
-          },
-          Object {
-            "account": "Income:Job",
-            "amount": "-142",
-          },
-        ],
-        "uuid": "uuid 14",
-      },
-    },
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "Income",
-        "Income:Job",
-      ],
-      "showOnlyInvalid": false,
-    },
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "persistedAt": undefined,
-  },
-}
-`;
-
-exports[`rootReducer unselects root account 1`] = `
-Object {
-  "computed": Object {
-    "accounts": Object {
-      "Assets": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets:Bank",
-        ],
-        "childrenBalance": "142",
-        "childrenCredits": "142",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "Assets",
-        "nbChildrenTransactions": 2,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Assets:Bank": Account {
-        "balance": "100",
-        "children": Array [
-          "Assets:Bank:Savings",
-        ],
-        "childrenBalance": "42",
-        "childrenCredits": "42",
-        "childrenDebits": "0",
-        "credits": "100",
-        "debits": "0",
-        "name": "Assets:Bank",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets",
-        ],
-      },
-      "Assets:Bank:Savings": Account {
-        "balance": "42",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "42",
-        "debits": "0",
-        "name": "Assets:Bank:Savings",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Assets:Bank",
-        ],
-      },
-      "Income": Account {
-        "balance": "0",
-        "children": Array [
-          "Income:Job",
-        ],
-        "childrenBalance": "-142",
-        "childrenCredits": "0",
-        "childrenDebits": "-142",
-        "credits": "0",
-        "debits": "0",
-        "name": "Income",
-        "nbChildrenTransactions": 1,
-        "nbTransactions": 0,
-        "parents": Array [],
-      },
-      "Income:Job": Account {
-        "balance": "-142",
-        "children": Array [],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "-142",
-        "name": "Income:Job",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 1,
-        "parents": Array [
-          "Income",
-        ],
-      },
-      "ROOT": Account {
-        "balance": "0",
-        "children": Array [
-          "Assets",
-          "Income",
-        ],
-        "childrenBalance": "0",
-        "childrenCredits": "0",
-        "childrenDebits": "0",
-        "credits": "0",
-        "debits": "0",
-        "name": "ROOT",
-        "nbChildrenTransactions": 0,
-        "nbTransactions": 0,
-      },
-    },
-    "invalidTransactions": Array [],
-  },
-  "entities": Object {
-    "transactions": Object {
-      "uuid 13": Object {
-        "header": Object {
-          "date": 1360454400,
-          "title": "Savings",
-        },
-        "postings": Array [
-          Object {
-            "account": "Assets:Bank",
-            "amount": "100",
-            "currency": "€",
-          },
-          Object {
-            "account": "Assets:Bank:Savings",
-            "amount": "42",
-            "currency": "€",
-          },
-          Object {
-            "account": "Income:Job",
-            "amount": "-142",
-          },
-        ],
-        "uuid": "uuid 13",
-      },
-    },
-  },
-  "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [],
-      "showOnlyInvalid": false,
-    },
-    "isLeftMenuOpen": false,
-    "isLoading": false,
-    "persistedAt": undefined,
-  },
-}
-`;
-
-exports[`rootReducer unsets edited transaction 1`] = `
 Object {
   "computed": Object {
     "accounts": Object {
@@ -1672,21 +1494,278 @@ Object {
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-        "Expenses",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": Object {
+          "header": Object {
+            "date": 1360281600,
+            "title": "Bread",
+          },
+          "postings": Array [
+            Object {
+              "account": "Bank",
+              "amount": "-3.05",
+              "comment": "Comment",
+              "currency": "$",
+              "tag": "!",
+            },
+            Object {
+              "account": "Expenses",
+              "amount": "3.05",
+            },
+          ],
+          "uuid": "uuid 11",
+        },
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer sets loading indicator 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": true,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer unselects edited transaction if deleted 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer unsets edited transaction 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "Bank": Account {
+        "balance": "-3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "-3.05",
+        "name": "Bank",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "Expenses": Account {
+        "balance": "3.05",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "3.05",
+        "debits": "0",
+        "name": "Expenses",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 1,
+        "parents": Array [],
+      },
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [
+          "Bank",
+          "Expenses",
+        ],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {
+      "uuid 12": Object {
+        "header": Object {
+          "date": 1360281600,
+          "title": "Bread",
+        },
+        "postings": Array [
+          Object {
+            "account": "Bank",
+            "amount": "-3.05",
+            "comment": "Comment",
+            "currency": "$",
+            "tag": "!",
+          },
+          Object {
+            "account": "Expenses",
+            "amount": "3.05",
+          },
+        ],
+        "uuid": "uuid 12",
+      },
+    },
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`rootReducer unsets loading indicator 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT_ACCOUNT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;
@@ -1741,7 +1820,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 1": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Updated!",
@@ -1759,26 +1838,30 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 1",
+        "uuid": "uuid 0",
       },
     },
   },
   "ui": Object {
-    "editedTransaction": undefined,
-    "filters": Object {
-      "input": "",
-      "maxDate": undefined,
-      "minDate": undefined,
-      "selectedAccounts": Array [
-        "ROOT",
-        "Bank",
-        "Expenses",
-      ],
-      "showOnlyInvalid": false,
-    },
     "isLeftMenuOpen": false,
     "isLoading": false,
     "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
   },
 }
 `;

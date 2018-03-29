@@ -37,3 +37,8 @@ export const xmlToJson = (xml: Node): any => {
   }
   return obj;
 };
+
+export const concatReducer = (prev: any[], curr: any[]) => ([...prev, ...curr]);
+export const unionReducer = (prev: any[], curr: any[]) => ([...prev, ...curr.filter(x => !prev.includes(x))]);
+export const differenceReducer = (prev: any[], curr: any[]) => ([...prev.filter(x => !curr.includes(x))]);
+export const intersectionReducer = (prev: any[], curr: any[]) => (prev.filter(x => curr.indexOf(x) !== -1));

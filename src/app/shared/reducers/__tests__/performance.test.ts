@@ -23,6 +23,6 @@ const assertExecutionTimeLessThan = (func, maxTime, iterations = 1) => {
 describe(rootReducer.name, () => {
   it('adds 10k transactions in less than a second', () => {
     const action = AppStateActions.addTransactions(new Array(10000).fill(transactionWithNestedAccounts));
-    assertExecutionTimeLessThan( () => rootReducer(undefined, action), 1000, 5);
+    assertExecutionTimeLessThan( () => rootReducer(undefined, action), 1000, 1);
   });
 });

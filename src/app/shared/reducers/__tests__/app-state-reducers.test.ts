@@ -1,6 +1,5 @@
-import { transactionWithNestedAccounts } from './fixtures';
+import { transactionWithNestedAccounts, transactionWithMissingAmount } from './fixtures';
 import { AnyAction } from 'redux';
-import { rootReducer, AppStateActions, differenceReducer, concatReducer, unionReducer, intersectionReducer } from '../app-state-reducer';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/observable/zip';
 import 'rxjs/add/operator/mergeMap';
@@ -12,6 +11,7 @@ import 'rxjs/add/operator/take';
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
 import { transactions } from './fixtures';
+import { rootReducer, AppStateActions } from '../app-state-reducer';
 
 jest.mock('uuid', () => {
   let counter = 0;
@@ -26,41 +26,6 @@ jest.mock('uuid', () => {
   };
 });
 
-describe(concatReducer.name, () => {
-  it('works :)', () => {
-    expect(concatReducer([], [])).toEqual([]);
-    expect(concatReducer([1, 2], [])).toEqual([1, 2]);
-    expect(concatReducer([], [3, 4])).toEqual([3, 4]);
-    expect(concatReducer([1, 2], [2, 3])).toEqual([1, 2, 2, 3]);
-  });
-});
-
-describe(unionReducer.name, () => {
-  it('works :)', () => {
-    expect(unionReducer([], [])).toEqual([]);
-    expect(unionReducer([1, 2], [])).toEqual([1, 2]);
-    expect(unionReducer([], [3, 4])).toEqual([3, 4]);
-    expect(unionReducer([1, 2], [2, 3])).toEqual([1, 2, 3]);
-  });
-});
-
-describe(differenceReducer.name, () => {
-  it('works :)', () => {
-    expect(differenceReducer([], [])).toEqual([]);
-    expect(differenceReducer([1, 2], [])).toEqual([1, 2]);
-    expect(differenceReducer([], [1, 2])).toEqual([]);
-    expect(differenceReducer([1, 2], [1, 2])).toEqual([]);
-  });
-});
-
-describe(intersectionReducer.name, () => {
-  it('works :)', () => {
-    expect(intersectionReducer([], [])).toEqual([]);
-    expect(intersectionReducer([1, 2], [])).toEqual([]);
-    expect(intersectionReducer([], [1, 2])).toEqual([]);
-    expect(intersectionReducer([1, 2], [2, 3])).toEqual([2]);
-  });
-});
 
 describe(rootReducer.name, () => {
   it('has empty state at startup', () => {
@@ -73,6 +38,14 @@ describe(rootReducer.name, () => {
 
   it('adds new transaction', () => {
     const action = AppStateActions.addTransactions([transactions[0]]);
+
+    const state = rootReducer(undefined, action);
+
+    expect(state).toMatchSnapshot();
+  });
+
+  it('adds new transaction with missing amount', () => {
+    const action = AppStateActions.addTransactions([transactionWithMissingAmount]);
 
     const state = rootReducer(undefined, action);
 
@@ -130,7 +103,7 @@ describe(rootReducer.name, () => {
     const action1 = AppStateActions.addTransactions(transaction);
     const state = rootReducer(undefined, action1);
     const transactionWithId = Object.values(state.entities.transactions)[0];
-    const action2 = AppStateActions.setEditedTransaction(transactionWithId);
+    const action2 = AppStateActions.setEditedTransaction(transactionWithId, 'ROOT');
 
     const finalState = rootReducer(state, action2);
 
@@ -142,44 +115,10 @@ describe(rootReducer.name, () => {
     const action1 = AppStateActions.addTransactions(transaction);
     const state = rootReducer(undefined, action1);
     const transactionWithId = Object.values(state.entities.transactions)[0];
-    const action2 = AppStateActions.setEditedTransaction(transactionWithId);
+    const action2 = AppStateActions.setEditedTransaction(transactionWithId, 'ROOT');
     const state2 = rootReducer(state, action2);
 
-    const finalState = rootReducer(state2, AppStateActions.setEditedTransaction(undefined));
-
-    expect(finalState).toMatchSnapshot();
-  });
-
-  it('selects root account', () => {
-    const state = rootReducer(undefined, AppStateActions.addTransactions([transactionWithNestedAccounts]));
-
-    const finalState = rootReducer(state, AppStateActions.selectAccount('ROOT', true));
-
-    expect(finalState).toMatchSnapshot();
-  });
-
-  it('unselects root account', () => {
-    const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactionWithNestedAccounts]));
-    const state2 = rootReducer(state1, AppStateActions.selectAccount('ROOT', true));
-
-    const finalState = rootReducer(state2, AppStateActions.selectAccount('ROOT', false));
-
-    expect(finalState).toMatchSnapshot();
-  });
-
-  it('unselects nested account', () => {
-    const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactionWithNestedAccounts]));
-    const state2 = rootReducer(state1, AppStateActions.selectAccount('ROOT', true));
-
-    const finalState = rootReducer(state2, AppStateActions.selectAccount('Assets', false));
-
-    expect(finalState).toMatchSnapshot();
-  });
-
-  it('unselects accounts from deleted transactions', () => {
-    const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactionWithNestedAccounts]));
-    const state2 = rootReducer(state1, AppStateActions.selectAccount('Assets:Bank', true));
-    const finalState = rootReducer(state2, AppStateActions.addTransactions([], true));
+    const finalState = rootReducer(state2, AppStateActions.setEditedTransaction(undefined, 'ROOT'));
 
     expect(finalState).toMatchSnapshot();
   });
@@ -187,8 +126,16 @@ describe(rootReducer.name, () => {
   it('unselects edited transaction if deleted', () => {
     const state = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
     const transactionWithId = Object.values(state.entities.transactions)[0];
-    const state2 = rootReducer(state, AppStateActions.setEditedTransaction(transactionWithId));
+    const state2 = rootReducer(state, AppStateActions.setEditedTransaction(transactionWithId, 'ROOT'));
     const finalState = rootReducer(state2, AppStateActions.deleteTransaction(transactionWithId.uuid));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('closes tab if no more accounts', () => {
+    const state = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
+    const state2 = rootReducer(state, AppStateActions.openTab(['Expenses']));
+    const finalState = rootReducer(state2, AppStateActions.addTransactions([], true));
 
     expect(finalState).toMatchSnapshot();
   });
@@ -196,7 +143,7 @@ describe(rootReducer.name, () => {
   it('keeps edited transaction not deleted', () => {
     const state = rootReducer(undefined, AppStateActions.addTransactions(transactions));
     const transactionsWithId = Object.values(state.entities.transactions);
-    const state2 = rootReducer(state, AppStateActions.setEditedTransaction(transactionsWithId[0]));
+    const state2 = rootReducer(state, AppStateActions.setEditedTransaction(transactionsWithId[0], 'ROOT'));
     const finalState = rootReducer(state2, AppStateActions.deleteTransaction(transactionsWithId[1].uuid));
 
     expect(finalState).toMatchSnapshot();
@@ -227,12 +174,6 @@ describe(rootReducer.name, () => {
     expect(finalState).toMatchSnapshot();
   });
 
-  it('opens left panel', () => {
-    const finalState = rootReducer(undefined, AppStateActions.openLeftPanel(true));
-
-    expect(finalState).toMatchSnapshot();
-  });
-
   it('computes invalid transaction', () => {
     const transactionWithoutPostings = {
       header: {
@@ -247,13 +188,64 @@ describe(rootReducer.name, () => {
   });
 
   it('saves current input', () => {
-    const finalState = rootReducer(undefined, AppStateActions.setInputFilter('my input'));
+    const finalState = rootReducer(undefined, AppStateActions.setInputFilter('my input', 'ROOT'));
 
     expect(finalState).toMatchSnapshot();
   });
 
   it('saves show invalid preference', () => {
-    const finalState = rootReducer(undefined, AppStateActions.showOnlyInvalid(true));
+    const finalState = rootReducer(undefined, AppStateActions.showOnlyInvalid(true, 'ROOT'));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('saves min date', () => {
+    const finalState = rootReducer(undefined, AppStateActions.setMinDate(1520080726, 'ROOT'));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('saves max date', () => {
+    const finalState = rootReducer(undefined, AppStateActions.setMaxDate(1520080726, 'ROOT'));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('opens a tab', () => {
+    const finalState = rootReducer(undefined, AppStateActions.openTab(['Account:Sub account']));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('does not open an existing tab', () => {
+    const state = rootReducer(undefined, AppStateActions.openTab(['Account']));
+    const finalState = rootReducer(state, AppStateActions.openTab(['Account']));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('closes a tab', () => {
+    const state = rootReducer(undefined, AppStateActions.openTab(['Account:Sub account']));
+    const finalState = rootReducer(undefined, AppStateActions.closeTab(Object.keys(state.ui.tabs)[0]));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('does not close an unknown tab', () => {
+    const finalState = rootReducer(undefined, AppStateActions.closeTab('unknown'));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('sets loading indicator', () => {
+    const finalState = rootReducer(undefined, AppStateActions.setIsLoading(true));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
+  it('unsets loading indicator', () => {
+    const state = rootReducer(undefined, AppStateActions.setIsLoading(true));
+    const finalState = rootReducer(state, AppStateActions.setIsLoading(false));
 
     expect(finalState).toMatchSnapshot();
   });

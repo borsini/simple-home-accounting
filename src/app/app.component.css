@@ -10,6 +10,10 @@ body {
     min-height: 100vh;
 }
 
+mat-tab-group {
+  flex: 1;
+}
+
 mat-sidenav {
   width: 400px;
   padding:5px;
@@ -54,4 +58,15 @@ mat-progress-spinner {
 .app-version {
   font-size: 0.5em;
   margin:10px;
+}
+
+.close-button mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.close-button {
+  min-width: 0;
+  padding:0;
 }

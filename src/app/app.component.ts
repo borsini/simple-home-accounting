@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav, MatTabGroup } from '@angular/material';
 import * as fileSaver from 'file-saver';
 import { LedgerService } from './shared/services/ledger/ledger.service';
 import { OfxService } from './shared/services/ofx/ofx.service';
@@ -11,19 +11,23 @@ import { Subject } from 'rxjs/Subject';
 import { Transaction, TransactionWithUUID } from './shared/models/transaction';
 import { GnucashService } from './shared/services/gnucash/gnucash.service';
 import { NgRedux } from '@angular-redux/store';
-import { AppState } from './shared/models/app-state';
+import { AppState, Tab, AccountMap, TransactionMap } from './shared/models/app-state';
 import {
-  AppStateActions,
-  selectEditedTransaction,
+  AppStateActions } from './shared/reducers/app-state-reducer';
+import {
   allTransactionsSelector,
   isLeftMenuOpenSelector,
   isLoadingSelector,
-  invalidTransactionsSelector } from './shared/reducers/app-state-reducer';
+  invalidTransactionsSelector,
+  allAccountsSelector,
+  tabsSelector,
+} from './shared/selectors/selectors';
 
 const { version } = require('../../package.json');
 import * as moment from 'moment';
 import { UndoRedoState, presentSelector, pastSelector, futureSelector, UndoRedoActions } from './shared/reducers/undo-redo-reducer';
-import { filter } from 'rxjs/operators';
+import { filter, concatMap, mergeMap } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 
 @Component({
   selector: 'app-dialog-result-example-dialog',
@@ -48,6 +52,12 @@ export class DialogTwoOptionsDialogComponent {
   constructor(public dialogRef: MatDialogRef<DialogTwoOptionsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {}
 }
 
+interface TabConfiguration {
+  isClosable: boolean;
+  tabId: string;
+  title: string;
+}
+
 @Component({
   providers: [ LedgerService, OfxService, GnucashService],
   selector: 'app-root',
@@ -63,8 +73,20 @@ export class AppComponent implements OnInit {
   nbUndosAvailable: Observable<number>;
   nbRedosAvailable: Observable<number>;
   isDrawerOpen: Observable<boolean>;
-  title = 'app';
   appVersion: string;
+  tabsConf: Observable<TabConfiguration[]>;
+
+  allTransactionsCount: Observable<number>;
+
+  @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
+
+  computeTitle = (tab: Tab, allAccounts: AccountMap, allTransactions: TransactionMap) => {
+    if (tab.selectedAccounts.length === 1 && tab.selectedAccounts[0] === 'ROOT') {
+      return `Toutes les transactions (${Object.keys(allTransactions).length})`;
+    }
+
+    return `${tab.selectedAccounts.join(',')} (${allAccounts[tab.selectedAccounts[0]].balance})`;
+  }
 
   constructor(
     private _ledger: LedgerService,
@@ -90,14 +112,29 @@ export class AppComponent implements OnInit {
 
     this.isDrawerOpen = this.ngRedux.select(presentSelector(isLeftMenuOpenSelector));
     this.isLoading = this.ngRedux.select(presentSelector(isLoadingSelector));
+
+    this.allTransactionsCount = this.ngRedux.select(presentSelector(allTransactionsSelector)).map(trs => Object.keys(trs).length);
+
+    const tabs = this.ngRedux.select(presentSelector(tabsSelector));
+    const allAccounts = this.ngRedux.select(presentSelector(allAccountsSelector));
+    const allTransactions = this.ngRedux.select(presentSelector(allTransactionsSelector));
+
+    this.tabsConf = combineLatest(tabs, allAccounts, allTransactions)
+    .map(([tbs, acc, trs]) => {
+      return Object.values(tbs).map<TabConfiguration>(tb => ({
+        isClosable: tb.isClosable,
+        tabId: tb.id,
+        title: this.computeTitle(tb, acc, trs),
+      }));
+    });
   }
 
-  handleOpen(isOpen: boolean) {
-    this.ngRedux.dispatch(AppStateActions.openLeftPanel(isOpen));
+  trackByFn(index, item: TabConfiguration) {
+    return item.tabId; // or item.id
   }
 
-  toggle() {
-    this.ngRedux.dispatch(AppStateActions.toggleLeftPanel());
+  closeTabClicked(tab: string) {
+    this.ngRedux.dispatch(AppStateActions.closeTab(tab));
   }
 
   uploadFileOnChange(files: FileList) {
@@ -108,7 +145,6 @@ export class AppComponent implements OnInit {
       .subscribe(
       zip => {
         this.ngRedux.dispatch(AppStateActions.addTransactions(zip[0], zip[1]));
-        this.ngRedux.dispatch(AppStateActions.openLeftPanel(true));
       },
       e => {
         this.openErrorDialog(e);

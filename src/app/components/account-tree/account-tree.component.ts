@@ -1,5 +1,9 @@
 import { Observable } from 'rxjs/Observable';
-import { selectedAccountsSelector, AppStateActions, allAccountsSelector } from './../../shared/reducers/app-state-reducer';
+import { AppStateActions } from './../../shared/reducers/app-state-reducer';
+import {
+  allAccountsSelector,
+  selectedAccountsSelector,
+} from './../../shared/selectors/selectors';
 import { NgRedux } from '@angular-redux/store';
 import { AppState } from './../../shared/models/app-state';
 import { Component, Input, OnInit } from '@angular/core';
@@ -27,7 +31,7 @@ export class AccountTreeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.ngRedux.select(presentSelector(selectedAccountsSelector))
+    this.ngRedux.select(presentSelector(selectedAccountsSelector('ROOT')))
     .map(accounts => accounts.includes(this.accountName))
     .do(c => { this.isChecked = c; }).subscribe();
     this.ngRedux.select(presentSelector(allAccountsSelector))
@@ -36,9 +40,7 @@ export class AccountTreeComponent implements OnInit {
     .subscribe();
   }
 
-  checkAccount(chk: boolean) {
-    this.ngRedux.dispatch(AppStateActions.selectAccount(this.accountName, chk));
-  }
+  checkAccount(chk: boolean) { }
 
   toggle() {
     this.isCollapsed = !this.isCollapsed;

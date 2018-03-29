@@ -1,13 +1,15 @@
 import {v4 as uuid } from 'uuid';
 import Decimal from 'decimal.js';
 
-import { AppState, TransactionMap, AccountMap } from './../models/app-state';
+import { AppState, TransactionMap, AccountMap, Tab, Tabs, Ui, Filters } from './../models/app-state';
 import { Account } from '../models/account';
 import { Action, AnyAction } from 'redux';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../models/transaction';
 import { Posting } from '../models/posting';
+import { unionReducer, concatReducer, differenceReducer, intersectionReducer } from '../utils/utils';
+import { filtersSelector } from '../selectors/selectors';
 
-const ROOT_ACCOUNT = 'ROOT';
+export const ROOT_ACCOUNT = 'ROOT';
 
 export const INITIAL_STATE: AppState = {
   entities: {
@@ -18,159 +20,44 @@ export const INITIAL_STATE: AppState = {
     invalidTransactions: [],
   },
   ui: {
-    editedTransaction: undefined,
+    tabs: {
+      [ROOT_ACCOUNT]: {
+        id: ROOT_ACCOUNT,
+        selectedAccounts: [ROOT_ACCOUNT],
+        editedTransaction: undefined,
+        filters: {
+          input: '',
+          showOnlyInvalid: false,
+          minDate: undefined,
+          maxDate: undefined,
+        },
+        isClosable: false,
+      },
+    },
     isLeftMenuOpen: false,
     persistedAt: undefined,
     isLoading: false,
-    filters: {
-      selectedAccounts: [],
-      input: '',
-      showOnlyInvalid: false,
-      minDate: undefined,
-      maxDate: undefined,
-    },
   },
-};
-
-export const selectEditedTransaction = (s: AppState) => {
-  return s.ui.editedTransaction;
-};
-
-export const allTransactionsSelector = (s: AppState) => {
-  return s.entities.transactions;
-};
-
-export const allAccountsSelector = (s: AppState) => {
-  return s.computed.accounts;
-};
-
-export const isLeftMenuOpenSelector = (s: AppState) => {
-  return s.ui.isLeftMenuOpen;
-};
-
-export const isTransactionPanelOpenSelector = (s: AppState) => {
-  return s.ui.editedTransaction !== undefined;
-};
-
-export const isLoadingSelector = (s: AppState) => {
-  return s.ui.isLoading;
-};
-
-export const selectedAccountsSelector = (s: AppState) => {
-  return s.ui.filters.selectedAccounts;
-};
-
-export const canAutosearchSelector = (s: AppState) => {
-  return !s.ui.isLeftMenuOpen && !isTransactionPanelOpenSelector(s);
-};
-
-const doesTransactionUseAccountsFilter = (accountsNames: string[]) => (tr: TransactionWithUUID): boolean => {
-  if (accountsNames.find(n => n === ROOT_ACCOUNT)) {
-    return true;
-  }
-  return tr.postings.some( p => accountsNames.indexOf(p.account) !== -1 );
-};
-
-const doesTransactionContainInput = (query: string) => (tr: TransactionWithUUID): boolean => {
-  if (query === undefined || query === '' ) {
-    return true;
-  }
-
-  const words = query.split(' ').filter(s => s !== '').map( s => s.toLowerCase());
-
-  return words.some( word => {
-    let titleMatches, amountOrAccountMatches = false;
-    titleMatches = tr.header.title && tr.header.title.toLowerCase().indexOf(word) >= 0;
-    amountOrAccountMatches = tr.postings.some( p => {
-        return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount !== undefined && p.amount.toString().indexOf(word) >= 0);
-    });
-
-    return titleMatches || amountOrAccountMatches;
-  });
-};
-
-const isTransactionBetweenDates = (start: number | undefined, end: number | undefined) => (tr: TransactionWithUUID): boolean => {
-  return (!start || tr.header.date >= start) && (!end || tr.header.date <= end);
-};
-
-const isTransactionOnlyInvalid = (onlyInvalid: boolean, invalidIds: string[]) => (tr: TransactionWithUUID): boolean => {
-    if (!onlyInvalid) { return true; }
-    return invalidIds.includes(tr.uuid);
-};
-
-type Validator<T> = (T) => boolean;
-
-const AND = <U>(validators: Validator<U>[]): Validator<U> => {
-  return (obj: U) => validators.every(v => v(obj));
-};
-
-export const selectedTransactionsSelector = (s: AppState) => {
-  const filters = s.ui.filters;
-  const allTransactions = Object.values(s.entities.transactions);
-
-  const accountFilter = doesTransactionUseAccountsFilter(filters.selectedAccounts);
-  const inputFilter = doesTransactionContainInput(filters.input);
-  const datesFilter = isTransactionBetweenDates(filters.minDate, filters.maxDate);
-  const onlyInvalidFilter = isTransactionOnlyInvalid(filters.showOnlyInvalid, s.computed.invalidTransactions);
-
-  const finalFilter = AND([accountFilter, inputFilter, datesFilter, onlyInvalidFilter]);
-
-  return allTransactions.filter(finalFilter);
-};
-
-export const rootAccountSelector = (s: AppState) => {
-  return ROOT_ACCOUNT;
-};
-
-export const invalidTransactionsSelector = (s: AppState) => {
-  return s.computed.invalidTransactions;
-};
-
-export const invalidSelectedTransactionsSelector = (s: AppState) => {
-  const selectedTransactions = selectedTransactionsSelector(s).map(tr => tr.uuid);
-  return [selectedTransactions, s.computed.invalidTransactions].reduce(intersectionReducer);
-};
-
-export const filtersSelector = (s: AppState) => {
-  return s.ui.filters;
-};
-
-export const minAndMaxAllowedDateSelector = (s: AppState) =>  {
-  return Object.values(s.entities.transactions).reduce<{min?: number, max?: number}>(
-    (prev, curr) => ({
-        min: prev.min ? Math.min(prev.min!, curr.header.date) : curr.header.date,
-        max: prev.max ? Math.max(prev.max!, curr.header.date) : curr.header.date,
-      }),
-    {},
-  );
 };
 
 export class AppStateActions {
   static readonly ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
   static readonly SET_EDITED_TRANSACTION = 'SET_EDITED_TRANSACTION';
-  static readonly SELECT_ACCOUNT = 'SELECT_ACCOUNT';
   static readonly DELETE_TRANSACTION = 'DELETE_TRANSACTION';
   static readonly UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
-  static readonly OPEN_LEFT_PANEL = 'OPEN_LEFT_PANEL';
-  static readonly TOGGLE_LEFT_PANEL = 'TOGGLE_LEFT_PANEL';
   static readonly SET_IS_LOADING = 'SET_IS_LOADING';
   static readonly SET_INPUT_FILTER = 'SET_INPUT_FILTER';
   static readonly SHOW_ONLY_INVALID = 'SHOW_ONLY_INVALID';
   static readonly SET_MIN_DATE = 'SET_MIN_DATE';
   static readonly SET_MAX_DATE = 'SET_MAX_DATE';
+  static readonly OPEN_TAB = 'OPEN_TAB';
+  static readonly CLOSE_TAB = 'CLOSE_TAB';
 
-  static setEditedTransaction(t: Transaction | TransactionWithUUID | undefined): AnyAction {
+  static setEditedTransaction(t: Transaction | TransactionWithUUID | undefined, tab: string): AnyAction {
     return {
       transaction: t,
       type: AppStateActions.SET_EDITED_TRANSACTION,
-    };
-  }
-
-  static selectAccount(account: string, isSelected: boolean): AnyAction {
-    return {
-      account,
-      isSelected,
-      type: AppStateActions.SELECT_ACCOUNT,
+      tab,
     };
   }
 
@@ -196,19 +83,6 @@ export class AppStateActions {
     };
   }
 
-  static openLeftPanel(open: boolean): AnyAction {
-    return {
-      open,
-      type: AppStateActions.OPEN_LEFT_PANEL,
-    };
-  }
-
-  static toggleLeftPanel(): AnyAction {
-    return {
-      type: AppStateActions.TOGGLE_LEFT_PANEL,
-    };
-  }
-
   static setIsLoading(isLoading: boolean): AnyAction {
     return {
       isLoading,
@@ -216,53 +90,53 @@ export class AppStateActions {
     };
   }
 
-  static setInputFilter(input: string): AnyAction {
+  static setInputFilter(input: string, tab: string): AnyAction {
     return {
       input,
       type: AppStateActions.SET_INPUT_FILTER,
+      tab,
     };
   }
 
-  static showOnlyInvalid(show: boolean): AnyAction {
+  static showOnlyInvalid(show: boolean, tab: string): AnyAction {
     return {
       show,
       type: AppStateActions.SHOW_ONLY_INVALID,
+      tab,
     };
   }
 
-  static setMinDate(date: number | undefined): AnyAction {
+  static setMinDate(date: number | undefined, tab: string): AnyAction {
     return {
       date,
       type: AppStateActions.SET_MIN_DATE,
+      tab,
     };
   }
 
-  static setMaxDate(date: number | undefined): AnyAction {
+  static setMaxDate(date: number | undefined, tab: string): AnyAction {
     return {
       date,
       type: AppStateActions.SET_MAX_DATE,
+      tab,
+    };
+  }
+
+  static openTab(accounts: string[]): AnyAction {
+    return {
+      accounts,
+      open,
+      type: AppStateActions.OPEN_TAB,
+    };
+  }
+
+  static closeTab(tab: string): AnyAction {
+    return {
+      tab,
+      type: AppStateActions.CLOSE_TAB,
     };
   }
 }
-
-export const concatReducer = (prev: any[], curr: any[]) => ([...prev, ...curr]);
-export const unionReducer = (prev: any[], curr: any[]) => ([...prev, ...curr.filter(x => !prev.includes(x))]);
-export const differenceReducer = (prev: any[], curr: any[]) => ([...prev.filter(x => !curr.includes(x))]);
-export const intersectionReducer = (prev: any[], curr: any[]) => (prev.filter(x => curr.indexOf(x) !== -1));
-
-const selectOrUnselectAccounts = (newlySelectedAccounts: string[], allAccounts: string[]): string[] => {
-  // Unselect root account if some accounts are unchecked
-  if (newlySelectedAccounts.includes(ROOT_ACCOUNT) && newlySelectedAccounts.length !== allAccounts.length) {
-    return newlySelectedAccounts.filter(a => a !== ROOT_ACCOUNT);
-  }
-
-  // Select root account if all other accounts are checked
-  if (! newlySelectedAccounts.includes(ROOT_ACCOUNT) && newlySelectedAccounts.length === allAccounts.length - 1) {
-    return [ROOT_ACCOUNT, ...newlySelectedAccounts];
-  }
-
-  return newlySelectedAccounts;
-};
 
 const addOrUpdateTransactions = (previous: TransactionMap, transactions: TransactionWithUUID[], clearOldTransactions: boolean)
 : TransactionMap => {
@@ -373,43 +247,20 @@ const addAmountToAccount = (a: Account, amount: string, isFinalAccount: boolean)
 
 
 /******************************************************/
-const setEditedTransaction = (state: AppState, t: Transaction | TransactionWithUUID | undefined): AppState => {
+const setEditedTransaction = (state: AppState, t: Transaction | TransactionWithUUID | undefined, tab: string): AppState => {
   return {
     ...state,
     ui: {
       ...state.ui,
-      editedTransaction: t,
+      tabs: {
+        ...state.ui.tabs,
+        [tab]: {
+          ...state.ui.tabs[tab],
+          editedTransaction: t,
+        },
+      },
     },
   };
-};
-
-const allChildren = (state: AppState, a: string): string[] => {
-  const account = state.computed.accounts[a];
-  const children = account.children.map(c => allChildren(state, c)).reduce(concatReducer, []);
-
-  return [a, ...children];
-};
-
-const selectAccounts = (state: AppState, shouldSelect: boolean, accounts: string[]): AppState => {
-  const accountsAlreadySelected = state.ui.filters.selectedAccounts;
-
-  const accountsWithChildren = accounts
-  .map(a => allChildren(state, a))
-  .reduce(unionReducer, []);
-
-  const newlySelectedAccounts = [accountsAlreadySelected, accountsWithChildren].reduce(shouldSelect ? unionReducer : differenceReducer);
-  const acc = selectOrUnselectAccounts(newlySelectedAccounts, Object.keys(state.computed.accounts));
-
-  return {
-        ...state,
-        ui: {
-          ...state.ui,
-          filters: {
-            ...state.ui.filters,
-            selectedAccounts: acc,
-          },
-        },
-      };
 };
 
 const addTransactions = (state: AppState, transactions: Transaction[], clearOldTransactions: boolean): AppState => {
@@ -434,20 +285,6 @@ const updateTransaction = (state: AppState, transaction: TransactionWithUUID): A
   return stateWithNewTransactions(state, tr);
 };
 
-const openLeftPanel = (state: AppState, open: boolean): AppState => {
-  return {
-    ...state,
-    ui: {
-      ...state.ui,
-      isLeftMenuOpen: open,
-    },
-  };
-};
-
-const toggleLeftPanel = (state: AppState): AppState => {
-  return openLeftPanel(state, !state.ui.isLeftMenuOpen);
-};
-
 const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
   return {
     ...state,
@@ -458,56 +295,114 @@ const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
   };
 };
 
-const setInputFilter = (state: AppState, input: string): AppState => {
+const setInputFilter = (state: AppState, input: string, tab: string): AppState => {
+  const f = { ...filtersSelector(tab)(state), input };
+  return stateWithFilters(state, f, tab);
+};
+
+const showOnlyInvalid = (state: AppState, show: boolean, tab: string): AppState => {
+  const f = { ...filtersSelector(tab)(state), showOnlyInvalid: show };
+  return stateWithFilters(state, f, tab);
+};
+
+
+const setMinDate = (state: AppState, date: number | undefined, tab: string): AppState => {
+  const f = { ...filtersSelector(tab)(state), minDate: date };
+  return stateWithFilters(state, f, tab);
+};
+
+
+const stateWithFilters = (state: AppState, filters: Filters, tab: string): AppState => {
   return {
     ...state,
     ui: {
       ...state.ui,
-      filters: {
-        ...state.ui.filters,
-        input,
+      tabs: {
+        ...state.ui.tabs,
+        [tab]: {
+          ...state.ui.tabs[tab],
+          filters,
+        },
       },
     },
   };
 };
 
-const showOnlyInvalid = (state: AppState, show: boolean): AppState => {
+
+const setMaxDate = (state: AppState, date: number | undefined, tab: string): AppState => {
+  const f = { ...filtersSelector(tab)(state), maxDate: date };
+  return stateWithFilters(state, f, tab);
+};
+
+const isTabAlreadyOpen = (currentTabs: Tabs, accounts: string[]) => {
+  return Object.values(currentTabs).some(t => [t.selectedAccounts, accounts].reduce(differenceReducer).length === 0);
+};
+
+const stateWithNewTabs = (state: AppState, newTabs: Tabs): AppState => {
   return {
     ...state,
     ui: {
       ...state.ui,
-      filters: {
-        ...state.ui.filters,
-        showOnlyInvalid: show,
-      },
+      tabs: newTabs,
     },
   };
 };
 
+const closeTab = (state: AppState, tab: string): AppState => {
+  const newTabs = Object.values(state.ui.tabs)
+    .filter(t => t.id !== tab)
+    .reduce<Tabs>( (prev, curr) => ({ ...prev,  [curr.id]: curr}), {});
+  return stateWithNewTabs(state, newTabs);
+};
 
-const setMinDate = (state: AppState, date: number | undefined): AppState => {
+const createTab = (selectedAccounts: string[]): Tab => ({
+  id: uuid(),
+  selectedAccounts,
+  filters: {
+    input: '',
+    showOnlyInvalid: false,
+  },
+  isClosable: true,
+});
+
+const openTab = (state: AppState, accounts: string[]): AppState => {
+  const currentTabs = state.ui.tabs;
+  if (isTabAlreadyOpen(currentTabs, accounts)) {
+    return state;
+  } else {
+    const tab = createTab(accounts);
+    const newTabs = { ...currentTabs, [tab.id]: tab} ;
+    return stateWithNewTabs(state, newTabs);
+  }
+};
+
+const updateTab = (tab: Tab, newAccounts: string[], newTransactions: string[]): Tab | null => {
+  const selectedAccounts = [tab.selectedAccounts, newAccounts].reduce(intersectionReducer);
+
+  if (selectedAccounts.length === 0) { return null; }
+
+  const editedTransaction =
+  (isTransactionWithUUID(tab.editedTransaction) && newTransactions.includes(tab.editedTransaction.uuid)) ||
+  !isTransactionWithUUID(tab.editedTransaction)
+  ? tab.editedTransaction
+  : undefined;
+
   return {
-    ...state,
-    ui: {
-      ...state.ui,
-      filters: {
-        ...state.ui.filters,
-        minDate: date,
-      },
-    },
+    ...tab,
+    selectedAccounts,
+    editedTransaction,
   };
 };
 
-const setMaxDate = (state: AppState, date: number | undefined): AppState => {
+const updateUi = (ui: Ui, newTransactions: string[], newAccounts: string[]): Ui => {
+  const tabs = Object.keys(ui.tabs).reduce<Tabs>( (prev, tabId) => {
+    const tab = updateTab(ui.tabs[tabId], newAccounts, newTransactions);
+    return tab ? { ...prev, [tab.id]: tab } : prev;
+  }, {});
+
   return {
-    ...state,
-    ui: {
-      ...state.ui,
-      filters: {
-        ...state.ui.filters,
-        maxDate: date,
-      },
-    },
+    ...ui,
+    tabs,
   };
 };
 
@@ -515,22 +410,14 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
   const transactions = Object.values(transactionMap);
   const newAccounts = generateAccounts(transactions);
   const newAccountsKeys = Object.keys(newAccounts);
-  const previouslySelected = state.ui.filters.selectedAccounts;
-
-  // Unselect accounts if they dont exist anymore
-  const newSelectedAccounts = previouslySelected.length === 0
-  ? newAccountsKeys
-  : [previouslySelected, newAccountsKeys].reduce(intersectionReducer);
-
-  // Unselect transaction if it doesnt exist anymore
-  const previouslyEdited = state.ui.editedTransaction;
-  const newEdited = isTransactionWithUUID(previouslyEdited)
-  && transactions.includes(previouslyEdited) ? previouslyEdited : undefined;
 
   // Check if transactions are valid
   const newInvalidTransactions = transactions.filter(t =>
     t.header.title === undefined ||
     t.postings.length < 2).map(t2 => t2.uuid);
+
+  // Update ui
+  const ui = updateUi(state.ui, Object.keys(transactionMap), newAccountsKeys);
 
   return {
     ...state,
@@ -541,24 +428,14 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
       accounts: newAccounts,
       invalidTransactions: newInvalidTransactions,
     },
-    ui: {
-      ...state.ui,
-      editedTransaction: newEdited,
-      filters: {
-        ...state.ui.filters,
-        selectedAccounts: newSelectedAccounts,
-      },
-    },
+    ui,
   };
 };
 
 export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyAction): AppState {
   switch (action.type) {
     case AppStateActions.SET_EDITED_TRANSACTION:
-      return setEditedTransaction(lastState, action.transaction);
-
-    case AppStateActions.SELECT_ACCOUNT:
-      return selectAccounts(lastState, action.isSelected, [action.account]);
+      return setEditedTransaction(lastState, action.transaction, action.tab);
 
     case AppStateActions.ADD_TRANSACTIONS:
       return addTransactions(lastState, action.transactions, action.clearOldTransactions);
@@ -569,26 +446,26 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
     case AppStateActions.UPDATE_TRANSACTION:
       return updateTransaction(lastState, action.transaction);
 
-    case AppStateActions.OPEN_LEFT_PANEL:
-      return openLeftPanel(lastState, action.open);
-
-    case AppStateActions.TOGGLE_LEFT_PANEL:
-      return toggleLeftPanel(lastState);
-
     case AppStateActions.SET_IS_LOADING:
       return setIsLoading(lastState, action.isLoading);
 
     case AppStateActions.SET_INPUT_FILTER:
-      return setInputFilter(lastState, action.input);
+      return setInputFilter(lastState, action.input, action.tab);
 
     case AppStateActions.SHOW_ONLY_INVALID:
-      return showOnlyInvalid(lastState, action.show);
+      return showOnlyInvalid(lastState, action.show, action.tab);
 
     case AppStateActions.SET_MIN_DATE:
-      return setMinDate(lastState, action.date);
+      return setMinDate(lastState, action.date, action.tab);
 
     case AppStateActions.SET_MAX_DATE:
-      return setMaxDate(lastState, action.date);
+      return setMaxDate(lastState, action.date, action.tab);
+
+    case AppStateActions.OPEN_TAB:
+      return openTab(lastState, action.accounts);
+
+    case AppStateActions.CLOSE_TAB:
+      return closeTab(lastState, action.tab);
   }
 
   return lastState;

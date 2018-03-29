@@ -1,4 +1,4 @@
-<app-filters></app-filters>
+<app-filters tabId="{{tabId}}"></app-filters>
 
   <mat-paginator #paginator [class.hidden]="noTransactionsToDisplay | async"
   [pageIndex]="0"
@@ -28,9 +28,9 @@
   <!-- Name Column -->
   <ng-container cdkColumnDef="movements">
     <mat-header-cell *cdkHeaderCellDef [ngClass]="'grow_cell'"> Mouvements </mat-header-cell>
-    <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell'">
+    <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell'" (click)="$event.stopPropagation()">
         <div *ngFor="let p of (row.postings | async).slice(0,2)" class="posting">
-          <span class="posting_left">{{p.account}}</span>
+          <span class="posting_left" (click)="p.handleAccountClick()">{{p.account}}</span>
           <span
             class="posting_right"
             *ngIf="p.amount != 0"

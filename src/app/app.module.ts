@@ -14,6 +14,7 @@ import {
   MatSortModule,
   MatTableModule,
   MatToolbarModule,
+  MatTabsModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -27,10 +28,14 @@ import { TransactionsComponent } from './components/transactions/transactions.co
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { NgReduxModule, NgRedux, DevToolsExtension } from '@angular-redux/store';
 import { AppState, TransactionMap } from './shared/models/app-state';
-import { rootReducer, INITIAL_STATE, AppStateActions, allTransactionsSelector } from './shared/reducers/app-state-reducer';
+import { rootReducer, INITIAL_STATE, AppStateActions } from './shared/reducers/app-state-reducer';
+import {
+  allTransactionsSelector,
+} from './shared/selectors/selectors';
 
 import { undoRedoReducer, UndoRedoState, presentSelector } from './shared/reducers/undo-redo-reducer';
 import { FiltersComponent } from './components/filters/filters.component';
+import { AccountComponent } from './components/account/account.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -43,6 +48,7 @@ import { FiltersComponent } from './components/filters/filters.component';
     DialogTwoOptionsDialogComponent,
     EditTransactionComponent,
     FiltersComponent,
+    AccountComponent,
   ],
   entryComponents: [
     DialogResultExampleDialogComponent,
@@ -71,6 +77,7 @@ import { FiltersComponent } from './components/filters/filters.component';
     MatNativeDateModule,
     MatCardModule,
     NgReduxModule,
+    MatTabsModule,
   ],
   providers : [
     {provide: DateAdapter, useClass: MomentDateAdapter},

@@ -32,6 +32,10 @@ mat-cell {
     flex:1;
 }
 
+.posting_left:hover {
+  text-decoration: underline;
+}
+
 .shrink_cell {
     flex: 0 1 100px;
 }

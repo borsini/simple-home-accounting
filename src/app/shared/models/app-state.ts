@@ -4,6 +4,27 @@ import * as moment from 'moment';
 
 export type TransactionMap = { [k: string]: TransactionWithUUID };
 export type AccountMap = { [k: string]: Account };
+export interface Tabs { [k: string]: Tab; }
+export interface Ui {
+  tabs: Tabs;
+  isLeftMenuOpen: boolean;
+  persistedAt?: moment.Moment;
+  isLoading: boolean;
+}
+export interface Filters {
+  input: string;
+  showOnlyInvalid: boolean;
+  minDate?: number;
+  maxDate?: number;
+}
+
+export interface Tab {
+  id: string;
+  selectedAccounts: string[];
+  editedTransaction?: Transaction | TransactionWithUUID;
+  filters: Filters;
+  isClosable: boolean;
+}
 
 export interface AppState {
   entities: {
@@ -13,17 +34,5 @@ export interface AppState {
     accounts: AccountMap;
     invalidTransactions: string[],
   };
-  ui: {
-    editedTransaction?: Transaction | TransactionWithUUID;
-    isLeftMenuOpen: boolean;
-    persistedAt?: moment.Moment;
-    isLoading: boolean,
-    filters: {
-      selectedAccounts: string[];
-      input: string,
-      showOnlyInvalid: boolean,
-      minDate?: number,
-      maxDate?: number,
-    },
-  };
+  ui: Ui;
 }

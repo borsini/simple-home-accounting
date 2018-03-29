@@ -1,14 +1,8 @@
-import {
-  allTransactionsSelector,
-  selectEditedTransaction,
-  AppStateActions,
-  canAutosearchSelector,
-  invalidTransactionsSelector,
-  selectedAccountsSelector} from './../../shared/reducers/app-state-reducer';
+import { AppStateActions } from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { DataSource } from '@angular/cdk/table';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
@@ -29,7 +23,14 @@ import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/observable/merge';
 
-import { selectedTransactionsSelector } from '../../shared/reducers/app-state-reducer';
+import {
+  allTransactionsSelector,
+  editedTransactionSelector,
+  invalidSelectedTransactionsSelector,
+  invalidTransactionsSelector,
+  selectedAccountsSelector,
+  selectedTransactionsSelector,
+} from '../../shared/selectors/selectors';
 import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
 const LEDGER_DATE_FORMAT = 'DD/MM/YYYY';
@@ -38,7 +39,7 @@ export class PostingRow {
 
   private decimalAmount: Decimal;
 
-  constructor(private _posting: Posting) {
+  constructor(private _posting: Posting, private _handleAccountClicked: (a: string) => void) {
     this.decimalAmount = new Decimal(this._posting.amount || 0);
   }
 
@@ -57,6 +58,10 @@ export class PostingRow {
   get isPositive() {
     return new Decimal(this._posting.amount || 0).isPositive();
   }
+
+  handleAccountClick() {
+    this._handleAccountClicked(this._posting.account);
+  }
 }
 
 export class TransactionRow {
@@ -65,7 +70,8 @@ export class TransactionRow {
       public transaction: TransactionWithUUID,
       private _selectedTransactionUUID: Observable<string>,
       private invalidTransactions: Observable<string[]>,
-      private selectedAccounts: Observable<string[]>) {}
+      private selectedAccounts: Observable<string[]>,
+      private _handleAccountClicked: (a: string) => void) {}
 
     get title() {
       return this.transaction.header.title;
@@ -83,7 +89,7 @@ export class TransactionRow {
     }
 
     postingsToDisplay(selectedAccounts: string[]): Posting[] {
-      if (selectedAccounts.length === 1) {
+      if (selectedAccounts.length === 1 && selectedAccounts[0] !== 'ROOT') {
         const postingsWithoutSameAccount = this.transaction.postings.filter( p => p.account !== selectedAccounts[0]);
         if (postingsWithoutSameAccount) {
           return postingsWithoutSameAccount.map(this.inverseAmount);
@@ -95,7 +101,7 @@ export class TransactionRow {
 
     get postings(): Observable<PostingRow[]> {
       return this.selectedAccounts.map(sa => {
-        return this.postingsToDisplay(sa).map(p => new PostingRow(p));
+        return this.postingsToDisplay(sa).map(p => new PostingRow(p, this._handleAccountClicked));
       });
     }
 
@@ -112,6 +118,7 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
 
     constructor(
       private ngRedux: NgRedux<UndoRedoState<AppState>>,
+      private tabId: string,
       private _paginator: MatPaginator,
       private _sort: MatSort) {
       super();
@@ -124,20 +131,24 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
     /** Connect function called by the table to retrieve one stream containing the data to render. */
     connect(): Observable<TransactionRow[]> {
 
+      const selectedTransactionsSel = selectedTransactionsSelector(this.tabId);
+      const editedTransactionSel = editedTransactionSelector(this.tabId);
+      const selectedAccountsSel = selectedAccountsSelector(this.tabId);
+
       const sortChange = Observable.from<MatSort>(this._sort.sortChange)
-        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
+        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSel)));
 
       const pageChange = Observable.from<PageEvent>(this._paginator.page)
-        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSelector)));
+        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSel)));
 
-      const selectedTransactionsChanged = this.ngRedux.select(presentSelector(selectedTransactionsSelector));
+      const selectedTransactionsChanged = this.ngRedux.select(presentSelector(selectedTransactionsSel));
 
-      const selectedUUID = this.ngRedux.select(presentSelector(selectEditedTransaction))
+      const selectedUUID = this.ngRedux.select(presentSelector(editedTransactionSel))
       .pipe(filter(t => isTransactionWithUUID(t)))
       .map(t => (t as TransactionWithUUID).uuid);
 
       const invalidTransactions = this.ngRedux.select(presentSelector(invalidTransactionsSelector));
-      const selectedAccounts = this.ngRedux.select(presentSelector(selectedAccountsSelector));
+      const selectedAccounts = this.ngRedux.select(presentSelector(selectedAccountsSel));
       return Observable.merge(pageChange, sortChange, selectedTransactionsChanged)
       .debounceTime(150)
       .map( data => this.sortData(data))
@@ -150,10 +161,15 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
         selectedUUID,
         invalidTransactions,
         selectedAccounts,
+        this.handleAccountClicked,
       )));
     }
 
     disconnect() {}
+
+    handleAccountClicked = (account: string ) => {
+      this.ngRedux.dispatch(AppStateActions.openTab([account]));
+    }
 
     paginateData(data: TransactionWithUUID[]): TransactionWithUUID[] {
       const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
@@ -192,6 +208,7 @@ export class TransactionsComponent implements OnInit {
   dataSource: TransactionDataSource;
   displayedColumns = ['title', 'date', 'movements'];
 
+  @Input() tabId: string;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -200,12 +217,12 @@ export class TransactionsComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.dataSource = new TransactionDataSource(this.ngRedux, this.paginator, this.sort);
-    this.noTransactionsToDisplay = this.ngRedux.select(presentSelector(selectedTransactionsSelector))
+    this.dataSource = new TransactionDataSource(this.ngRedux, this.tabId, this.paginator, this.sort);
+    this.noTransactionsToDisplay = this.ngRedux.select(presentSelector(selectedTransactionsSelector(this.tabId)))
     .map(t => t.length === 0);
   }
 
   onTransactionClicked(row: TransactionRow) {
-    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction));
+    this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction, this.tabId));
   }
 }

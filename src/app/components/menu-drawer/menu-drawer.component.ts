@@ -1,5 +1,5 @@
 import { Account } from './../../shared/models/account';
-import { selectedAccountsSelector, selectedTransactionsSelector, rootAccountSelector } from './../../shared/reducers/app-state-reducer';
+import { selectedAccountsSelector, selectedTransactionsSelector, rootAccountSelector } from './../../shared/selectors/selectors';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
 import { Component, OnInit } from '@angular/core';

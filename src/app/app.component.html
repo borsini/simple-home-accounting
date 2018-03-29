@@ -1,14 +1,6 @@
 <mat-sidenav-container class="mat-typography">
-  <mat-sidenav #drawer [opened]="isDrawerOpen | async" (opened)="handleOpen(true)" (closed)="handleOpen(false)">
-    <app-menu-drawer></app-menu-drawer>
-  </mat-sidenav>
-
   <div class="main">
     <mat-toolbar color="primary">
-
-      <button mat-button (click)="toggle()">
-          <mat-icon class="material-icons" >menu</mat-icon>
-      </button>
 
       <span>Simple Home Accounting</span>
       <span class="app-version">v{{appVersion}}</span>
@@ -51,13 +43,25 @@
 
     </mat-toolbar>
 
-    <div class="content">
-      <app-transactions></app-transactions>
-    </div>
-
-    <div class="footer">
-      <app-edit-transaction></app-edit-transaction>
-    </div>
+    <mat-tab-group>
+      <mat-tab *ngFor="let conf of tabsConf | async; trackBy:trackByFn" [ngClass]="tutu">
+        <ng-template mat-tab-label>
+            {{conf.title}}
+            <button mat-button
+              (click)="closeTabClicked(conf.tabId);$event.stopPropagation();"
+              class="close-button"
+              *ngIf="conf.isClosable">
+                <mat-icon class="material-icons">close</mat-icon>
+            </button>
+        </ng-template>
+        <div class="content">
+          <app-transactions tabId="{{conf.tabId}}"></app-transactions>
+        </div>
+        <div class="footer">
+          <app-edit-transaction tabId="{{conf.tabId}}"></app-edit-transaction>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
 
   </div>
 

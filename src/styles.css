@@ -16,5 +16,10 @@ html, body, mat-sidenav-container, .content {
   height: 100%;
 }
 
-mat-sidenav {
-  }
+.mat-tab-body-wrapper {
+  /*
+  https://github.com/angular/material2/issues/9290
+  https://material.angular.io/guide/customizing-component-styles
+  */
+  flex: 1;
+}
