@@ -126,9 +126,15 @@ export class EditTransactionComponent implements OnInit {
     return this.group.get('postings') as FormArray;
   }
 
-  filterAccount(query: any): Observable<Account[]> {
-    return this.ngRedux.select(presentSelector(allAccountsSelector)).map(accounts => {
-      return Object.values(accounts).filter(a => a.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  filterAccount(query: string): Observable<Account[]> {
+    const latinizedQuery = query.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    return this.ngRedux.select(presentSelector(allAccountsSelector))
+    .map(accounts => {
+      return Object.values(accounts).filter(a => {
+        const latinizedAccount = a.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return latinizedAccount.toLowerCase().indexOf(latinizedQuery.toLowerCase()) !== -1;
+      });
     });
   }
 
