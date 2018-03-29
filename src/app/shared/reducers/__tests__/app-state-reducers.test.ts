@@ -15,17 +15,21 @@ import { rootReducer, AppStateActions } from '../app-state-reducer';
 
 jest.mock('uuid', () => {
   let counter = 0;
-  const uuids = Array.from(Array(20).keys()).map(u => `uuid ${u}`);
 
   return {
     v4: jest.fn(() => {
-      const uuid = uuids[counter % (uuids.length - 1)];
+      const uuid = `uuid ${counter}`;
       counter++;
       return uuid;
     }),
+    reset: () => counter = 0,
   };
 });
 
+
+beforeEach( () => {
+  require('uuid').reset();
+});
 
 describe(rootReducer.name, () => {
   it('has empty state at startup', () => {

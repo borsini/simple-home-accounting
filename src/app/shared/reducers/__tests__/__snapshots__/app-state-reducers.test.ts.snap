@@ -146,7 +146,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 1": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -162,7 +162,7 @@ Object {
             "amount": "-1000",
           },
         ],
-        "uuid": "uuid 1",
+        "uuid": "uuid 0",
       },
     },
   },
@@ -291,7 +291,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 10": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Savings",
@@ -312,7 +312,7 @@ Object {
             "amount": "-142",
           },
         ],
-        "uuid": "uuid 10",
+        "uuid": "uuid 0",
       },
     },
   },
@@ -404,7 +404,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 4": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -422,9 +422,9 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 4",
+        "uuid": "uuid 0",
       },
-      "uuid 5": Object {
+      "uuid 1": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -440,7 +440,7 @@ Object {
             "amount": "-500",
           },
         ],
-        "uuid": "uuid 5",
+        "uuid": "uuid 1",
       },
     },
   },
@@ -609,18 +609,18 @@ Object {
       },
     },
     "invalidTransactions": Array [
-      "uuid 1",
+      "uuid 0",
     ],
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 1": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1520080726,
           "title": "Titre",
         },
         "postings": Array [],
-        "uuid": "uuid 1",
+        "uuid": "uuid 0",
       },
     },
   },
@@ -781,12 +781,12 @@ Object {
           "ROOT",
         ],
       },
-      "uuid 3": Object {
+      "uuid 0": Object {
         "filters": Object {
           "input": "",
           "showOnlyInvalid": false,
         },
-        "id": "uuid 3",
+        "id": "uuid 0",
         "isClosable": true,
         "selectedAccounts": Array [
           "Account",
@@ -861,7 +861,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 2": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -879,9 +879,9 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 2",
+        "uuid": "uuid 0",
       },
-      "uuid 3": Object {
+      "uuid 1": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -897,7 +897,7 @@ Object {
             "amount": "-500",
           },
         ],
-        "uuid": "uuid 3",
+        "uuid": "uuid 1",
       },
     },
   },
@@ -1021,7 +1021,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 16": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -1039,7 +1039,7 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 16",
+        "uuid": "uuid 0",
       },
     },
   },
@@ -1067,7 +1067,7 @@ Object {
               "amount": "3.05",
             },
           ],
-          "uuid": "uuid 16",
+          "uuid": "uuid 0",
         },
         "filters": Object {
           "input": "",
@@ -1127,12 +1127,12 @@ Object {
           "ROOT",
         ],
       },
-      "uuid 2": Object {
+      "uuid 0": Object {
         "filters": Object {
           "input": "",
           "showOnlyInvalid": false,
         },
-        "id": "uuid 2",
+        "id": "uuid 0",
         "isClosable": true,
         "selectedAccounts": Array [
           "Account:Sub account",
@@ -1193,7 +1193,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 7": Object {
+      "uuid 1": Object {
         "header": Object {
           "date": 1360454400,
           "title": "Salary",
@@ -1209,7 +1209,7 @@ Object {
             "amount": "-500",
           },
         ],
-        "uuid": "uuid 7",
+        "uuid": "uuid 1",
       },
     },
   },
@@ -1471,7 +1471,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 11": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -1489,7 +1489,7 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 11",
+        "uuid": "uuid 0",
       },
     },
   },
@@ -1517,7 +1517,7 @@ Object {
               "amount": "3.05",
             },
           ],
-          "uuid": "uuid 11",
+          "uuid": "uuid 0",
         },
         "filters": Object {
           "input": "",
@@ -1678,7 +1678,7 @@ Object {
   },
   "entities": Object {
     "transactions": Object {
-      "uuid 12": Object {
+      "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
           "title": "Bread",
@@ -1696,7 +1696,7 @@ Object {
             "amount": "3.05",
           },
         ],
-        "uuid": "uuid 12",
+        "uuid": "uuid 0",
       },
     },
   },
