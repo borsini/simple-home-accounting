@@ -185,6 +185,7 @@ export class AppComponent implements OnInit {
 
   saveLedgerClicked() {
     this.ngRedux.select(presentSelector(allTransactionsSelector))
+    .take(1)
     .flatMap(tr => this._ledger.generateLedgerString(Object.values(tr)))
     .do(ledger => {
       const blob = new Blob([ledger], {type: 'text/plain;charset=utf-8'});
