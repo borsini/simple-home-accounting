@@ -103,7 +103,7 @@ const doesTransactionUseAccountsFilter = (accountsNames: string[]) => (tr: Trans
       let titleMatches, amountOrAccountMatches = false;
       titleMatches = tr.header.title && tr.header.title.toLowerCase().indexOf(word) >= 0;
       amountOrAccountMatches = tr.postings.some( p => {
-          return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount !== undefined && p.amount.toString().indexOf(word) >= 0);
+          return p.account.toLowerCase().indexOf(word) >= 0 || (p.amount !== undefined && p.amount.toString().indexOf(word.replace(',', '.')) >= 0);
       });
 
       return titleMatches || amountOrAccountMatches;
