@@ -5,35 +5,51 @@
     <mat-card-content>
 
     <div id="header">
-      <mat-input-container floatPlaceholder="never" id="title" class="expand">
-        <input matInput #filter placeholder="Titre" formControlName="title">
-      </mat-input-container>
+      <mat-form-field floatPlaceholder="never" id="title" class="expand" >
+        <input matInput placeholder="Titre" formControlName="title">
+        <mat-error *ngIf="group.get('title').errors">
+          {{ group.get('title').errors }}
+        </mat-error>
+      </mat-form-field>
 
-      <mat-input-container id="date">
+      <mat-form-field id="date">
           <input matInput [matDatepicker]="picker" placeholder="Date" formControlName="date">
-          <mat-datepicker-toggle matInput [for]="picker"></mat-datepicker-toggle>
-        </mat-input-container>
-        <mat-datepicker #picker></mat-datepicker>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="group.get('date').errors">
+            {{ group.get('date').errors }}
+          </mat-error>
+      </mat-form-field>
+
 
         <button id="close" (click)="closePanel()" mat-icon-button>
             <mat-icon class="material-icons">clear</mat-icon>
-          </button>
+        </button>
     </div>
 
-    <div id="postings" formArrayName="postings">
-      <div *ngFor="let p of postings.controls; let i=index" [formGroupName]="i" id="posting" >
+    <div id="postings" formArrayName="postings" [ngClass]="{hasErrors:(postings.errors)}">
+      <div *ngFor="let p of postings.controls; let i=index" [formGroupName]="i" class="posting" >
         <mat-input-container class="expand" floatPlaceholder="never">
           <input matInput placeholder="Compte" formControlName="account" type="text" [matAutocomplete]="auto">
+          <mat-error *ngIf="p.get('account').errors">
+            {{ p.get('account').errors }}
+          </mat-error>
         </mat-input-container>
-        <mat-input-container class="expand" floatPlaceholder="never">
-          <input matInput #filter placeholder="Commentaire" formControlName="comment">
-        </mat-input-container>
+
         <mat-input-container id="amount" floatPlaceholder="never">
-            <input matInput #filter placeholder="Montant" formControlName="amount">
+            <input matInput placeholder="Montant" formControlName="amount">
+            <mat-error *ngIf="p.get('amount').errors">
+              {{ p.get('amount').errors }}
+            </mat-error>
         </mat-input-container>
-        <mat-input-container id="currency" floatPlaceholder="never">
-            <input matInput #filter placeholder="Monnaie" formControlName="currency">
+
+        <mat-input-container floatPlaceholder="never">
+          <input matInput placeholder="Commentaire" formControlName="comment">
+          <mat-error *ngIf="p.get('comment').errors">
+            {{ p.get('comment').errors }}
+          </mat-error>
         </mat-input-container>
+
         <button id="close" (click)="removePosting(i)" mat-icon-button>
           <mat-icon class="material-icons">delete</mat-icon>
         </button>

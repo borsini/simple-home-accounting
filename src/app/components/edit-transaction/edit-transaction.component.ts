@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors,
   Validators,
+  ValidatorFn,
 } from '@angular/forms';
 import { MatDatepicker } from '@angular/material';
 
@@ -30,6 +31,9 @@ import {
 import { Account } from '../../shared/models/account';
 import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
+
+interface AllErrors { [control: string]: ValidationErrors; }
+
 @Component({
   selector: 'app-edit-transaction',
   styleUrls: ['./edit-transaction.component.css'],
@@ -45,6 +49,7 @@ export class EditTransactionComponent implements OnInit {
   group: FormGroup;
   filteredAccounts: Subject<Account[]> = new Subject();
   formErrors: Observable<string>;
+  required: {'required': true};
 
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>, private _formBuilder: FormBuilder) { }
 
@@ -105,6 +110,13 @@ export class EditTransactionComponent implements OnInit {
         };
       }) : [];
 
+      this.formErrors = Observable.concat( Observable.of(1), this.group.valueChanges)
+      .map( t => this.getAllErrors(this.group))
+      .map(this.errorsToString)
+      .map(e => e[0]);
+
+      this.group.statusChanges.do(s => console.log('status' + s)).subscribe();
+
       // Set all the values
       this.group.setValue({
         date: date,
@@ -112,14 +124,16 @@ export class EditTransactionComponent implements OnInit {
         title: title,
       });
 
-      const errorObservable = Observable.of(this.logErrors(this.group));
-      const groupErrors = this.group.valueChanges.map( t => this.logErrors(this.group));
 
-    this.formErrors = Observable.concat(errorObservable, groupErrors)
-      .map(e => e[0]);
+      markFormGroupTouched(this.group);
+  }
 
-      this.group.markAsDirty();
-      this.group.updateValueAndValidity();
+  errorsToString = (errors: AllErrors): string[] => {
+    console.log(errors);
+    return Object.keys(errors)
+    .map(k => errors[k])
+    .map(v => Object.keys(v)[0])
+    .map(s => s);
   }
 
   get postings(): FormArray {
@@ -181,23 +195,28 @@ export class EditTransactionComponent implements OnInit {
     };
   }
 
-  logErrors(control: AbstractControl, id: string = ''): string[] {
+  getAllErrors(control: AbstractControl, id: string = ''): AllErrors {
     const e = control.errors;
-    let errors: string[] = [];
+    let errors: { [control: string]: ValidationErrors } = {};
+
 
     if (e != null) {
-      errors.push(id + ': ' + JSON.stringify(e));
+      errors[id] = e;
     }
 
     if (control instanceof FormGroup) {
       Object.keys(control.controls).forEach(k => {
         const c = control.get(k);
         if (c) {
-          errors = errors.concat(this.logErrors(c, id + '/' + k));
+          const childErrors = this.getAllErrors(c, id + '/' + k);
+          errors = { ...errors, ...childErrors };
         }
       });
     } else if (control instanceof FormArray) {
-      control.controls.forEach((c, i) => errors = errors.concat(this.logErrors(c, id + '[' + i + ']')));
+      control.controls.forEach((c, i) => {
+        const childErrors = this.getAllErrors(c, id + '[' + i + ']');
+        errors = { ...errors, ...childErrors };
+      });
     }
 
     return errors;
@@ -205,8 +224,9 @@ export class EditTransactionComponent implements OnInit {
 
   addPosting() {
     const postings = (this.group.get('postings') as FormArray);
-    postings.push(this.createPostingGroup());
-    postings.markAsDirty();
+    const g = this.createPostingGroup();
+    postings.push(g);
+    markFormGroupTouched(g);
   }
 
   removePosting(index: number) {
@@ -225,6 +245,20 @@ export class EditTransactionComponent implements OnInit {
     this.ngRedux.dispatch(AppStateActions.setEditedTransaction(undefined, this.tabId));
   }
 }
+
+ /**
+   * Marks all controls in a form group as touched
+   * @param formGroup - The group to caress..hah
+   */
+  function markFormGroupTouched(formGroup: FormGroup) {
+    (<any> Object).values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+
+      if (control.controls) {
+        control.controls.forEach(c => markFormGroupTouched(c));
+      }
+    });
+  }
 
 export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
   return (array: FormArray): Observable<ValidationErrors | null> => {

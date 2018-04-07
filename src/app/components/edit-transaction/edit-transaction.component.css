@@ -7,7 +7,7 @@
     display:flex;
 }
 
-#posting {
+.posting {
     display:flex;
 }
 
@@ -23,11 +23,8 @@
     margin-left: 20px;
 }
 
-.ng-invalid {
-    /*
-    border:1px solid orange;
-    padding:2px;
-    */
+.hasErrors {
+    border-left:2px solid #f44336;
 }
 
 #fab_add {
