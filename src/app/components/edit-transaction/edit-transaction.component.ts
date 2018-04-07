@@ -153,21 +153,23 @@ export class EditTransactionComponent implements OnInit {
   }
 
   onSubmit() {
-    const tr = this.prepareTransaction();
+    if (this.group.valid) {
+      const tr = this.prepareTransaction();
 
-    if (!this.transactionToEdit) { return; }
+      if (!this.transactionToEdit) { return; }
 
-    if (isTransactionWithUUID(this.transactionToEdit)) {
-      const modifiedTransaction = {
-        ...tr,
-        uuid: this.transactionToEdit.uuid,
-      };
-      this.ngRedux.dispatch(AppStateActions.updateTransaction(modifiedTransaction));
-    } else {
-      this.ngRedux.dispatch(AppStateActions.addTransactions([tr]));
+      if (isTransactionWithUUID(this.transactionToEdit)) {
+        const modifiedTransaction = {
+          ...tr,
+          uuid: this.transactionToEdit.uuid,
+        };
+        this.ngRedux.dispatch(AppStateActions.updateTransaction(modifiedTransaction));
+      } else {
+        this.ngRedux.dispatch(AppStateActions.addTransactions([tr]));
+      }
+
+      this.closePanel();
     }
-
-    this.closePanel();
   }
 
   revert() {
