@@ -1,4 +1,4 @@
-import { transactionWithNestedAccounts, transactionWithMissingAmount } from './fixtures';
+import { transactionWithNestedAccounts, transactionsWithMissingAmounts } from './fixtures';
 import { AnyAction } from 'redux';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/observable/zip';
@@ -49,7 +49,7 @@ describe(rootReducer.name, () => {
   });
 
   it('adds new transaction with missing amount', () => {
-    const action = AppStateActions.addTransactions([transactionWithMissingAmount]);
+    const action = AppStateActions.addTransactions(transactionsWithMissingAmounts);
 
     const state = rootReducer(undefined, action);
 

@@ -153,7 +153,7 @@ const addOrUpdateTransactions = (previous: TransactionMap, transactions: Transac
 
 const addMissingAmount = (transaction: TransactionWithUUID): TransactionWithUUID => {
   const result = transaction.postings.reduce<{withAmount: Posting[], withoutAmount: Posting[], sum: Decimal}>( (prev, posting) => {
-      if (posting.amount === null || posting.amount === undefined) {
+      if (!posting.amount) {
         return {...prev, withoutAmount: [...prev.withoutAmount, posting] };
       } else {
         return {...prev, withAmount: [...prev.withAmount, posting], sum: Decimal.add(prev.sum, posting.amount) };

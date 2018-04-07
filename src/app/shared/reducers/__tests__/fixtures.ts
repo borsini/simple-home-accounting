@@ -61,19 +61,38 @@ export const transactionWithNestedAccounts: Transaction = {
   ],
 };
 
-export const transactionWithMissingAmount: Transaction = {
-  header: {
-    date: moment.utc('2013-02-10').unix(),
-    title: 'Salary',
+export const transactionsWithMissingAmounts: Transaction[] = [
+  {
+    header: {
+      date: moment.utc('2013-02-10').unix(),
+      title: 'Salary',
+    },
+    postings: [
+      {
+        account: 'Bank',
+        amount: '1000',
+        currency: '€',
+      },
+      {
+        account: 'Job',
+      },
+    ],
   },
-  postings: [
-    {
-      account: 'Bank',
-      amount: '1000',
-      currency: '€',
+  {
+    header: {
+      date: moment.utc('2013-02-11').unix(),
+      title: 'Bread',
     },
-    {
-      account: 'Job',
-    },
-  ],
-};
+    postings: [
+      {
+        account: 'Cash',
+        amount: '-3.14',
+        currency: '€',
+      },
+      {
+        account: 'Daily expenses',
+        amount: '',
+      },
+    ],
+  },
+];
