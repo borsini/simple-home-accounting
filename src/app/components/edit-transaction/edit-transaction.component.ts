@@ -68,7 +68,14 @@ export class EditTransactionComponent implements OnInit {
         date: moment.utc().unix(),
         title: '',
       },
-      postings: [],
+      postings: [
+        {
+          account: '',
+        },
+        {
+          account: '',
+        },
+      ],
     }, this.tabId));
     this.init();
   }
@@ -95,18 +102,20 @@ export class EditTransactionComponent implements OnInit {
         title: ['', [Validators.required]],
       });
 
-      const postingsControl = this.transactionToEdit ? this.transactionToEdit.postings.map(p => this.createPostingGroup()) : [];
+      const nbPostings = this.transactionToEdit ? Math.max(this.transactionToEdit.postings.length, 2) : 0;
+      const postingsControl = this.transactionToEdit ? Array(nbPostings).fill(0).map(p => this.createPostingGroup()) : [];
       this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator()));
 
       // Initialize values
       const title = this.transactionToEdit ? this.transactionToEdit.header.title : '';
       const date = this.transactionToEdit ? moment.unix(this.transactionToEdit.header.date) : moment();
-      const postings = this.transactionToEdit ? this.transactionToEdit.postings.map( p => {
+      const postings = this.transactionToEdit ? postingsControl.map( (c, i) => {
+        const p = this.transactionToEdit!.postings[i];
         return {
-          account: p.account,
-          amount: p.amount ? p.amount.toString() : null,
-          comment: p.comment || '',
-          currency: p.currency || '',
+          account: p && p.account || '',
+          amount: p && p.amount ? p.amount.toString() : null,
+          comment: p && p.comment || '',
+          currency: p && p.currency || '',
         };
       }) : [];
 
@@ -118,11 +127,7 @@ export class EditTransactionComponent implements OnInit {
       this.group.statusChanges.do(s => console.log('status' + s)).subscribe();
 
       // Set all the values
-      this.group.setValue({
-        date: date,
-        postings: postings,
-        title: title,
-      });
+      this.group.setValue({ date, postings, title });
 
 
       markFormGroupTouched(this.group);
