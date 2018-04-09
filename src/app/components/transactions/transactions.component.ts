@@ -30,6 +30,7 @@ import {
   invalidTransactionsSelector,
   selectedAccountsSelector,
   selectedTransactionsSelector,
+  filtersSelector,
 } from '../../shared/selectors/selectors';
 import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
@@ -214,12 +215,16 @@ export class TransactionsComponent implements OnInit {
 
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) {
     this.transactions = ngRedux.select(presentSelector(allTransactionsSelector)).map(t => Object.values(t));
-   }
+  }
 
   ngOnInit() {
     this.dataSource = new TransactionDataSource(this.ngRedux, this.tabId, this.paginator, this.sort);
     this.noTransactionsToDisplay = this.ngRedux.select(presentSelector(selectedTransactionsSelector(this.tabId)))
     .map(t => t.length === 0);
+
+    this.ngRedux.select(presentSelector(filtersSelector(this.tabId))).do(_ => {
+      this.paginator.pageIndex = 0;
+    }).subscribe();
   }
 
   onTransactionClicked(row: TransactionRow) {
