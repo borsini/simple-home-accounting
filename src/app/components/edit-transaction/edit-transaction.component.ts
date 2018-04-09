@@ -68,7 +68,14 @@ export class EditTransactionComponent implements OnInit {
         date: moment.utc().unix(),
         title: '',
       },
-      postings: [],
+      postings: [
+        {
+          account: '',
+        },
+        {
+          account: '',
+        },
+      ],
     }, this.tabId));
     this.init();
   }
