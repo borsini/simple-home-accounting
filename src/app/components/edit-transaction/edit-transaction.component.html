@@ -7,8 +7,8 @@
     <div id="header">
       <mat-form-field floatPlaceholder="never" id="title" class="expand" >
         <input matInput placeholder="Titre" formControlName="title">
-        <mat-error *ngIf="group.get('title').errors">
-          {{ group.get('title').errors }}
+        <mat-error *ngIf="titleErrors | async">
+          {{ titleErrors | async }}
         </mat-error>
       </mat-form-field>
 
@@ -16,8 +16,8 @@
           <input matInput [matDatepicker]="picker" placeholder="Date" formControlName="date">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <mat-error *ngIf="group.get('date').errors">
-            {{ group.get('date').errors }}
+          <mat-error *ngIf="dateErrors | async">
+            {{ dateErrors | async }}
           </mat-error>
       </mat-form-field>
 
@@ -31,22 +31,22 @@
       <div *ngFor="let p of postings.controls; let i=index" [formGroupName]="i" class="posting" >
         <mat-input-container class="expand" floatPlaceholder="never">
           <input matInput placeholder="Compte" formControlName="account" type="text" [matAutocomplete]="auto">
-          <mat-error *ngIf="p.get('account').errors">
-            {{ p.get('account').errors }}
+          <mat-error *ngIf="postingAccountErrors(i) | async">
+            {{ postingAccountErrors(i) | async }}
           </mat-error>
         </mat-input-container>
 
         <mat-input-container id="amount" floatPlaceholder="never">
             <input matInput placeholder="Montant" formControlName="amount">
-            <mat-error *ngIf="p.get('amount').errors">
-              {{ p.get('amount').errors }}
+            <mat-error *ngIf="postingAmountErrors(i) | async">
+              {{ postingAmountErrors(i) | async }}
             </mat-error>
         </mat-input-container>
 
         <mat-input-container floatPlaceholder="never">
           <input matInput placeholder="Commentaire" formControlName="comment">
-          <mat-error *ngIf="p.get('comment').errors">
-            {{ p.get('comment').errors }}
+          <mat-error *ngIf="postingCommentErrors(i) | async">
+            {{ postingCommentErrors(i) | async }}
           </mat-error>
         </mat-input-container>
 
@@ -54,6 +54,10 @@
           <mat-icon class="material-icons">delete</mat-icon>
         </button>
       </div>
+
+      <mat-error *ngIf="postingsErrors | async">
+        {{ postingsErrors | async }}
+      </mat-error>
     </div>
 
     <mat-autocomplete #auto="matAutocomplete">
@@ -65,18 +69,10 @@
   </mat-card-content>
 
   <mat-card-actions>
-      <button mat-raised-button type="submit" [disabled]="group.pristine || group.invalid" color="primary">Sauvegarder</button>
-      <button mat-raised-button type="button" (click)="revert()" [disabled]="group.pristine">Réinitialiser</button>
-
+    <button mat-raised-button type="submit" [disabled]="group.pristine || group.invalid" color="primary">Sauvegarder</button>
+    <button mat-raised-button type="button" (click)="revert()" [disabled]="group.pristine">Réinitialiser</button>
     <button mat-raised-button type="menu" (click)="addPosting();$event.preventDefault();">Ajouter une ligne</button>
     <button mat-raised-button type="menu" (click)="deleteTransaction();$event.preventDefault();" *ngIf="transactionToEdit" color="warn">Supprimer la transaction</button>
-
-    <div class="expand"></div>
-
-    <button mat-raised-button *ngIf="group.status === 'INVALID'" type="button" color="warn"><mat-icon class="material-icons">warning</mat-icon>{{ (formErrors | async) }}</button>
-
-
-
   </mat-card-actions>
 
 </form>
