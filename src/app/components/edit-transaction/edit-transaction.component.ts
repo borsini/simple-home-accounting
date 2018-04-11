@@ -5,7 +5,7 @@ import {
   Validators,
   ValidatorFn,
 } from '@angular/forms';
-import { MatDatepicker } from '@angular/material';
+import { MatDatepicker, ErrorStateMatcher } from '@angular/material';
 
 import Decimal from 'decimal.js';
 import { Observable } from 'rxjs/Observable';
@@ -13,6 +13,7 @@ import { Subject } from 'rxjs/Subject';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../../shared/models/transaction';
 
 import * as moment from 'moment';
+import { filter } from 'rxjs/operators';
 import 'rxjs/add/observable/concat';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
@@ -31,8 +32,11 @@ import {
 import { Account } from '../../shared/models/account';
 import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
 
-
-interface AllErrors { [control: string]: ValidationErrors; }
+const REQUIRED = 'required';
+const NOT_ENOUGH_ACCOUNTS = 'notEnoughAccounts';
+const ONLY_ONE_NULL = 'onlyOneNullAmount';
+const INCORRECT_BALANCE = 'incorrectBalance';
+const PICKER_PARSING = 'matDatepickerParse';
 
 @Component({
   selector: 'app-edit-transaction',
@@ -48,8 +52,12 @@ export class EditTransactionComponent implements OnInit {
   isPanelOpen: Observable<boolean>;
   group: FormGroup;
   filteredAccounts: Subject<Account[]> = new Subject();
-  formErrors: Observable<string>;
-  required: {'required': true};
+  titleErrors: Observable<string>;
+  dateErrors: Observable<string>;
+  postingsErrors: Observable<string>;
+  postingAccountErrors: (p: number) => Observable<string>;
+  postingAmountErrors: (p: number) => Observable<string>;
+  postingCommentErrors: (p: number) => Observable<string>;
 
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>, private _formBuilder: FormBuilder) { }
 
@@ -117,12 +125,16 @@ export class EditTransactionComponent implements OnInit {
         };
       }) : [];
 
-      this.formErrors = Observable.concat( Observable.of(1), this.group.valueChanges)
+      const allErrors = Observable.concat( Observable.of(1), this.group.valueChanges)
       .map( t => this.getAllErrors(this.group))
-      .map(this.errorsToString)
-      .map(e => e[0]);
+      .map(this.errorsToString);
 
-      this.group.statusChanges.do(s => console.log('status' + s)).subscribe();
+      this.titleErrors = this.errorsForControl('/title')(allErrors);
+      this.dateErrors = this.errorsForControl('/date')(allErrors);
+      this.postingsErrors = this.errorsForControl('/postings')(allErrors);
+      this.postingAccountErrors = (p: number) => this.errorsForControl(`/postings[${p}]/account`)(allErrors);
+      this.postingAmountErrors = (p: number) => this.errorsForControl(`/postings[${p}]/amount`)(allErrors);
+      this.postingCommentErrors = (p: number) => this.errorsForControl(`/postings[${p}]/comment`)(allErrors);
 
       // Set all the values
       this.group.setValue({
@@ -131,16 +143,36 @@ export class EditTransactionComponent implements OnInit {
         title: title,
       });
 
-
       markFormGroupTouched(this.group);
   }
 
-  errorsToString = (errors: AllErrors): string[] => {
-    console.log(errors);
-    return Object.keys(errors)
-    .map(k => errors[k])
-    .map(v => Object.keys(v)[0])
-    .map(s => s);
+  errorsForControl = (control: string) => (o: Observable<{ [control: string]: string[] }>): Observable<string> => {
+    return o.map(errors => errors[control] || [])
+    .map(e => e.join(', '));
+  }
+
+  errorCodeToString = (errorCode: string): string => {
+    switch (errorCode) {
+      case REQUIRED:
+        return 'Champ obligatoire';
+      case NOT_ENOUGH_ACCOUNTS:
+        return 'Un minimum de 2 comptes est requis';
+      case INCORRECT_BALANCE:
+         return 'La balance doit être égale à 0';
+      case ONLY_ONE_NULL:
+         return 'Une seule ligne peut avoir un montant nul';
+      case PICKER_PARSING:
+         return 'Format invalide';
+      default:
+        return `Erreur inconnue (${errorCode})`;
+    }
+  }
+
+  validationErrorsToStrings = (errors: ValidationErrors): string[] => (Object.keys(errors).map(this.errorCodeToString));
+
+  errorsToString = (errors: { [control: string]: ValidationErrors; }): { [control: string]: string[] } => {
+    return Object.keys(errors).reduce(
+      (prev, controlName) => ({...prev, [controlName]: this.validationErrorsToStrings(errors[controlName])}), {});
   }
 
   get postings(): FormArray {
@@ -204,7 +236,7 @@ export class EditTransactionComponent implements OnInit {
     };
   }
 
-  getAllErrors(control: AbstractControl, id: string = ''): AllErrors {
+  getAllErrors(control: AbstractControl, id: string = ''): { [control: string]: ValidationErrors; } {
     const e = control.errors;
     let errors: { [control: string]: ValidationErrors } = {};
 
@@ -280,7 +312,7 @@ export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
 
     let error: ValidationErrors | null = null;
     if (accounts.size < 2) {
-      error = { 'notEnoughAccounts': 'minimum is 2'};
+      error = { [NOT_ENOUGH_ACCOUNTS]: 'minimum is 2'};
     } else {
       const amountControls = array.controls
         .map(c => c.get('amount'))
@@ -291,11 +323,11 @@ export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
       const howManyNulls = amountControls.filter(a => a == null || a.trim() === '').length;
 
       if (howManyNulls > 1) {
-        error = { 'onlyOneNullAmount': null };
+        error = { [ONLY_ONE_NULL]: null };
       } else if (howManyNulls === 0) {
           const sum = amountControls.filter(a => a != null && a.trim() !== '').map(a => Number.parseFloat(a)).reduce((p, c) => p + c, 0);
           if (sum !== 0) {
-            error = { 'incorrectBalance': sum };
+            error = { [INCORRECT_BALANCE]: sum };
           }
       }
     }
