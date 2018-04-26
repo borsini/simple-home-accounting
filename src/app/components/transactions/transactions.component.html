@@ -1,12 +1,12 @@
-<app-filters tabId="{{tabId}}"></app-filters>
+<mat-card id="transactions_container" [class.hidden]="noTransactionsToDisplay | async">
 
   <mat-paginator #paginator [class.hidden]="noTransactionsToDisplay | async"
-  [pageIndex]="0"
-  [pageSize]="25"
-  [pageSizeOptions]="[10, 25, 50]">
-</mat-paginator>
+    [pageIndex]="0"
+    [pageSize]="25"
+    [pageSizeOptions]="[10, 25, 50]">
+  </mat-paginator>
 
-<mat-table #table [dataSource]="dataSource" matSort [class.hidden]="noTransactionsToDisplay | async">
+  <mat-table #table [dataSource]="dataSource" matSort [class.hidden]="noTransactionsToDisplay | async">
 
   <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
@@ -55,3 +55,4 @@
 
 </mat-table>
 
+</mat-card>

@@ -26,7 +26,6 @@ import 'rxjs/add/observable/merge';
 import {
   allTransactionsSelector,
   editedTransactionSelector,
-  invalidSelectedTransactionsSelector,
   invalidTransactionsSelector,
   selectedAccountsSelector,
   selectedTransactionsSelector,

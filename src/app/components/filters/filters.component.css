@@ -7,6 +7,7 @@ mat-input-container {
 }
 
 #filters_container {
+  margin: 12px;
   padding: 6px;
   display: flex;
   align-items: center;

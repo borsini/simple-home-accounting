@@ -1,4 +1,4 @@
-<div id="filters_container" [class.hidden]="shouldHideFilters | async">
+<mat-card id="filters_container" [class.hidden]="shouldHideFilters | async">
   <mat-input-container floatPlaceholder="never">
       <input matInput #filter placeholder="Titre, date ou montant...">
   </mat-input-container>
@@ -19,4 +19,4 @@
       </mat-form-field>
 
   </div>
-</div>
+</mat-card>
