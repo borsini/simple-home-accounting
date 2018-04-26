@@ -64,11 +64,6 @@ const tabSelector = (s: AppState, tab: string): Tab => {
     return s.computed.invalidTransactions;
   };
 
-  export const invalidSelectedTransactionsSelector = (tab: string) => (s: AppState) => {
-    const selectedTransactions = selectedTransactionsSelector(tab)(s).map(tr => tr.uuid);
-    return [selectedTransactions, s.computed.invalidTransactions].reduce(intersectionReducer);
-  };
-
   export const filtersSelector = (tab: string) => (s: AppState) => {
     return tabSelector(s, tab).filters;
   };
