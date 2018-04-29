@@ -323,8 +323,10 @@ export const postingsRepartitionAsyncValidator = (array: FormArray): Observable<
     if (howManyNulls > 1) {
       error = { [ONLY_ONE_NULL]: null };
     } else if (howManyNulls === 0) {
-        const sum = amountControls.filter(a => a != null && a.trim() !== '').map(a => Number.parseFloat(a)).reduce((p, c) => p + c, 0);
-        if (sum !== 0) {
+        const sum = amountControls.filter(a => a != null && a.trim() !== '')
+        .map(a => new Decimal(a))
+        .reduce((p, c) => p.plus(c), new Decimal(0));
+        if (!sum.isZero()) {
           error = { [INCORRECT_BALANCE]: sum };
         }
     }

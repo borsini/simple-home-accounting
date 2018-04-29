@@ -55,7 +55,7 @@ describe(postingsRepartitionAsyncValidator.name, () => {
     });
   });
 
-  it('returns error when balance is incorrect', (done) => {
+  it('returns error when integer balance is incorrect', (done) => {
     const b = new FormBuilder();
     const p1 = createPostingGroupWithValue(b, 'Expenses', '3.14', '', '');
     const p2 = createPostingGroupWithValue(b, 'Income', '-3.15', '', '');
@@ -91,6 +91,23 @@ describe(postingsRepartitionAsyncValidator.name, () => {
     const p2 = createPostingGroupWithValue(b, 'Income', '-3.14', '', '');
 
     const postings = new FormArray([p1, p2]);
+
+    const res = postingsRepartitionAsyncValidator(postings).toPromise();
+
+    res.then( errors => {
+      expect(errors).toBeNull();
+      done();
+    });
+  });
+
+  // See http://0.30000000000000004.com/ and https://en.wikipedia.org/wiki/Floating_point
+  it('returns no error even with float imprecision', (done) => {
+    const b = new FormBuilder();
+    const p1 = createPostingGroupWithValue(b, 'Expenses', '0.1', '', '');
+    const p2 = createPostingGroupWithValue(b, 'Income', '0.2', '', '');
+    const p3 = createPostingGroupWithValue(b, 'Income', '-0.3', '', '');
+
+    const postings = new FormArray([p1, p2, p3]);
 
     const res = postingsRepartitionAsyncValidator(postings).toPromise();
 

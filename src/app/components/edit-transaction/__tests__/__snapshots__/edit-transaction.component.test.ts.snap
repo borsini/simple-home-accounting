@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`returns error when balance is incorrect 1`] = `
+exports[`returns error when integer balance is incorrect 1`] = `
 Object {
-  "incorrectBalance": -0.009999999999999787,
+  "incorrectBalance": "-0.01",
 }
 `;
 
