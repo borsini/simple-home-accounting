@@ -102,6 +102,7 @@ export class EditTransactionComponent implements OnInit {
       currency: [''],
     });
   }
+
   private init() {
       // Prepare form structure
       this.group = this._formBuilder.group({
@@ -112,7 +113,7 @@ export class EditTransactionComponent implements OnInit {
 
       const nbPostings = this.transactionToEdit ? Math.max(this.transactionToEdit.postings.length, 2) : 0;
       const postingsControl = this.transactionToEdit ? Array(nbPostings).fill(0).map(p => this.createPostingGroup()) : [];
-      this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator()));
+      this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator));
 
       // Initialize values
       const title = this.transactionToEdit ? this.transactionToEdit.header.title : '';
@@ -299,36 +300,34 @@ export class EditTransactionComponent implements OnInit {
     });
   }
 
-export function postingsRepartitionAsyncValidator(): AsyncValidatorFn {
-  return (array: FormArray): Observable<ValidationErrors | null> => {
-    const accountControls = array.controls
-      .map(c => c.get('account'))
+export const postingsRepartitionAsyncValidator = (array: FormArray): Observable<ValidationErrors | null> => {
+  const accountControls = array.controls
+    .map(c => c.get('account'))
+    .filter(ac => ac != null)
+    // tslint:disable-next-line no-non-null-assertion
+    .map(ac => ac!.value as string);
+  const accounts = new Set(accountControls);
+
+  let error: ValidationErrors | null = null;
+  if (accounts.size < 2) {
+    error = { [NOT_ENOUGH_ACCOUNTS]: 'minimum is 2'};
+  } else {
+    const amountControls = array.controls
+      .map(c => c.get('amount'))
       .filter(ac => ac != null)
       // tslint:disable-next-line no-non-null-assertion
       .map(ac => ac!.value as string);
-    const accounts = new Set(accountControls);
 
-    let error: ValidationErrors | null = null;
-    if (accounts.size < 2) {
-      error = { [NOT_ENOUGH_ACCOUNTS]: 'minimum is 2'};
-    } else {
-      const amountControls = array.controls
-        .map(c => c.get('amount'))
-        .filter(ac => ac != null)
-        // tslint:disable-next-line no-non-null-assertion
-        .map(ac => ac!.value as string);
+    const howManyNulls = amountControls.filter(a => a == null || a.trim() === '').length;
 
-      const howManyNulls = amountControls.filter(a => a == null || a.trim() === '').length;
-
-      if (howManyNulls > 1) {
-        error = { [ONLY_ONE_NULL]: null };
-      } else if (howManyNulls === 0) {
-          const sum = amountControls.filter(a => a != null && a.trim() !== '').map(a => Number.parseFloat(a)).reduce((p, c) => p + c, 0);
-          if (sum !== 0) {
-            error = { [INCORRECT_BALANCE]: sum };
-          }
-      }
+    if (howManyNulls > 1) {
+      error = { [ONLY_ONE_NULL]: null };
+    } else if (howManyNulls === 0) {
+        const sum = amountControls.filter(a => a != null && a.trim() !== '').map(a => Number.parseFloat(a)).reduce((p, c) => p + c, 0);
+        if (sum !== 0) {
+          error = { [INCORRECT_BALANCE]: sum };
+        }
     }
-    return Observable.of(error);
-  };
-}
+  }
+  return Observable.of(error);
+};

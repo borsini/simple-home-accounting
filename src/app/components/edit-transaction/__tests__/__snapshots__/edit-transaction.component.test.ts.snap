@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`returns error when balance is incorrect 1`] = `
+Object {
+  "incorrectBalance": -0.009999999999999787,
+}
+`;
+
+exports[`returns error when more than one empty amount 1`] = `
+Object {
+  "onlyOneNullAmount": null,
+}
+`;
+
+exports[`returns error when no postings 1`] = `
+Object {
+  "notEnoughAccounts": "minimum is 2",
+}
+`;
+
+exports[`returns error when one empty posting 1`] = `
+Object {
+  "notEnoughAccounts": "minimum is 2",
+}
+`;
