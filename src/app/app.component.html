@@ -44,6 +44,15 @@
     </mat-toolbar>
 
     <mat-tab-group>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Tous les comptes
+        </ng-template>
+        <div class="content">
+          <app-account-tree [accountName]="this.rootAccount | async"></app-account-tree>
+        </div>
+      </mat-tab>
+
       <mat-tab *ngFor="let conf of tabsConf | async; trackBy:trackByFn" [ngClass]="tutu">
         <ng-template mat-tab-label>
             {{conf.title}}

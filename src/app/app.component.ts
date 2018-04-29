@@ -21,6 +21,7 @@ import {
   invalidTransactionsSelector,
   allAccountsSelector,
   tabsSelector,
+  rootAccountSelector,
 } from './shared/selectors/selectors';
 
 const { version } = require('../../package.json');
@@ -75,13 +76,13 @@ export class AppComponent implements OnInit {
   isDrawerOpen: Observable<boolean>;
   appVersion: string;
   tabsConf: Observable<TabConfiguration[]>;
-
+  rootAccount: Observable<string | undefined>;
   allTransactionsCount: Observable<number>;
 
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
-  computeTitle = (tab: Tab, allAccounts: AccountMap, allTransactions: TransactionMap) => {
-    if (tab.selectedAccounts.length === 1 && tab.selectedAccounts[0] === 'ROOT') {
+  computeTabTitle = (tab: Tab, allAccounts: AccountMap, allTransactions: TransactionMap, rootAccount: string) => {
+    if (tab.selectedAccounts.length === 1 && tab.selectedAccounts[0] === rootAccount) {
       return `Toutes les transactions (${Object.keys(allTransactions).length})`;
     }
 
@@ -99,6 +100,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.rootAccount = this.ngRedux.select(presentSelector(rootAccountSelector));
+
     this.showDownloadButton = this.ngRedux.select(presentSelector(allTransactionsSelector)).zip(
       this.ngRedux.select(presentSelector(invalidTransactionsSelector)))
       .map(zip => Object.keys(zip[0]).length > 0 && zip[1].length === 0);
@@ -118,13 +121,14 @@ export class AppComponent implements OnInit {
     const tabs = this.ngRedux.select(presentSelector(tabsSelector));
     const allAccounts = this.ngRedux.select(presentSelector(allAccountsSelector));
     const allTransactions = this.ngRedux.select(presentSelector(allTransactionsSelector));
-
-    this.tabsConf = combineLatest(tabs, allAccounts, allTransactions)
-    .map(([tbs, acc, trs]) => {
+    const rootAccount = this.rootAccount.pipe(filter(r => r !== undefined)) as Observable<string>;
+    
+    this.tabsConf = combineLatest(tabs, allAccounts, allTransactions, rootAccount)
+    .map(([tbs, acc, trs, root]) => {
       return Object.values(tbs).map<TabConfiguration>(tb => ({
         isClosable: tb.isClosable,
         tabId: tb.id,
-        title: this.computeTitle(tb, acc, trs),
+        title: this.computeTabTitle(tb, acc, trs, root),
       }));
     });
   }

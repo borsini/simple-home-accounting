@@ -21,7 +21,10 @@ export class AccountTreeComponent implements OnInit {
   accountName: string;
 
   @Input()
-  treeLevel: number;
+  showCheckboxes: boolean;
+
+  @Input()
+  treeLevel = 0;
 
   isCollapsed = false;
   isChecked: boolean;
@@ -34,13 +37,16 @@ export class AccountTreeComponent implements OnInit {
     this.ngRedux.select(presentSelector(selectedAccountsSelector('ROOT')))
     .map(accounts => accounts.includes(this.accountName))
     .do(c => { this.isChecked = c; }).subscribe();
+
     this.ngRedux.select(presentSelector(allAccountsSelector))
     .map(accounts => accounts[this.accountName])
     .do(a => this.account = a)
     .subscribe();
   }
 
-  checkAccount(chk: boolean) { }
+  checkAccount(chk: boolean) {
+    this.ngRedux.dispatch(AppStateActions.openTab([this.accountName]));
+  }
 
   toggle() {
     this.isCollapsed = !this.isCollapsed;
