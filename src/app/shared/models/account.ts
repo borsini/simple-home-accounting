@@ -3,7 +3,7 @@ import Decimal from 'decimal.js';
 export class Account {
     name: string;
     children: string[];
-    parents: string[];
+    parent?: string;
     balance: Decimal;
     childrenBalance: Decimal;
     nbTransactions: number;

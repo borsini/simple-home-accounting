@@ -1,0 +1,14 @@
+<mat-card id="account_filter_container">
+  <mat-input-container floatPlaceholder="never">
+      <input matInput #filter placeholder="Nom d'un compte...">
+  </mat-input-container>
+</mat-card>
+
+<mat-card id="accounts">
+  <app-tree
+    [datasource]="treeDatasource"
+    [delegate]="treeDelegate"
+    [itemId]="'ROOT'">
+  </app-tree>
+
+</mat-card>

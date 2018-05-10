@@ -1,0 +1,13 @@
+mat-card {
+    margin: 12px 12px 0px 12px;
+    padding: 12px;
+    display: flex;
+}
+
+mat-input-container {
+    flex: 1;
+}
+
+app-tree {
+    flex: 1;
+}

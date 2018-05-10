@@ -15,7 +15,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Expenses": Account {
         "balance": "3.05",
@@ -28,7 +28,7 @@ Object {
         "name": "Expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -111,7 +111,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Cash": Account {
         "balance": "-3.14",
@@ -124,7 +124,7 @@ Object {
         "name": "Cash",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Daily expenses": Account {
         "balance": "3.14",
@@ -137,7 +137,7 @@ Object {
         "name": "Daily expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Job": Account {
         "balance": "-1000",
@@ -150,7 +150,7 @@ Object {
         "name": "Job",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -253,7 +253,7 @@ Object {
         "name": "Assets",
         "nbChildrenTransactions": 2,
         "nbTransactions": 0,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Assets:Bank": Account {
         "balance": "100",
@@ -268,9 +268,7 @@ Object {
         "name": "Assets:Bank",
         "nbChildrenTransactions": 1,
         "nbTransactions": 1,
-        "parents": Array [
-          "Assets",
-        ],
+        "parent": "Assets",
       },
       "Assets:Bank:Savings": Account {
         "balance": "42",
@@ -283,9 +281,7 @@ Object {
         "name": "Assets:Bank:Savings",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [
-          "Assets:Bank",
-        ],
+        "parent": "Assets:Bank",
       },
       "Income": Account {
         "balance": "0",
@@ -300,7 +296,7 @@ Object {
         "name": "Income",
         "nbChildrenTransactions": 1,
         "nbTransactions": 0,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Income:Job": Account {
         "balance": "-142",
@@ -313,9 +309,7 @@ Object {
         "name": "Income:Job",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [
-          "Income",
-        ],
+        "parent": "Income",
       },
       "ROOT": Account {
         "balance": "0",
@@ -401,7 +395,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 2,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Expenses": Account {
         "balance": "3.05",
@@ -414,7 +408,7 @@ Object {
         "name": "Expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Job": Account {
         "balance": "-500",
@@ -427,7 +421,7 @@ Object {
         "name": "Job",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -858,7 +852,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 2,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Expenses": Account {
         "balance": "3.05",
@@ -871,7 +865,7 @@ Object {
         "name": "Expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Job": Account {
         "balance": "-500",
@@ -884,7 +878,7 @@ Object {
         "name": "Job",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -1032,7 +1026,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Expenses": Account {
         "balance": "3.05",
@@ -1045,7 +1039,7 @@ Object {
         "name": "Expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -1204,7 +1198,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Job": Account {
         "balance": "-500",
@@ -1217,7 +1211,7 @@ Object {
         "name": "Job",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -1482,7 +1476,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Expenses": Account {
         "balance": "3.05",
@@ -1495,7 +1489,7 @@ Object {
         "name": "Expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -1689,7 +1683,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Expenses": Account {
         "balance": "3.05",
@@ -1702,7 +1696,7 @@ Object {
         "name": "Expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",
@@ -1831,7 +1825,7 @@ Object {
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "Expenses": Account {
         "balance": "3.05",
@@ -1844,7 +1838,7 @@ Object {
         "name": "Expenses",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
-        "parents": Array [],
+        "parent": "ROOT",
       },
       "ROOT": Account {
         "balance": "0",

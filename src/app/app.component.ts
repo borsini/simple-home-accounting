@@ -81,9 +81,6 @@ export class AppComponent implements OnInit {
   rootAccount: Observable<string | undefined>;
   allTransactionsCount: Observable<number>;
 
-  treeDatasource: TreeDatasource;
-  treeDelegate: TreeDelegate;
-
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
   computeTabTitle = (tab: Tab, allAccounts: AccountMap, allTransactions: TransactionMap, rootAccount: string) => {
@@ -100,31 +97,8 @@ export class AppComponent implements OnInit {
     private _gnucash: GnucashService,
     public dialog: MatDialog,
     private ngRedux: NgRedux<UndoRedoState<AppState>>) {
-    
     this._flatAccounts = new Map();
     this.appVersion = version;
-    this.treeDatasource = {
-      getItemForId: (id: string): Observable<TreeItem | undefined> =>
-        this.ngRedux.select(presentSelector(allAccountsSelector))
-        .map(accounts => accounts[id])
-        .map(a => {
-          return a ? {
-            id,
-            title: a.name,
-            subtitle: a.balance.toString(),
-            isChecked: false,
-            childrenIds: a.children
-          } : undefined
-        })
-    };
-    this.treeDelegate = {
-      onItemClicked: (item: TreeItem) => {
-        this.ngRedux.dispatch(AppStateActions.openTab([item.id]));
-      },
-      onItemChecked: (item: TreeItem, isChecked: boolean) => {
-        console.log("onItemChecked", item, isChecked);
-      },
-    };
   }
 
   ngOnInit() {

@@ -1,5 +1,6 @@
-import { AppState, Tab, Tabs } from '../models/app-state';
+import { AppState, Tab, Tabs, AccountMap } from '../models/app-state';
 import { TransactionWithUUID } from '../models/transaction';
+import { Account } from '../models/account';
 import { ROOT_ACCOUNT } from '../reducers/app-state-reducer';
 import { intersectionReducer } from '../utils/utils';
 
@@ -20,6 +21,33 @@ const tabSelector = (s: AppState, tab: string): Tab => {
   export const allAccountsSelector = (s: AppState) => {
     return s.computed.accounts;
   };
+
+  const getAncestors = (allAccounts: AccountMap, accountId: string): Account[] => {
+    const account = allAccounts[accountId];
+
+    if(account && account.parent) {
+      return [account, ...getAncestors(allAccounts, account.parent)];
+    }
+
+    return [account];
+  }
+
+
+  export const accountsFiltered = (filter: string ) => (s: AppState) => {
+    const allAccounts = allAccountsSelector(s);
+
+    const matchingAccounts = Object.keys(allAccounts).filter(a => a === ROOT_ACCOUNT || a.includes(filter.trim()));
+
+    const matchingAccountsAndTheirAncestors = matchingAccounts.reduce( (prev, curr) => ([
+      ...prev,
+      ...getAncestors(allAccounts, curr),
+    ]), []);
+
+    return matchingAccountsAndTheirAncestors.reduce((prev, curr) => ({
+      ...prev, 
+      [curr.name]: curr,
+    }), { } as AccountMap);
+  }
 
   export const isLeftMenuOpenSelector = (s: AppState) => {
     return s.ui.isLeftMenuOpen;

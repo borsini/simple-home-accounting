@@ -171,12 +171,13 @@ const addMissingAmount = (transaction: TransactionWithUUID): TransactionWithUUID
 
 const generateAccounts = (transactions: Transaction[]): AccountMap => {
   const accounts = createAccountsFromTransactions(transactions);
-  const topAccounts = accounts.filter(a => a.parents.length === 0);
+  const topAccounts = accounts.filter(a => a.parent === undefined);
   const root = new Account(ROOT_ACCOUNT);
   root.children = topAccounts.map(a => a.name);
   root.childrenBalance = topAccounts
     .map(a => a.childrenBalance.plus(a.balance) )
     .reduce( (b1, b2) => b1.plus(b2), new Decimal(0));
+  topAccounts.forEach(ta => ta.parent = root.name);
 
   return [
     root,
@@ -211,15 +212,15 @@ const createAccountsFromTransactions = (transactions: Transaction[]): Account[] 
 };
 
 const getOrCreateAccount = (name: string, parent: Account | undefined, accountsMap: Map<string, Account>): Account => {
-  let stat = accountsMap.get(name);
+  let account = accountsMap.get(name);
 
-  if (!stat) {
-      stat = new Account(name);
-      stat.parents = parent ? [parent.name] : [];
-      accountsMap.set(name, stat);
+  if (!account) {
+    account = new Account(name);
+    account.parent = parent ? parent.name : undefined;
+      accountsMap.set(name, account);
   }
 
-  return stat;
+  return account;
 };
 
 const addAmountToAccount = (a: Account, amount: string, isFinalAccount: boolean) => {

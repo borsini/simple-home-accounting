@@ -16,7 +16,6 @@ import { Observable } from 'rxjs/Observable';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../../shared/models/transaction';
 import { Posting } from '../../shared/models/posting';
 import { Subject } from 'rxjs/Subject';
-import { combineLatest } from 'rxjs/observable/combineLatest';
 import 'rxjs/add/operator/skipUntil';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/take';

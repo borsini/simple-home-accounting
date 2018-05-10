@@ -36,6 +36,7 @@ import {
 import { undoRedoReducer, UndoRedoState, presentSelector } from './shared/reducers/undo-redo-reducer';
 import { FiltersComponent } from './components/filters/filters.component';
 import { AccountComponent } from './components/account/account.component';
+import { AccountsComponent } from './components/accounts/accounts.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -49,6 +50,7 @@ import { AccountComponent } from './components/account/account.component';
     EditTransactionComponent,
     FiltersComponent,
     AccountComponent,
+    AccountsComponent,
   ],
   entryComponents: [
     DialogResultExampleDialogComponent,
