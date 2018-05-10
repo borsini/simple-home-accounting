@@ -19,7 +19,7 @@ import {
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AccountTreeComponent } from './components/account-tree/account-tree.component';
+import { TreeComponent } from './components/tree/tree.component';
 import { AppComponent, DialogResultExampleDialogComponent, DialogTwoOptionsDialogComponent } from './app.component';
 
 import { EditTransactionComponent } from './components/edit-transaction/edit-transaction.component';
@@ -41,7 +41,7 @@ import { AccountComponent } from './components/account/account.component';
   bootstrap: [AppComponent],
   declarations: [
     AppComponent,
-    AccountTreeComponent,
+    TreeComponent,
     MenuDrawerComponent,
     TransactionsComponent,
     DialogResultExampleDialogComponent,

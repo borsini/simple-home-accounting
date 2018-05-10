@@ -1,0 +1,31 @@
+<ul class="account" *ngIf="item | async as i">
+
+    <div
+      [ngClass]="{checked:(i.isChecked)}"
+      [ngStyle]="{ 'padding-left': (treeLevel * 15) + 'px' }"
+      class="account_header">
+      <div class="chevron_container" >
+        <mat-icon *ngIf="i.childrenIds.length > 0" class="material-icons" (click)="toggle()">{{ isCollapsed ? 'chevron_right' : 'expand_more' }}  </mat-icon>
+      </div>
+
+      <mat-checkbox *ngIf="showCheckbox" [checked]="i.isChecked" (change)="handleCheck(i, $event.checked)"></mat-checkbox>
+
+      <div class="infos" (click)="handleOnClick(i)">
+        <span class="account_name">
+            {{ i.title }}</span>
+
+        <span class="balance">{{ i.subtitle }}
+        </span>
+      </div>
+    </div>
+
+    <li *ngFor="let childId of i.childrenIds">
+        <app-tree
+          *ngIf="!isCollapsed"
+          [datasource]="datasource"
+          [delegate]="delegate"
+          [showCheckbox]="showCheckbox"
+          [treeLevel]="treeLevel + 1"        
+          [itemId]='childId'></app-tree>
+    </li>
+</ul>

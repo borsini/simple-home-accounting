@@ -49,7 +49,11 @@
           Tous les comptes
         </ng-template>
         <div class="content">
-          <app-account-tree [accountName]="this.rootAccount | async"></app-account-tree>
+          <app-tree
+            [datasource]="treeDatasource"
+            [delegate]="treeDelegate"
+            [itemId]="'ROOT'">
+          </app-tree>
         </div>
       </mat-tab>
 
