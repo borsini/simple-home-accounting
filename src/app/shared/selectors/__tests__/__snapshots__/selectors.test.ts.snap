@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`returns transaction with uuid 1`] = `
+Object {
+  "header": Object {
+    "date": 1360281600,
+    "title": "Bread",
+  },
+  "postings": Array [
+    Object {
+      "account": "A:B:C",
+      "amount": "2",
+    },
+    Object {
+      "account": "A:B:D",
+      "amount": "-2",
+    },
+  ],
+  "uuid": "uuid 0",
+}
+`;
