@@ -4,4 +4,5 @@ export interface Posting {
   amount?: string;
   currency?: string;
   comment?: string;
+  readonly tags: string[],
 }

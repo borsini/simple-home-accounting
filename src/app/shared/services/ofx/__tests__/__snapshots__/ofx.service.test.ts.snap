@@ -8,6 +8,7 @@ Array [
     "header": Object {
       "date": 1503532800,
       "tag": "",
+      "tags": Array [],
       "title": "FNAC      23/08",
     },
     "postings": Array [
@@ -17,6 +18,7 @@ Array [
         "comment": "PAIEMENT PAR CARTE",
         "currency": "EUR",
         "tag": "",
+        "tags": Array [],
       },
     ],
   },

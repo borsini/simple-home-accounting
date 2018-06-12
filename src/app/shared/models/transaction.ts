@@ -9,6 +9,7 @@ interface Header {
   readonly date: number;
   readonly title: string;
   readonly tag?: string;
+  readonly tags: string[],
 }
 
 export interface TransactionWithUUID extends Transaction {

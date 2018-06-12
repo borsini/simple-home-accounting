@@ -21,7 +21,7 @@ export class LedgerService {
     const grammar =
     `
     Start
-    = NewLineOrCommentBlock?
+    = NewLineOrCommentBlock? 
       trs:(
         tr:Transaction Newline?
           NewLineOrCommentBlock? {return tr}
@@ -29,16 +29,16 @@ export class LedgerService {
       { return trs }
 
   NewLineOrCommentBlock = (Comment / Newline)*
-
+      
   Transaction
     = fl:FirstLine
       sls:(sl:SecondLine { return sl} )+
       { return { header:fl, postings:sls }}
 
   FirstLine
-    = d:Date _* tg:(tag:ClearingTag _ { return tag })? t:(t:Title { return t })? Newline
+    = d:Date _* tg:(tag:ClearingTag _ { return tag })? swt:StringWithTags? Newline
     {
-      return { date:d, title:t, tag:tg }
+      return { date:d, title:swt.str, tag:tg, tags:swt.tags }
     }
 
   SecondLine
@@ -53,38 +53,43 @@ export class LedgerService {
     Newline?
     {
       return {
-
-        tag:ct, account:a, sign:c ? c.sign : null, amount:c ? c.amount : null, currency:c ? c.currency : null, comment:cm
+        tag:ct,
+        account:a,
+        sign:c ? c.sign : null,
+        amount:c ? c.amount : null,
+        currency:c ? c.currency : null,
+        comment:cm ? cm.str : null,
+        tags:cm ? cm.tags : []
       }
     }
 
   Comment
-    = CommentStartChars _* cm:(!'\\n' c:. { return c })* { return cm.join("") }
-
+    = CommentStartChars _* str:StringWithTags { return str; }
+    
   CommentStartChars = [';']
 
   CurrencyCombinations = a1:Line / a2:Line2 / a3:Line3
 
-  Line =
+  Line = 
       sign:'-'? _* num:Number _* n:CurrencyName?
       {
         return { sign:sign, currency:n, amount:num }
       }
-
-  Line2 =
+      
+  Line2 = 
       sign:'-'? _* n:CurrencyName? _* num:Number
       {
         return { sign:sign, currency:n, amount:num }
       }
-
+      
   Line3 =
     n:CurrencyName? _* sign:'-'? _* num:Number
       {
         return { sign:sign, currency:n, amount:num }
       }
-
+      
   Number = $([0-9]+ ('.' decimals:[0-9]*)?)
-
+    
   CurrencyName
     = '"' chars:CurrencyNameWithEscaping '"' { return chars.join("") }
     / chars:CurrencyNameWithoutEscaping { return chars.join("") }
@@ -92,21 +97,34 @@ export class LedgerService {
   CurrencyNameWithoutEscaping
     = (!(CommentStartChars / Newline / "-" / "+" / '"' / [0-9] / _) c:. { return c })+
 
-  CurrencyNameWithEscaping
+  CurrencyNameWithEscaping 
     = (!(CommentStartChars / Newline / "-" / "+" / '"') c:. { return c })+
 
   Date
-    = d:((d:[0-9]+ {return d.join("")})'/'(m:[0-9]+ { return m.join("") })'/'(y:[0-9]+ { return y.join("")} ))
+    = d:((d:[0-9]+ {return d.join("")})'/'(m:[0-9]+ { return m.join("") })'/'(y:[0-9]+ { return y.join("")} )) 
     { return d.join("") }
 
   ClearingTag
     = ['*','!']
 
   Title
-    = t:[^\\n]+ { return t.join("") }
+    = t:(!('\\n') .)+ { return t.join("") }
+
+  StringWithTags = rs:RawString {
+    const t = rs.split(':');
+      
+      if(t.length > 2) { //there is a tag in it
+        const tags = t.splice(1, t.length - 2);
+        return { str:t.join(''), tags }
+      } else {
+        return { str:rs, tags:[] } 
+      }
+  }
+
+  RawString = chars:(!Newline c:. { return c })* { return chars.join("") }
 
   Account
-    =  letters:(!"  " !"\\t" !"\\n" letter:. { return letter })*
+    =  letters:(!"  " !"\\t" !"\\n" letter:. { return letter })* 
     {
       return letters.join("")
     }
@@ -115,7 +133,7 @@ export class LedgerService {
     = [' ', '\\t']
 
   Newline
-   = '\\n' / '\\n\\r'/ '\\r\\n' / '\\r'
+  = '\\n' / '\\n\\r'/ '\\r\\n' / '\\r'
     `;
     this._parser = pegjs.generate(grammar);
   }
@@ -130,6 +148,7 @@ export class LedgerService {
           date: moment.utc(t.header.date, 'YYYY/MM/DD').unix(),
           title: t.header.title,
           tag: t.header.tag,
+          tags: t.header.tags,
         },
         postings : t.postings.map(p => {
           const pt: Posting = {
@@ -137,6 +156,7 @@ export class LedgerService {
             account: p.account,
             currency: p.currency,
             comment: p.comment,
+            tags: p.tags,
           };
 
           pt.amount = p.amount ?  (p.sign || '') + p.amount : undefined;
@@ -160,7 +180,12 @@ export class LedgerService {
       let out = '';
       transactions.forEach( tr => {
 
-        out += [moment.unix(tr.header.date).format('YYYY/MM/DD'), tr.header.tag, tr.header.title]
+        out += [
+          moment.unix(tr.header.date).format('YYYY/MM/DD'),
+          tr.header.tag,
+          tr.header.title,
+          tr.header.tags.length > 0 ? ':' + tr.header.tags.join(':') + ':' : ''
+        ]
           .filter(val => val)
           .join(' ') + '\n';
 
@@ -199,6 +224,7 @@ interface LedgerHeader {
   date: string;
   title: string;
   tag: string | undefined;
+  tags: string[],
 }
 
 export interface LedgerPosting {
@@ -208,4 +234,5 @@ export interface LedgerPosting {
   amount: string | undefined;
   currency: string | undefined;
   comment: string | undefined;
+  tags: string[],
 }

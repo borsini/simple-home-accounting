@@ -8,15 +8,32 @@ Array [
     "header": Object {
       "date": 1484265600,
       "tag": "!",
-      "title": "Transaction",
+      "tags": Array [
+        "TAG0",
+      ],
+      "title": "Transaction ",
     },
     "postings": Array [
       Object {
         "account": "CompteA:Sous compte",
         "amount": "41.3",
-        "comment": "Commentaire",
+        "comment": "Commentaire ",
         "currency": "€",
         "tag": null,
+        "tags": Array [
+          "TAG 1",
+          "TAG 2",
+        ],
+      },
+      Object {
+        "account": "CompteA:Autre compte",
+        "amount": "11.3",
+        "comment": "Commentaire ",
+        "currency": "€",
+        "tag": null,
+        "tags": Array [
+          "TAG 3",
+        ],
       },
       Object {
         "account": "CompteB",
@@ -24,6 +41,7 @@ Array [
         "comment": null,
         "currency": null,
         "tag": "*",
+        "tags": Array [],
       },
     ],
     "uuid": undefined,

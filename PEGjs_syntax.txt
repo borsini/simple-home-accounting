@@ -1,4 +1,4 @@
-Start
+  Start
   = NewLineOrCommentBlock? 
     trs:(
       tr:Transaction Newline?
@@ -14,9 +14,9 @@ Transaction
     { return { header:fl, postings:sls }}
 
 FirstLine
-  = d:Date _* tg:(tag:ClearingTag _ { return tag })? t:(t:Title { return t })? Newline
+  = d:Date _* tg:(tag:ClearingTag _ { return tag })? swt:StringWithTags? Newline
   {
-    return { date:d, title:t, tag:tg }
+    return { date:d, title:swt.str, tag:tg, tags:swt.tags }
   }
 
 SecondLine
@@ -31,14 +31,19 @@ SecondLine
   Newline?
   {
     return {
-      
-      tag:ct, account:a, sign:c ? c.sign : null, amount:c ? c.amount : null, currency:c ? c.currency : null, comment:cm
+      tag:ct,
+      account:a,
+      sign:c ? c.sign : null,
+      amount:c ? c.amount : null,
+      currency:c ? c.currency : null,
+      comment:cm ? cm.str : null,
+      tags:cm ? cm.tags : []
     }
   }
 
 Comment
-  = CommentStartChars _* cm:(!'\n' c:. { return c })* { return cm.join("") }
-
+  = CommentStartChars _* str:StringWithTags { return str; }
+  
 CommentStartChars = [';']
 
 CurrencyCombinations = a1:Line / a2:Line2 / a3:Line3
@@ -62,13 +67,13 @@ Line3 =
     }
     
 Number = $([0-9]+ ('.' decimals:[0-9]*)?)
-   
+  
 CurrencyName
   = '"' chars:CurrencyNameWithEscaping '"' { return chars.join("") }
   / chars:CurrencyNameWithoutEscaping { return chars.join("") }
 
 CurrencyNameWithoutEscaping
-  = (!(CommentStartChars / Newline / "-" / "+" / '"' / [0-9]) c:. { return c })+
+  = (!(CommentStartChars / Newline / "-" / "+" / '"' / [0-9] / _) c:. { return c })+
 
 CurrencyNameWithEscaping 
   = (!(CommentStartChars / Newline / "-" / "+" / '"') c:. { return c })+
@@ -81,7 +86,20 @@ ClearingTag
   = ['*','!']
 
 Title
-  = t:[^\n]+ { return t.join("") }
+  = t:(!('\\n') .)+ { return t.join("") }
+
+StringWithTags = rs:RawString {
+  const t = rs.split(':');
+    
+    if(t.length > 2) { //there is a tag in it
+      const tags = t.splice(1, t.length - 2);
+      return { str:t.join(''), tags }
+    } else {
+      return { str:rs, tags:[] } 
+    }
+}
+
+RawString = chars:(!Newline c:. { return c })* { return chars.join("") }
 
 Account
   =  letters:(!"  " !"\t" !"\n" letter:. { return letter })* 
@@ -93,4 +111,4 @@ _ "whitespace or tab"
   = [' ', '\t']
 
 Newline
- = '\n' / '\n\r'/ '\r\n' / '\r'
+= '\n' / '\n\r'/ '\r\n' / '\r'

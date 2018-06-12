@@ -62,6 +62,7 @@ export class OfxService {
               tag: '',
               date: d,
               title: n,
+              tags: [],
             },
             postings: [
               {
@@ -70,6 +71,7 @@ export class OfxService {
                 amount: a.replace('+', ''),
                 currency: c,
                 comment: m,
+                tags: [],
               },
             ],
           };

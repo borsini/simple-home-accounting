@@ -75,13 +75,16 @@ export class EditTransactionComponent implements OnInit {
       header: {
         date: moment.utc().unix(),
         title: '',
+        tags: [],
       },
       postings: [
         {
           account: '',
+          tags: [],
         },
         {
           account: '',
+          tags: [],
         },
       ],
     }, this.tabId));
@@ -222,6 +225,7 @@ export class EditTransactionComponent implements OnInit {
         date: formModel.date.unix(),
         tag: '',
         title: formModel.title,
+        tags: [],
       },
       postings: formModel.postings.map(p => {
         return {
@@ -230,6 +234,7 @@ export class EditTransactionComponent implements OnInit {
           comment: p.comment,
           currency: p.currency,
           tag: '',
+          tags: [],
         } as Posting;
       }),
     };
