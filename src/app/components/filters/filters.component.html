@@ -7,6 +7,14 @@
     <mat-checkbox [disabled]="(invalidCount | async) === 0" [checked]="showOnlyInvalid | async" (change)="checkOnlyInvalid($event.checked)">Seulement les transactions invalides ({{ invalidCount | async }})</mat-checkbox>
 
     <mat-form-field>
+      <mat-select placeholder="Choose tag" (selectionChange)="tagsChanged($event.value)" multiple>
+          <mat-option *ngFor="let tag of tags | async" [value]="tag">
+              {{ tag }}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
       <input matInput [min]="minDate | async" [max]="maxDate | async" [matDatepicker]="startPicker" placeholder="Date début" (dateInput)="startDateChanged($event.value)">
       <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>

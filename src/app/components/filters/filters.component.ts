@@ -10,6 +10,7 @@ import {
   selectedTransactionsSelector,
   invalidTransactionsSelector,
   minAndMaxAllowedDateSelector,
+  allTagsSelector,
 } from '../../shared/selectors/selectors';
 import { filter } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
@@ -31,6 +32,7 @@ export class FiltersComponent implements OnInit {
   shouldHideFilters: Observable<boolean>;
   minDate: Observable<moment.Moment | undefined>;
   maxDate: Observable<moment.Moment | undefined>;
+  tags: Observable<string[]>;
 
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) { }
 
@@ -49,6 +51,7 @@ export class FiltersComponent implements OnInit {
 
     this.minDate = minAndMax.map(result => result.min ? moment.unix(result.min) : undefined);
     this.maxDate = minAndMax.map(result => result.max ? moment.unix(result.max) : undefined);
+    this.tags = this.ngRedux.select(presentSelector(allTagsSelector(this.tabId)))
   }
 
   checkOnlyInvalid(check: boolean) {
@@ -61,5 +64,9 @@ export class FiltersComponent implements OnInit {
 
   endDateChanged(date: moment.Moment) {
     this.ngRedux.dispatch(AppStateActions.setMaxDate(date && date.isValid() ? date.unix() : undefined, this.tabId));
+  }
+
+  tagsChanged(selectedTags: string[]) {
+    this.ngRedux.dispatch(AppStateActions.setTags(selectedTags, this.tabId));
   }
 }

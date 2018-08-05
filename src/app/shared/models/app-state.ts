@@ -16,6 +16,7 @@ export interface Filters {
   showOnlyInvalid: boolean;
   minDate?: number;
   maxDate?: number;
+  tags: string[];
 }
 
 export interface Tab {

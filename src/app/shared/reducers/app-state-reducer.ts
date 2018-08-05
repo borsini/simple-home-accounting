@@ -30,6 +30,7 @@ export const INITIAL_STATE: AppState = {
           showOnlyInvalid: false,
           minDate: undefined,
           maxDate: undefined,
+          tags: [],
         },
         isClosable: false,
       },
@@ -50,6 +51,7 @@ export class AppStateActions {
   static readonly SHOW_ONLY_INVALID = 'SHOW_ONLY_INVALID';
   static readonly SET_MIN_DATE = 'SET_MIN_DATE';
   static readonly SET_MAX_DATE = 'SET_MAX_DATE';
+  static readonly SET_TAGS = 'SET_TAGS';
   static readonly OPEN_TAB = 'OPEN_TAB';
   static readonly CLOSE_TAB = 'CLOSE_TAB';
 
@@ -118,6 +120,14 @@ export class AppStateActions {
     return {
       date,
       type: AppStateActions.SET_MAX_DATE,
+      tab,
+    };
+  }
+
+  static setTags(tags: string[], tab: string): AnyAction {
+    return {
+      tags,
+      type: AppStateActions.SET_TAGS,
       tab,
     };
   }
@@ -335,6 +345,11 @@ const setMaxDate = (state: AppState, date: number | undefined, tab: string): App
   return stateWithFilters(state, f, tab);
 };
 
+const setTags = (state: AppState, tags: string[], tab: string): AppState => {
+  const f = { ...filtersSelector(tab)(state), tags };
+  return stateWithFilters(state, f, tab);
+};
+
 const isTabAlreadyOpen = (currentTabs: Tabs, accounts: string[]) => {
   return Object.values(currentTabs).some(t => [t.selectedAccounts, accounts].reduce(differenceReducer).length === 0);
 };
@@ -362,6 +377,7 @@ const createTab = (selectedAccounts: string[]): Tab => ({
   filters: {
     input: '',
     showOnlyInvalid: false,
+    tags: [],
   },
   isClosable: true,
 });
@@ -461,6 +477,9 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
 
     case AppStateActions.SET_MAX_DATE:
       return setMaxDate(lastState, action.date, action.tab);
+
+    case AppStateActions.SET_TAGS:
+      return setTags(lastState, action.tags, action.tab);
 
     case AppStateActions.OPEN_TAB:
       return openTab(lastState, action.accounts);

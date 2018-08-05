@@ -69,6 +69,13 @@ const tabSelector = (s: AppState, tab: string): Tab => {
     return s.ui.tabs;
   };
 
+  export const transactionsInTabSelector = (tab: string) => (s:AppState) => {
+    const tr = Object.values(allTransactionsSelector(s))
+    const accounts = tabSelector(s, tab).selectedAccounts;
+
+    return tr.filter( t => doesTransactionUseAccountsFilter(accounts)(t))
+  } 
+
   export const selectedTransactionsSelector = (tab: string) => (s: AppState) => {
     const t = tabSelector(s, tab);
     const filters = t.filters;
@@ -76,10 +83,11 @@ const tabSelector = (s: AppState, tab: string): Tab => {
 
     const accountFilter = doesTransactionUseAccountsFilter(t.selectedAccounts);
     const inputFilter = doesTransactionContainInput(filters.input);
+    const tagFilter = doesTransactionContainTag(filters.tags)
     const datesFilter = isTransactionBetweenDates(filters.minDate, filters.maxDate);
     const onlyInvalidFilter = isTransactionOnlyInvalid(filters.showOnlyInvalid, s.computed.invalidTransactions);
 
-    const finalFilter = AND([accountFilter, inputFilter, datesFilter, onlyInvalidFilter]);
+    const finalFilter = AND([accountFilter, inputFilter, tagFilter, datesFilter, onlyInvalidFilter]);
 
     return allTransactions.filter(finalFilter);
   };
@@ -106,6 +114,20 @@ const tabSelector = (s: AppState, tab: string): Tab => {
     );
   };
 
+  export const allTagsSelector = (tab: string) => (s: AppState) => {
+    const allTags = new Set<string>()
+
+    const tr = transactionsInTabSelector(tab)(s); 
+
+    tr.forEach(tr => {
+      tr.header.tags.forEach(tag => {
+        allTags.add(tag)
+      })
+    })
+
+    return Array.from(allTags);
+  }
+
   /* Helpers */
 
 const doesTransactionUseAccountsFilter = (accountsNames: string[]) => (tr: TransactionWithUUID): boolean => {
@@ -131,6 +153,14 @@ const doesTransactionUseAccountsFilter = (accountsNames: string[]) => (tr: Trans
 
       return titleMatches || amountOrAccountMatches;
     });
+  };
+
+  const doesTransactionContainTag = (tags: string[]) => (tr: TransactionWithUUID): boolean => {
+    if (tags.length == 0) {
+      return true;
+    }
+  
+    return [tr.header.tags, tags].reduce(intersectionReducer).length > 0;
   };
 
   const isTransactionBetweenDates = (start: number | undefined, end: number | undefined) => (tr: TransactionWithUUID): boolean => {
