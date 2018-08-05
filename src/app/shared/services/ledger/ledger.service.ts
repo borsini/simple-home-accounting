@@ -27,20 +27,20 @@ export class LedgerService {
           NewLineOrCommentBlock? {return tr}
       )*
       { return trs }
-
+  
   NewLineOrCommentBlock = (Comment / Newline)*
       
   Transaction
     = fl:FirstLine
       sls:(sl:SecondLine { return sl} )+
       { return { header:fl, postings:sls }}
-
+  
   FirstLine
-    = d:Date _* tg:(tag:ClearingTag _ { return tag })? swt:StringWithTags? Newline
+    = d:Date _* tg:(tag:ClearingTag _ { return tag })? t:StringWithoutComment c:Comment? Newline
     {
-      return { date:d, title:swt.str, tag:tg, tags:swt.tags }
+      return { date:d, title:t.trim(), tag:tg, tags:c ? c.tags : [], comments: c ? c.str.trim() : null }
     }
-
+  
   SecondLine
     =
     _+
@@ -62,14 +62,14 @@ export class LedgerService {
         tags:cm ? cm.tags : []
       }
     }
-
+  
   Comment
     = CommentStartChars _* str:StringWithTags { return str; }
     
   CommentStartChars = [';']
-
+  
   CurrencyCombinations = a1:Line / a2:Line2 / a3:Line3
-
+  
   Line = 
       sign:'-'? _* num:Number _* n:CurrencyName?
       {
@@ -93,49 +93,53 @@ export class LedgerService {
   CurrencyName
     = '"' chars:CurrencyNameWithEscaping '"' { return chars.join("") }
     / chars:CurrencyNameWithoutEscaping { return chars.join("") }
-
+  
   CurrencyNameWithoutEscaping
     = (!(CommentStartChars / Newline / "-" / "+" / '"' / [0-9] / _) c:. { return c })+
-
+  
   CurrencyNameWithEscaping 
     = (!(CommentStartChars / Newline / "-" / "+" / '"') c:. { return c })+
-
+  
   Date
     = d:((d:[0-9]+ {return d.join("")})'/'(m:[0-9]+ { return m.join("") })'/'(y:[0-9]+ { return y.join("")} )) 
     { return d.join("") }
-
+  
   ClearingTag
     = ['*','!']
-
-  Title
-    = t:(!('\\n') .)+ { return t.join("") }
-
+  
+  StringWithoutComment
+    = t:(
+      !(CommentStartChars / Newline) c:. { return c }
+      )+
+      { return t.join('') }
+  
   StringWithTags = rs:RawString {
     const t = rs.split(':');
       
-      if(t.length > 2) { //there is a tag in it
-        const tags = t.splice(1, t.length - 2);
-        return { str:t.join(''), tags }
-      } else {
-        return { str:rs, tags:[] } 
-      }
+    if(t.length > 2) { //there is a tag in it
+      const tags = t.splice(1, t.length - 2);
+      return { str:t.join('').trim(), tags }
+    } else {
+      return { str:rs.trim(), tags:[] } 
+    }
   }
-
+  
   RawString = chars:(!Newline c:. { return c })* { return chars.join("") }
-
+  
   Account
     =  letters:(!"  " !"\\t" !"\\n" letter:. { return letter })* 
     {
       return letters.join("")
     }
-
+  
   _ "whitespace or tab"
     = [' ', '\\t']
-
+  
   Newline
   = '\\n' / '\\n\\r'/ '\\r\\n' / '\\r'
-    `;
-    this._parser = pegjs.generate(grammar);
+  `;
+  
+  this._parser = pegjs.generate(grammar);
   }
 
   parseLedgerString(text: string): Observable<Transaction[]> {
@@ -184,7 +188,7 @@ export class LedgerService {
           moment.unix(tr.header.date).format('YYYY/MM/DD'),
           tr.header.tag,
           tr.header.title,
-          tr.header.tags.length > 0 ? ':' + tr.header.tags.join(':') + ':' : ''
+          tr.header.tags.length > 0 ? ';:' + tr.header.tags.join(':') + ':' : ''
         ]
           .filter(val => val)
           .join(' ') + '\n';
@@ -199,8 +203,15 @@ export class LedgerService {
               out += [p.currency, p.amount].filter(val => val).join(' ');
             }
 
-            if (p.comment) {
-              out += ' ; ' + p.comment;
+            if (p.comment || (p.tags && p.tags.length > 0)) {
+              out += ' ; ';
+              
+              if (p.comment) {
+                out +=  p.comment;
+              }
+              if (p.tags && p.tags.length > 0) {
+                out += ' :' + p.tags.join(':') + ':'
+              }
             }
 
             out += '\n';

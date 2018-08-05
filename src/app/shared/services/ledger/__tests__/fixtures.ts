@@ -5,7 +5,7 @@ import { Transaction } from '../../../models/transaction';
 export const emptyFile = '';
 
 export const oneTransactionFile = `
-2017/01/13 ! Transaction :TAG0:
+2017/01/13 ! Transaction ; :TAG0:
     CompteA:Sous compte      41.3€ ;Commentaire :TAG 1:TAG 2:
     CompteA:Autre compte     11.3€ ;Commentaire :TAG 3:
     * CompteB

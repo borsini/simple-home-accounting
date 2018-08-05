@@ -14,9 +14,9 @@ Transaction
     { return { header:fl, postings:sls }}
 
 FirstLine
-  = d:Date _* tg:(tag:ClearingTag _ { return tag })? swt:StringWithTags? Newline
+  = d:Date _* tg:(tag:ClearingTag _ { return tag })? t:StringWithoutComment c:Comment? Newline
   {
-    return { date:d, title:swt.str, tag:tg, tags:swt.tags }
+    return { date:d, title:t.trim(), tag:tg, tags:c ? c.tags : [], comments: c ? c.str.trim() : null }
   }
 
 SecondLine
@@ -85,17 +85,20 @@ Date
 ClearingTag
   = ['*','!']
 
-Title
-  = t:(!('\\n') .)+ { return t.join("") }
+StringWithoutComment
+  = t:(
+  	!(CommentStartChars / Newline) c:. { return c }
+    )+
+    { return t.join('') }
 
 StringWithTags = rs:RawString {
   const t = rs.split(':');
     
     if(t.length > 2) { //there is a tag in it
       const tags = t.splice(1, t.length - 2);
-      return { str:t.join(''), tags }
+      return { str:t.join('').trim(), tags }
     } else {
-      return { str:rs, tags:[] } 
+      return { str:rs.trim(), tags:[] } 
     }
 }
 
