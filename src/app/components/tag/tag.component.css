@@ -1,0 +1,20 @@
+.tag {
+    border-radius: 4px;
+    background-color: red;
+    color: white;
+    padding: 4px;
+}
+
+.delete-tag-button {
+    min-width: 0;
+    padding: 3px;
+    line-height: 0;
+    width: auto;
+    height: auto;
+}
+
+.mat-icon {
+    font-size: 1em;
+    width: auto;
+    height: auto;
+}

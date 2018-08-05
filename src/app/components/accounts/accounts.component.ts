@@ -22,6 +22,7 @@ export class AccountsComponent implements OnInit {
   
   treeDatasource: TreeDatasource;
   treeDelegate: TreeDelegate;
+  isInputDisabled = false;
   
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) {
     this.treeDelegate = {
@@ -36,24 +37,28 @@ export class AccountsComponent implements OnInit {
 
   ngOnInit() {
     const filterValue = fromEvent(this.filter.nativeElement, 'keyup')
-    .debounceTime(200)
+    .debounceTime(700)
+    .do(console.log)
     .pipe(startWith('fake'))
     .map(_ => this.filter.nativeElement.value as string);
 
+    const accounts = filterValue
+    .do(_ => this.isInputDisabled = true)
+    .flatMap(f => this.ngRedux.select(presentSelector(accountsFiltered(f))))
+    .do(_ => this.isInputDisabled = false)
+
     this.treeDatasource = {
       getItemForId: (id: string): Observable<TreeItem | undefined> =>
-        filterValue.flatMap(f => this.ngRedux.select(presentSelector(accountsFiltered(f))))
-        .map(filteredAccounts => {
-          console.log(filteredAccounts, id);
-          const a = filteredAccounts[id];
-          return a ? {
-            id,
-            title: a.name.split(':').slice(-1)[0],
-            subtitle: a.balance.toString(),
-            isChecked: false,
-            childrenIds: [a.children, Object.keys(filteredAccounts)].reduce(intersectionReducer)
-          } : undefined;
-        })
+      accounts.map(filteredAccounts => {
+        const a = filteredAccounts[id];
+        return a ? {
+          id,
+          title: a.name.split(':').slice(-1)[0],
+          subtitle: a.balance.toString(),
+          isChecked: false,
+          childrenIds: [a.children, Object.keys(filteredAccounts)].reduce(intersectionReducer)
+        } : undefined;
+      })
     };
   }
 

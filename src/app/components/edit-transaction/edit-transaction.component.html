@@ -11,7 +11,7 @@
           {{ titleErrors | async }}
         </mat-error>
       </mat-form-field>
-
+  
       <mat-form-field id="date">
           <input matInput [matDatepicker]="picker" placeholder="Date" formControlName="date">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -21,10 +21,18 @@
           </mat-error>
       </mat-form-field>
 
+      <button type="button" id="close" (click)="closePanel()" mat-icon-button>
+          <mat-icon class="material-icons">clear</mat-icon>
+      </button>
+    </div>
 
-        <button type="button" id="close" (click)="closePanel()" mat-icon-button>
-            <mat-icon class="material-icons">clear</mat-icon>
-        </button>
+    <div formArrayName="tags">
+        <app-tags
+        [tags]="group.controls.tags.value"
+        [allowEditing]="true"
+        (onClosedClick)="removeHeaderTag($event)"
+        (onTagAdded)="addHeaderTag($event)"
+        ></app-tags>
     </div>
 
     <div id="postings" formArrayName="postings" [ngClass]="{hasErrors:(postings.errors)}">

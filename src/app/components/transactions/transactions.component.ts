@@ -111,6 +111,10 @@ export class TransactionRow {
     get isSelected(): Observable<boolean> {
       return this._selectedTransactionUUID.map(uuid => this.transaction.uuid === uuid);
     }
+
+    get headerTags(): string[] {
+      return this.transaction.header.tags;
+    }
   }
 
 export class TransactionDataSource extends DataSource<TransactionRow> {

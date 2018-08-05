@@ -1,0 +1,12 @@
+<div class="tag">
+  <span>{{ name }}</span>
+
+  <button mat-button
+    *ngIf="showDeleteButton"
+    type="button"
+    (click)="deleteTagClicked()"
+    class="delete-tag-button">
+      <mat-icon class="material-icons">close</mat-icon>
+  </button>
+
+</div>

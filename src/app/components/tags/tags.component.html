@@ -1,0 +1,21 @@
+<div id="tags_container">
+    <ul>
+        <li *ngFor="let tag of tags; let i=index">
+            <app-tag
+            [name]="tag" 
+            [showDeleteButton]="allowEditing"
+            (onClosedClick)="onTagClosedClick(i)" 
+            class="toto"></app-tag>
+        </li>
+
+        <li>
+            <input 
+            *ngIf="allowEditing"
+             matInput
+              placeholder="Nouveau tag..."
+             (keydown.enter)="onEnterPressed($event.target.value);$event.preventDefault();">
+        </li>
+    </ul>
+
+    
+</div>

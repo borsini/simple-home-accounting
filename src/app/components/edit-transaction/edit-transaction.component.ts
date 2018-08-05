@@ -112,15 +112,19 @@ export class EditTransactionComponent implements OnInit {
         date: ['', [Validators.required]],
         postings: this._formBuilder.array([]),
         title: ['', [Validators.required]],
+        tags: this._formBuilder.array([]),
       });
 
+      //Prepare date
+      const date = this.transactionToEdit ? moment.unix(this.transactionToEdit.header.date) : moment();
+
+      //Prepare title
+      const title = this.transactionToEdit ? this.transactionToEdit.header.title : '';
+
+      //Prepare postings
       const nbPostings = this.transactionToEdit ? Math.max(this.transactionToEdit.postings.length, 2) : 0;
       const postingsControl = this.transactionToEdit ? Array(nbPostings).fill(0).map(p => this.createPostingGroup()) : [];
       this.group.setControl('postings', this._formBuilder.array(postingsControl, null, postingsRepartitionAsyncValidator));
-
-      // Initialize values
-      const title = this.transactionToEdit ? this.transactionToEdit.header.title : '';
-      const date = this.transactionToEdit ? moment.unix(this.transactionToEdit.header.date) : moment();
       const postings = this.transactionToEdit ? postingsControl.map( (c, i) => {
         const p = this.transactionToEdit!.postings[i];
         return {
@@ -131,6 +135,14 @@ export class EditTransactionComponent implements OnInit {
         };
       }) : [];
 
+      //Prepare tags
+      const nbTags = this.transactionToEdit ? this.transactionToEdit.header.tags.length : 0;
+      const tagsControl = this.transactionToEdit ? Array(nbTags).fill(0).map(p => this._formBuilder.control('')) : [];
+      
+      this.group.setControl('tags', this._formBuilder.array(tagsControl));
+      const tags = this.transactionToEdit ? this.transactionToEdit.header.tags : []
+      
+      // Initialize errors
       const allErrors = Observable.concat( Observable.of(1), this.group.valueChanges)
       .map( t => this.getAllErrors(this.group))
       .map(this.errorsToString);
@@ -143,8 +155,7 @@ export class EditTransactionComponent implements OnInit {
       this.postingCommentErrors = (p: number) => this.errorsForControl(`/postings[${p}]/comment`)(allErrors);
 
       // Set all the values
-      this.group.setValue({ date, postings, title });
-
+      this.group.setValue({ date, postings, title, tags });
       markFormGroupTouched(this.group);
   }
 
@@ -225,7 +236,7 @@ export class EditTransactionComponent implements OnInit {
         date: formModel.date.unix(),
         tag: '',
         title: formModel.title,
-        tags: [],
+        tags: formModel.tags,
       },
       postings: formModel.postings.map(p => {
         return {
@@ -286,6 +297,28 @@ export class EditTransactionComponent implements OnInit {
     }
   }
 
+  removeHeaderTag(tagIndex: number) {
+    const formTags = this.group.get('tags') as FormArray;
+    formTags.removeAt(tagIndex);
+    formTags.markAsDirty();
+  }
+
+  canAddHeaderTag(tag: string) : boolean {
+    const tags = this.group.get('tags') as FormArray;
+    const v = tags.getRawValue() as string[]
+    return this.transactionToEdit != null && !v.includes(tag)
+  }
+
+  addHeaderTag(tagName: string) {
+    if(this.canAddHeaderTag(tagName)) {
+      const formTags = this.group.get('tags') as FormArray;
+      const control = this._formBuilder.control(tagName)
+      formTags.push(control)
+      
+      formTags.markAsDirty()
+    }
+  }
+
   closePanel() {
     this.ngRedux.dispatch(AppStateActions.setEditedTransaction(undefined, this.tabId));
   }
@@ -296,6 +329,8 @@ export class EditTransactionComponent implements OnInit {
    * @param formGroup - The group to caress..hah
    */
   function markFormGroupTouched(formGroup: FormGroup) {
+    if(!formGroup.controls) return;
+
     (<any> Object).values(formGroup.controls).forEach(control => {
       control.markAsTouched();
 
