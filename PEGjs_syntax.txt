@@ -16,7 +16,7 @@ Transaction
 FirstLine
   = d:Date _* tg:(tag:ClearingTag _ { return tag })? t:StringWithoutComment c:Comment? Newline
   {
-    return { date:d, title:t.trim(), tag:tg, tags:c ? c.tags : [], comments: c ? c.str.trim() : null }
+    return { date:d, title:t.trim(), clearTag:tg, tags:c ? c.tags : [], comments: c ? c.str.trim() : null }
   }
 
 SecondLine

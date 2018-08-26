@@ -170,6 +170,7 @@ describe(rootReducer.name, () => {
       header: {
         ...transaction.header,
         title: 'Updated!',
+        isVerified: true,
       },
     };
 
@@ -182,7 +183,9 @@ describe(rootReducer.name, () => {
     const transactionWithoutPostings = {
       header: {
         date: 1520080726,
+        isVerified: false,
         title: 'Titre',
+        tags: [],
       },
       postings: [],
     };

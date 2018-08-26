@@ -75,6 +75,7 @@ export class EditTransactionComponent implements OnInit {
       header: {
         date: moment.utc().unix(),
         title: '',
+        isVerified: false,
         tags: [],
       },
       postings: [
@@ -234,7 +235,7 @@ export class EditTransactionComponent implements OnInit {
     return {
       header: {
         date: formModel.date.unix(),
-        tag: '',
+        isVerified: false, // each time we modifiy a transaction, we invalidate it's status
         title: formModel.title,
         tags: formModel.tags,
       },

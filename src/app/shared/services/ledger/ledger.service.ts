@@ -38,7 +38,7 @@ export class LedgerService {
   FirstLine
     = d:Date _* tg:(tag:ClearingTag _ { return tag })? t:StringWithoutComment c:Comment? Newline
     {
-      return { date:d, title:t.trim(), tag:tg, tags:c ? c.tags : [], comments: c ? c.str.trim() : null }
+      return { date:d, title:t.trim(), clearTag:tg, tags:c ? c.tags : [], comments: c ? c.str.trim() : null }
     }
   
   SecondLine
@@ -151,7 +151,7 @@ export class LedgerService {
         header : {
           date: moment.utc(t.header.date, 'YYYY/MM/DD').unix(),
           title: t.header.title,
-          tag: t.header.tag,
+          isVerified: t.header.clearTag === '*',
           tags: t.header.tags,
         },
         postings : t.postings.map(p => {
@@ -186,7 +186,7 @@ export class LedgerService {
 
         out += [
           moment.unix(tr.header.date).format('YYYY/MM/DD'),
-          tr.header.tag,
+          tr.header.isVerified ? '*' : null,
           tr.header.title,
           tr.header.tags.length > 0 ? ';:' + tr.header.tags.join(':') + ':' : ''
         ]
@@ -231,10 +231,12 @@ export interface LedgerTransaction {
   postings: Array<LedgerPosting>;
 }
 
+type ClearTag = "*" | "!";
+
 interface LedgerHeader {
   date: string;
   title: string;
-  tag: string | undefined;
+  clearTag: ClearTag | undefined;
   tags: string[],
 }
 

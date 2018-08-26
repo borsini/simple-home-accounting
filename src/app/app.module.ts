@@ -17,6 +17,8 @@ import {
   MatTabsModule,
   MatSelect,
   MatSelectModule,
+  MatButtonToggle,
+  MatButtonToggleModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -87,6 +89,7 @@ import { TagsComponent } from './components/tags/tags.component';
     NgReduxModule,
     MatTabsModule,
     MatSelectModule,
+    MatButtonToggleModule,
   ],
   providers : [
     {provide: DateAdapter, useClass: MomentDateAdapter},

@@ -115,6 +115,10 @@ export class TransactionRow {
     get headerTags(): string[] {
       return this.transaction.header.tags;
     }
+
+    get isVerified(): boolean {
+      return this.transaction.header.isVerified;
+    }
   }
 
 export class TransactionDataSource extends DataSource<TransactionRow> {
@@ -209,7 +213,7 @@ export class TransactionsComponent implements OnInit {
   transactions: Observable<Transaction[]>;
   noTransactionsToDisplay: Observable<boolean>;
   dataSource: TransactionDataSource;
-  displayedColumns = ['title', 'date', 'movements'];
+  displayedColumns = ['title', 'date', 'movements', 'status'];
 
   @Input() tabId: string;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -231,5 +235,20 @@ export class TransactionsComponent implements OnInit {
 
   onTransactionClicked(row: TransactionRow) {
     this.ngRedux.dispatch(AppStateActions.setEditedTransaction(row.transaction, this.tabId));
+  }
+
+  toggleCheck(row: TransactionRow) {
+    console.log(row.transaction);
+
+    const modifiedTransaction = {
+      ...row.transaction,
+      header: {
+        ...row.transaction.header,
+        isVerified: !row.transaction.header.isVerified,
+      },
+    };
+
+    console.log(modifiedTransaction);
+    this.ngRedux.dispatch(AppStateActions.updateTransaction(modifiedTransaction));
   }
 }

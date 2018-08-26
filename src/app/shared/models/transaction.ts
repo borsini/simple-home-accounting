@@ -8,7 +8,7 @@ export interface Transaction {
 interface Header {
   readonly date: number;
   readonly title: string;
-  readonly tag?: string;
+  readonly isVerified: boolean;
   readonly tags: string[],
 }
 

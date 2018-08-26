@@ -53,6 +53,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
+          "isVerified": false,
           "tags": Array [],
           "title": "Bread",
         },
@@ -184,6 +185,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360454400,
+          "isVerified": false,
           "tags": Array [],
           "title": "Salary",
         },
@@ -205,6 +207,7 @@ Object {
       "uuid 1": Object {
         "header": Object {
           "date": 1360540800,
+          "isVerified": false,
           "tags": Array [],
           "title": "Bread",
         },
@@ -348,6 +351,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360454400,
+          "isVerified": false,
           "tags": Array [],
           "title": "Savings",
         },
@@ -466,6 +470,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
+          "isVerified": false,
           "tags": Array [],
           "title": "Bread",
         },
@@ -492,6 +497,7 @@ Object {
       "uuid 1": Object {
         "header": Object {
           "date": 1360454400,
+          "isVerified": true,
           "tags": Array [],
           "title": "Salary",
         },
@@ -688,6 +694,8 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1520080726,
+          "isVerified": false,
+          "tags": Array [],
           "title": "Titre",
         },
         "postings": Array [],
@@ -940,6 +948,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
+          "isVerified": false,
           "tags": Array [],
           "title": "Bread",
         },
@@ -966,6 +975,7 @@ Object {
       "uuid 1": Object {
         "header": Object {
           "date": 1360454400,
+          "isVerified": true,
           "tags": Array [],
           "title": "Salary",
         },
@@ -1111,6 +1121,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
+          "isVerified": false,
           "tags": Array [],
           "title": "Bread",
         },
@@ -1145,6 +1156,7 @@ Object {
         "editedTransaction": Object {
           "header": Object {
             "date": 1360281600,
+            "isVerified": false,
             "tags": Array [],
             "title": "Bread",
           },
@@ -1298,6 +1310,7 @@ Object {
       "uuid 1": Object {
         "header": Object {
           "date": 1360454400,
+          "isVerified": true,
           "tags": Array [],
           "title": "Salary",
         },
@@ -1584,6 +1597,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
+          "isVerified": false,
           "tags": Array [],
           "title": "Bread",
         },
@@ -1618,6 +1632,7 @@ Object {
         "editedTransaction": Object {
           "header": Object {
             "date": 1360281600,
+            "isVerified": false,
             "tags": Array [],
             "title": "Bread",
           },
@@ -1806,6 +1821,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
+          "isVerified": false,
           "tags": Array [],
           "title": "Bread",
         },
@@ -1956,6 +1972,7 @@ Object {
       "uuid 0": Object {
         "header": Object {
           "date": 1360281600,
+          "isVerified": true,
           "tags": Array [],
           "title": "Updated!",
         },

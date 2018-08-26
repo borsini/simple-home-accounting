@@ -7,6 +7,7 @@ export const transactions: Transaction[] = [
     header: {
       date: moment.utc('2013-02-08').unix(),
       title: 'Bread',
+      isVerified: false,
       tags: [],
     },
     postings: [
@@ -28,6 +29,7 @@ export const transactions: Transaction[] = [
     header: {
       date: moment.utc('2013-02-10').unix(),
       title: 'Salary',
+      isVerified: true,
       tags: [],
     },
     postings: [
@@ -49,6 +51,7 @@ export const transactionWithNestedAccounts: Transaction = {
   header: {
     date: moment.utc('2013-02-10').unix(),
     title: 'Savings',
+    isVerified: false,
     tags: [],
   },
   postings: [
@@ -76,6 +79,7 @@ export const transactionsWithMissingAmounts: Transaction[] = [
     header: {
       date: moment.utc('2013-02-10').unix(),
       title: 'Salary',
+      isVerified: false,
       tags: [],
     },
     postings: [
@@ -95,6 +99,7 @@ export const transactionsWithMissingAmounts: Transaction[] = [
     header: {
       date: moment.utc('2013-02-11').unix(),
       title: 'Bread',
+      isVerified: false,
       tags: [],
     },
     postings: [

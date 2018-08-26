@@ -29,7 +29,7 @@
   <!-- Name Column -->
   <ng-container cdkColumnDef="movements">
     <mat-header-cell *cdkHeaderCellDef [ngClass]="'grow_cell'"> Mouvements </mat-header-cell>
-    <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell'" (click)="$event.stopPropagation()">
+    <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell postings'" (click)="$event.stopPropagation()">
         <div *ngFor="let p of (row.postings | async).slice(0,2)" class="posting">
           <span class="posting_left" (click)="p.handleAccountClick()">{{p.account}}</span>
           <span
@@ -43,6 +43,15 @@
         <div *ngIf="(row.postings | async).length > 2" class="posting">
           et {{ (row.postings | async).length - 2 }} supplémentaire(s)
         </div>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="status">
+    <mat-header-cell *cdkHeaderCellDef mat-sort-header [ngClass]="'shrink_cell'"> Statut </mat-header-cell>
+    <mat-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'">
+        <mat-button-toggle [checked]="row.isVerified" (click)="toggleCheck(row); $event.stopPropagation();">
+          <mat-icon class="material-icons">done</mat-icon>
+        </mat-button-toggle>
     </mat-cell>
   </ng-container>
 

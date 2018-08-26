@@ -59,7 +59,7 @@ export class OfxService {
 
           const t: Transaction = {
             header: {
-              tag: '',
+              isVerified: false,
               date: d,
               title: n,
               tags: [],

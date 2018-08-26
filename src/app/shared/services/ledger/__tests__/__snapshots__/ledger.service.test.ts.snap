@@ -7,11 +7,11 @@ Array [
   Object {
     "header": Object {
       "date": 1484265600,
-      "tag": "!",
+      "isVerified": false,
       "tags": Array [
         "TAG0",
       ],
-      "title": "Transaction",
+      "title": "Transaction1",
     },
     "postings": Array [
       Object {
@@ -41,6 +41,60 @@ Array [
         "comment": null,
         "currency": null,
         "tag": "*",
+        "tags": Array [],
+      },
+    ],
+    "uuid": undefined,
+  },
+  Object {
+    "header": Object {
+      "date": 1515801600,
+      "isVerified": true,
+      "tags": Array [],
+      "title": "Transaction2",
+    },
+    "postings": Array [
+      Object {
+        "account": "CompteA:Sous compte",
+        "amount": "41.3",
+        "comment": null,
+        "currency": "€",
+        "tag": null,
+        "tags": Array [],
+      },
+      Object {
+        "account": "CompteA:Autre compte",
+        "amount": undefined,
+        "comment": null,
+        "currency": null,
+        "tag": null,
+        "tags": Array [],
+      },
+    ],
+    "uuid": undefined,
+  },
+  Object {
+    "header": Object {
+      "date": 1547337600,
+      "isVerified": false,
+      "tags": Array [],
+      "title": "Transaction3",
+    },
+    "postings": Array [
+      Object {
+        "account": "CompteA:Sous compte",
+        "amount": "41.3",
+        "comment": null,
+        "currency": "€",
+        "tag": null,
+        "tags": Array [],
+      },
+      Object {
+        "account": "CompteA:Autre compte",
+        "amount": undefined,
+        "comment": null,
+        "currency": null,
+        "tag": null,
         "tags": Array [],
       },
     ],

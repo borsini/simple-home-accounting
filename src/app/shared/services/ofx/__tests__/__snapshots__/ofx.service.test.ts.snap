@@ -7,7 +7,7 @@ Array [
   Object {
     "header": Object {
       "date": 1503532800,
-      "tag": "",
+      "isVerified": false,
       "tags": Array [],
       "title": "FNAC      23/08",
     },
