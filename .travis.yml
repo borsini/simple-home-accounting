@@ -1,22 +1,44 @@
-sudo: required
-dist: trusty
+os: linux
+services: docker
+language: generic
 
-language: node_js
-node_js:
-  - "8.2.1"
-cache: yarn
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+    - $HOME/.cache/yarn
 
-branches:
-  only:
-    - develop
-    
+before_install:
+  - source ci.sh
+
+install:
+  - yarn
+
 jobs:
   include:
+    # run all tests
     - stage: test
-      script: yarn test
-    - stage: build prod
-      script: ng build --prod
-    - stage: deploy
-      script:
-        - ng build --prod
-        - firebase deploy --token $FIREBASE_TOKEN
+      script: ci_test
+
+    # compile/transpile the app
+    - stage: build web prod
+      script: ci_build_prod
+    
+    # create windows and mac binaries
+    - stage: build native apps
+      script: ci_compile_windows
+    - script: ci_compile_mac
+      
+    # deploy code to firebase and binaries to github
+    - stage: deploy to firebase
+      if: branch = master AND tag IS present
+      script: ci_deploy_firebase
+      deploy:
+        provider: releases
+        api_key: $GH_TOKEN
+        file_glob: true
+        file:
+          - dist/*.dmg
+          - dist/*.exe
+        skip_cleanup: true

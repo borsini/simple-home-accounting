@@ -43,3 +43,4 @@ yarn-error.log
 Thumbs.db
 build
 .vscode
+artifacts

@@ -5,6 +5,10 @@
   "main": "main.js",
   "author": "Benlenem",
   "description": "Simple web interface for plain text accounting. Compatible with ledger file format.",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Benlenem/simple-home-accounting.git"
+  },
   "build": {
     "appId": "com.benlenem.simplehomeaccounting",
     "productName": "Simple Home Accounting",
@@ -15,7 +19,6 @@
     "mac": {
       "category": "public.app-category.finance"
     },
-    "asar": false,
     "files": [
       "main.js",
       "build"
@@ -33,7 +36,6 @@
     "electron": "electron .",
     "electron-build": "ng build --prod && electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder",
     "build-win": "electron-builder build --win",
     "postinstall": "electron-builder install-app-deps"
   },
