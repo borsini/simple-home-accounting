@@ -32,7 +32,7 @@ jobs:
       
     # deploy code to firebase and binaries to github
     - stage: deploy to firebase
-      if: branch = master AND tag IS present
+      if: tag =~ ^v
       script: ci_deploy_firebase
       deploy:
         provider: releases
