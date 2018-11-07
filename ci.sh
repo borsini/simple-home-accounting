@@ -45,5 +45,5 @@ ci_compile_mac()
 
 ci_deploy_firebase()
 {
-    firebase deploy --token $FIREBASE_TOKEN
+    yarn firebase deploy --token $FIREBASE_TOKEN
 }

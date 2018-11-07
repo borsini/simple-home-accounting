@@ -31,7 +31,7 @@ jobs:
     - script: ci_compile_mac
       
     # deploy code to firebase and binaries to github
-    - stage: deploy to firebase
+    - stage: deploy to firebase and github
       if: tag =~ ^v
       script: ci_deploy_firebase
       deploy:
