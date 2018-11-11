@@ -3,14 +3,17 @@ services: docker
 language: generic
 
 cache:
+  yarn: true
   directories:
     - node_modules
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
-    - $HOME/.cache/yarn
 
 before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
+  - export PATH="$HOME/.yarn/bin:$PATH"
   - source ci.sh
+  
 
 install:
   - yarn
