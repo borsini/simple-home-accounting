@@ -27,6 +27,7 @@ ci_compile_windows()
     # https://github.com/electron-userland/electron-builder/issues/2450
 
     docker run \
+    --rm \
     -ti \
     --env-file <(env | grep -vE '\r|\n' | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
     -v ${PWD}/dist:/project/dist \
