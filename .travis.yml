@@ -1,46 +1,67 @@
-os: linux
-services: docker
-language: generic
+matrix:
+  include:
+    - os: linux
+      services: docker
+      language: generic
 
+    - os: osx
+      osx_image: xcode9.4
+      language: node_js
+      node_js: "10"
+      env:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+  
 cache:
   yarn: true
   directories:
     - node_modules
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
+    - build
+    - dist
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
   - export PATH="$HOME/.yarn/bin:$PATH"
   - source ci.sh
+  - sudo chown -R $USER:$GROUP node_modules
+  - sudo chown -R $USER:$GROUP dist
+  - sudo chown -R $USER:$GROUP build
   
-
 install:
   - yarn
 
 jobs:
   include:
-    # run all tests
     - stage: test
-      script: ci_test
+      script:
+        - ci_test
 
-    # compile/transpile the app
-    - stage: build web prod
-      script: ci_build_prod
-    
-    # create windows and mac binaries
-    - stage: build native apps
-      script: ci_compile_windows
-    - script: ci_compile_mac
+    - stage: build prod
+      script:
+        - ci_clean
+        - ci_build_prod
       
+    - stage: build app mac
+      os: osx
+      script:
+        - ci_compile_mac
+    
+    - stage: build windows app
+      script:
+        - ci_compile_windows
+
     # deploy code to firebase and binaries to github
-    - stage: deploy to firebase and github
+    - stage: deploy
       if: tag =~ ^v OR branch =~ ^v
-      script: ci_deploy_firebase
+      script: 
+        - ci_deploy_firebase
       deploy:
         provider: releases
         api_key: $GH_TOKEN
         file_glob: true
+        overwrite: true
         file:
           - dist/*.dmg
           - dist/*.exe
