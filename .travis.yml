@@ -36,13 +36,13 @@ stages:
 jobs:
   include:
     - stage: web
+      name: build web app
       script:
         - ci_test
         - ci_build_prod
       deploy:
         provider: releases
         api_key: $GH_TOKEN
-        draft: true
         file_glob: true
         overwrite: true
         file:
@@ -52,15 +52,18 @@ jobs:
           all_branches: true
 
     - stage: web
+      name: deploy web app to firebase
       if: tag =~ ^v OR branch =~ ^v
       script: 
         - ci_deploy_firebase
       
     - stage: mac
+      name: compile mac application
       os: osx
       script:
         - ci_compile_mac
     
     - stage: win
+      name: compile windows application
       script:
         - ci_compile_windows
