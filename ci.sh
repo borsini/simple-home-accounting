@@ -10,13 +10,6 @@ ci_build_prod()
     yarn ng build --prod
 }
 
-
-ci_clean()
-{
-    rm -rf build
-    rm -rf dist
-}
-
 ci_compile_windows()
 {
     # docker run parameters : 
@@ -43,12 +36,12 @@ ci_compile_windows()
     -v ~/.cache/electron:/root/.cache/electron \
     -v ~/.cache/electron-builder:/root/.cache/electron-builder \
     electronuserland/builder:wine \
-    /bin/bash -c "yarn --link-duplicates --pure-lockfile && yarn electron-builder build --win --publish never" 
+    /bin/bash -c "yarn --link-duplicates --pure-lockfile && yarn electron-builder build --win" 
 }
 
 ci_compile_mac()
 {
-    yarn electron-builder build --mac --publish never
+    yarn electron-builder build --mac
 }
 
 ci_deploy_firebase()
