@@ -51,7 +51,7 @@ jobs:
         on:
           all_branches: true
 
-    - stage: web
+    - stage: deploy
       name: deploy web app to firebase
       if: tag =~ ^v OR branch =~ ^v
       script: 
