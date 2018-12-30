@@ -18,7 +18,6 @@ cache:
     - node_modules
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
-    - build
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
@@ -56,15 +55,18 @@ jobs:
       name: deploy web app to firebase
       if: tag =~ ^v OR branch =~ ^v
       script: 
+        - ci_build_prod
         - ci_deploy_firebase
       
     - stage: mac
       name: compile mac application
       os: osx
       script:
+        - ci_build_prod
         - ci_compile_mac
     
     - stage: win
       name: compile windows application
       script:
+        - ci_build_prod
         - ci_compile_windows
