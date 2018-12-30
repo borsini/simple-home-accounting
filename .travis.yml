@@ -40,13 +40,20 @@ jobs:
       script:
         - ci_test
         - ci_build_prod
+      
+
+    - stage: upload
+      name: upload build folder to github
+      script:
+        - ci_build_prod
+        - zip -r build.zip build
       deploy:
         provider: releases
         api_key: $GH_TOKEN
         file_glob: true
         overwrite: true
         file:
-          - build/*
+          - build.zip
         skip_cleanup: true
         on:
           all_branches: true
