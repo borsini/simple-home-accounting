@@ -42,6 +42,7 @@ jobs:
         - ci_build_prod
         - zip -r build.zip build
       deploy:
+        name: toto
         provider: releases
         api_key: $GH_TOKEN
         file_glob: true
@@ -68,6 +69,7 @@ jobs:
         - ci_build_prod
         - ci_compile_mac
       deploy:
+        name: toto
         provider: releases
         api_key: $GH_TOKEN
         file_glob: true
@@ -86,6 +88,7 @@ jobs:
         - ci_build_prod
         - ci_compile_windows
       deploy:
+        name: toto
         provider: releases
         api_key: $GH_TOKEN
         file_glob: true
