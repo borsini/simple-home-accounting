@@ -42,7 +42,6 @@ jobs:
         - ci_build_prod
         - zip -r build.zip build
       deploy:
-        name: toto
         provider: releases
         api_key: $GH_TOKEN
         file_glob: true
@@ -68,10 +67,33 @@ jobs:
       script:
         - ci_build_prod
         - ci_compile_mac
+      deploy:
+        provider: releases
+        api_key: $GH_TOKEN
+        file_glob: true
+        overwrite: true
+        draft: true
+        file:
+          - dist/**/*.dmg
+        skip_cleanup: true
+        on:
+          all_branches: true
+          tags: false
     
     - stage: win
       name: build windows application
       script:
         - ci_build_prod
         - ci_compile_windows
-        - ls dist
+      deploy:
+        provider: releases
+        api_key: $GH_TOKEN
+        file_glob: true
+        overwrite: true
+        draft: true
+        file:
+          - dist/**/*.exe
+        skip_cleanup: true
+        on:
+          all_branches: true
+          tags: false
