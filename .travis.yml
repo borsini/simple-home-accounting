@@ -73,3 +73,4 @@ jobs:
       script:
         - ci_build_prod
         - ci_compile_windows
+        - ls build
