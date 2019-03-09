@@ -10,14 +10,18 @@ const transactionsFixture = [
     header: {
       date: moment.utc('2013-02-08').unix(),
       title: 'Bread',
+      isVerified: true,
+      tags: []
     },
     postings: [
       {
         account: 'A:B:C',
         amount: '2',
+        tags: []
       },
       {
         account: 'A:B:D',
+        tags: []
       },
     ],
   }

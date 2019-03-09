@@ -4,16 +4,20 @@ exports[`returns transaction with uuid 1`] = `
 Object {
   "header": Object {
     "date": 1360281600,
+    "isVerified": true,
+    "tags": Array [],
     "title": "Bread",
   },
   "postings": Array [
     Object {
       "account": "A:B:C",
       "amount": "2",
+      "tags": Array [],
     },
     Object {
       "account": "A:B:D",
       "amount": "-2",
+      "tags": Array [],
     },
   ],
   "uuid": "uuid 0",
