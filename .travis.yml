@@ -14,7 +14,6 @@ before_install:
   - export PATH="$HOME/.yarn/bin:$PATH"
   - source ci.sh
   
-
 install:
   - yarn
 
@@ -29,9 +28,9 @@ jobs:
       script: ci_build_prod
     
     # create windows and mac binaries
-    - stage: build native apps
-      script: ci_compile_windows
-    - script: ci_compile_mac
+  #  - stage: build native apps
+  #    script: ci_compile_windows
+  #  - script: ci_compile_mac
       
     # deploy code to firebase and binaries to github
     - stage: deploy to firebase and github
