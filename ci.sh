@@ -3,6 +3,13 @@
 ci_test()
 {
     yarn test
+
+    # Execute a one way compatibility test :
+    # generate a ledger file and parse it with Ledger CLI inside a docker container
+    rm -rf temp
+    mkdir temp
+    ./node_modules/.bin/ts-node src/app/shared/services/ledger/__tests__/ledger.service.compatibility.ts > temp/sample.ledger
+    docker run --rm -v "$PWD"/temp:/samples dcycle/ledger:1 -f /samples/sample.ledger reg
 }
 
 ci_build_prod()
