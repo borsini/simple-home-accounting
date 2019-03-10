@@ -37,26 +37,26 @@
 
     <div id="postings" formArrayName="postings" [ngClass]="{hasErrors:(postings.errors)}">
       <div *ngFor="let p of postings.controls; let i=index" [formGroupName]="i" class="posting" >
-        <mat-input-container class="expand" floatPlaceholder="never">
+        <mat-form-field class="expand" floatPlaceholder="never">
           <input matInput placeholder="Compte" formControlName="account" type="text" [matAutocomplete]="auto">
           <mat-error *ngIf="postingAccountErrors(i) | async">
             {{ postingAccountErrors(i) | async }}
           </mat-error>
-        </mat-input-container>
+        </mat-form-field>
 
-        <mat-input-container id="amount" floatPlaceholder="never">
+        <mat-form-field id="amount" floatPlaceholder="never">
             <input matInput placeholder="Montant" formControlName="amount">
             <mat-error *ngIf="postingAmountErrors(i) | async">
               {{ postingAmountErrors(i) | async }}
             </mat-error>
-        </mat-input-container>
+        </mat-form-field>
 
-        <mat-input-container floatPlaceholder="never">
+        <mat-form-field floatPlaceholder="never">
           <input matInput placeholder="Commentaire" formControlName="comment">
           <mat-error *ngIf="postingCommentErrors(i) | async">
             {{ postingCommentErrors(i) | async }}
           </mat-error>
-        </mat-input-container>
+        </mat-form-field>
 
         <button type="button" id="close" (click)="removePosting(i)" mat-icon-button>
           <mat-icon class="material-icons">delete</mat-icon>

@@ -2,7 +2,7 @@
   display: none !important;
 }
 
-mat-input-container {
+mat-form-field {
   flex:1;
 }
 

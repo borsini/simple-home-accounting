@@ -4,7 +4,7 @@ mat-card {
     display: flex;
 }
 
-mat-input-container {
+mat-form-field {
     flex: 1;
 }
 
