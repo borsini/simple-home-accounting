@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Transaction } from '../../models/transaction';
-import { isArray } from 'rxjs/util/isArray';
 import { xmlToJson } from '../../utils/utils';
 
 const AmountRegex = /(.*)\/(.*)/;
@@ -55,7 +54,7 @@ export class GnucashService {
 
       let jsTr = jsGnucash['gnc-v2']['gnc:book']['gnc:transaction'];
 
-      if (!isArray(jsTr)) {
+      if (!Array.isArray(jsTr)) {
         jsTr = [jsTr];
       }
 
@@ -67,7 +66,7 @@ export class GnucashService {
 
         let splits = t['trn:splits']['trn:split'];
 
-        if (!isArray(splits)) {
+        if (!Array.isArray(splits)) {
           splits = [splits];
         }
 

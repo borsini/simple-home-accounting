@@ -1,3 +1,7 @@
+
+import {of as observableOf, concat as observableConcat,  Observable ,  Subject } from 'rxjs';
+
+import {map, mergeMap,  filter } from 'rxjs/operators';
 import { NgRedux } from '@angular-redux/store';
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import {
@@ -8,16 +12,13 @@ import {
 import { MatDatepicker, ErrorStateMatcher } from '@angular/material';
 
 import Decimal from 'decimal.js';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../../shared/models/transaction';
 
 import * as moment from 'moment';
-import { filter } from 'rxjs/operators';
-import 'rxjs/add/observable/concat';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/mergeMap';
+
+
+
+
 import { Posting } from '../../shared/models/posting';
 import { AppState } from '../../shared/models/app-state';
 import {
@@ -95,8 +96,8 @@ export class EditTransactionComponent implements OnInit {
   createPostingGroup(): FormGroup {
     const accountFormControl = new FormControl('', Validators.required);
 
-    accountFormControl.valueChanges
-    .flatMap(v => this.filterAccount(v))
+    accountFormControl.valueChanges.pipe(
+    mergeMap(v => this.filterAccount(v)))
     .subscribe( accounts => this.filteredAccounts.next(accounts));
 
     return this._formBuilder.group({
@@ -144,9 +145,9 @@ export class EditTransactionComponent implements OnInit {
       const tags = this.transactionToEdit ? this.transactionToEdit.header.tags : []
       
       // Initialize errors
-      const allErrors = Observable.concat( Observable.of(1), this.group.valueChanges)
-      .map( t => this.getAllErrors(this.group))
-      .map(this.errorsToString);
+      const allErrors = observableConcat( observableOf(1), this.group.valueChanges).pipe(
+      map( t => this.getAllErrors(this.group)),
+      map(this.errorsToString),);
 
       this.titleErrors = this.errorsForControl('/title')(allErrors);
       this.dateErrors = this.errorsForControl('/date')(allErrors);
@@ -161,8 +162,8 @@ export class EditTransactionComponent implements OnInit {
   }
 
   errorsForControl = (control: string) => (o: Observable<{ [control: string]: string[] }>): Observable<string> => {
-    return o.map(errors => errors[control] || [])
-    .map(e => e.join(', '));
+    return o.pipe(map(errors => errors[control] || []),
+    map(e => e.join(', ')),);
   }
 
   errorCodeToString = (errorCode: string): string => {
@@ -196,13 +197,13 @@ export class EditTransactionComponent implements OnInit {
   filterAccount(query: string): Observable<Account[]> {
     const latinizedQuery = query.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-    return this.ngRedux.select(presentSelector(allAccountsSelector))
-    .map(accounts => {
+    return this.ngRedux.select(presentSelector(allAccountsSelector)).pipe(
+    map(accounts => {
       return Object.values(accounts).filter(a => {
         const latinizedAccount = a.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         return latinizedAccount.toLowerCase().indexOf(latinizedQuery.toLowerCase()) !== -1;
       });
-    });
+    }));
   }
 
   onSubmit() {
@@ -372,5 +373,5 @@ export const postingsRepartitionAsyncValidator = (array: FormArray): Observable<
         }
     }
   }
-  return Observable.of(error);
+  return observableOf(error);
 };

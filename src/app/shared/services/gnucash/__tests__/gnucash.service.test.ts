@@ -7,7 +7,7 @@ import {
   fileWithLineBreak,
 } from './fixtures';
 import { GnucashService } from '../gnucash.service';
-import 'rxjs/add/operator/toPromise';
+
 
 describe(GnucashService.name, () => {
   it('parses empty file', () => {

@@ -1,13 +1,13 @@
 import { transactionWithNestedAccounts, transactionsWithMissingAmounts } from './fixtures';
 import { AnyAction } from 'redux';
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/observable/zip';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/first';
-import 'rxjs/add/operator/toArray';
-import 'rxjs/add/operator/take';
+
+
+
+
+
+
+
+
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
 import { transactions } from './fixtures';

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Transaction } from '../../models/transaction';
 import { xmlToJson } from '../../utils/utils';
 

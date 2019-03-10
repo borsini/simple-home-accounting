@@ -63,7 +63,6 @@
     "pegjs": "^0.10.0",
     "redux": "4.0.0",
     "rxjs": "6.0.0",
-    "rxjs-compat": "6.0.0",
     "tslint-immutable": "^4.5.1",
     "uuid": "3.3.2",
     "zone.js": "0.8.26"

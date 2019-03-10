@@ -1,9 +1,11 @@
+
+import {mergeMap, tap} from 'rxjs/operators';
 import { emptyFile, oneTransactionFile, transactions } from './fixtures';
 import { LedgerService } from '../ledger.service';
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/observable/zip';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/do';
+
+
+
+
 
 describe(LedgerService.name, () => {
   it('parses empty file', () => {
@@ -27,9 +29,9 @@ describe(LedgerService.name, () => {
     const service = new LedgerService();
 
     let parsedTransactions;
-    const loadAndSave = service.parseLedgerString(oneTransactionFile)
-      .do(x => parsedTransactions = x)
-      .flatMap(tr => service.generateLedgerString(tr).flatMap(value => service.parseLedgerString(value)));
+    const loadAndSave = service.parseLedgerString(oneTransactionFile).pipe(
+      tap(x => parsedTransactions = x),
+      mergeMap(tr => service.generateLedgerString(tr).pipe(mergeMap(value => service.parseLedgerString(value)))),);
 
     return expect(loadAndSave.toPromise()).resolves.toEqual(parsedTransactions);
   });

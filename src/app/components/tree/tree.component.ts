@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Component, Input, OnInit } from '@angular/core';
 import { TreeDatasource, TreeItem, TreeDelegate } from './models';
 

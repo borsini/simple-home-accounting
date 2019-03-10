@@ -1,6 +1,7 @@
 import { CdkTableModule } from '@angular/cdk/table';
 import { NgModule, isDevMode } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import {
   DateAdapter, MAT_DATE_FORMATS, MatAutocompleteModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatDatepickerModule,
   MatIconModule,
@@ -116,8 +117,8 @@ export class AppModule {
       isDevMode() && devTools.isEnabled() ? [devTools.enhancer()] : []);
 
     this.ngRedux.select(presentSelector(allTransactionsSelector))
-    .distinctUntilChanged()
-    .debounceTime(5000)
+    .pipe(distinctUntilChanged())
+    .pipe(debounceTime(5000))
     .subscribe( transactions => {
       console.log('save');
       saveTransactions(transactions);

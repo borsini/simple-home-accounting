@@ -1,16 +1,19 @@
+
+import {from as observableFrom,  Observable } from 'rxjs';
+
+import {toArray, map, mergeMap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 
 import { Transaction } from '../../models/transaction';
 
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
 import * as pegjs from 'pegjs';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/toArray';
+
+
 import { Posting } from '../../models/posting';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/map';
+
+
 
 @Injectable()
 export class LedgerService {
@@ -143,9 +146,9 @@ export class LedgerService {
   }
 
   parseLedgerString(text: string): Observable<Transaction[]> {
-    return this.parseObservable(text)
-    .flatMap(trs => Observable.from(trs))
-    .map( t => {
+    return this.parseObservable(text).pipe(
+    mergeMap(trs => observableFrom(trs)),
+    map( t => {
       return {
         uuid: undefined,
         header : {
@@ -168,8 +171,8 @@ export class LedgerService {
           return pt;
         }),
       };
-    })
-    .toArray();
+    }),
+    toArray(),);
   }
 
   private parseObservable(text: string): Observable<LedgerTransaction[]> {

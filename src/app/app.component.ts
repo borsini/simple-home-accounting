@@ -1,13 +1,12 @@
+
+import {throwError as observableThrowError, of as observableOf,  BehaviorSubject ,  Observable ,  Subject ,  combineLatest } from 'rxjs';
+
+import {tap, take, map, zip,  filter, concatMap, mergeMap } from 'rxjs/operators';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav, MatTabGroup } from '@angular/material';
 import * as fileSaver from 'file-saver';
 import { LedgerService } from './shared/services/ledger/ledger.service';
 import { OfxService } from './shared/services/ofx/ofx.service';
-
-import 'rxjs/add/operator/zip';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 import { Transaction, TransactionWithUUID } from './shared/models/transaction';
 import { GnucashService } from './shared/services/gnucash/gnucash.service';
 import { NgRedux } from '@angular-redux/store';
@@ -28,8 +27,6 @@ import {
 const { version } = require('../../package.json');
 import * as moment from 'moment';
 import { UndoRedoState, presentSelector, pastSelector, futureSelector, UndoRedoActions } from './shared/reducers/undo-redo-reducer';
-import { filter, concatMap, mergeMap } from 'rxjs/operators';
-import { combineLatest } from 'rxjs/observable/combineLatest';
 import { TreeDatasource, TreeItem, TreeDelegate } from './components/tree/models';
 
 @Component({
@@ -104,35 +101,35 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.rootAccount = this.ngRedux.select(presentSelector(rootAccountSelector));
 
-    this.showDownloadButton = this.ngRedux.select(presentSelector(allTransactionsSelector)).zip(
-      this.ngRedux.select(presentSelector(invalidTransactionsSelector)))
-      .map(zip => Object.keys(zip[0]).length > 0 && zip[1].length === 0);
+    this.showDownloadButton = this.ngRedux.select(presentSelector(allTransactionsSelector)).pipe(zip(
+      this.ngRedux.select(presentSelector(invalidTransactionsSelector))),
+      map(zip => Object.keys(zip[0]).length > 0 && zip[1].length === 0),);
 
-    this.showResetButton = this.ngRedux.select(presentSelector(allTransactionsSelector))
-    .map(trs => Object.keys(trs).length > 0);
+    this.showResetButton = this.ngRedux.select(presentSelector(allTransactionsSelector)).pipe(
+    map(trs => Object.keys(trs).length > 0));
 
     const t = pastSelector(this.ngRedux.getState());
-    this.nbUndosAvailable = this.ngRedux.select<AppState[]>(pastSelector).map(p => p.length);
-    this.nbRedosAvailable = this.ngRedux.select<AppState[]>(futureSelector).map(p => p.length);
+    this.nbUndosAvailable = this.ngRedux.select<AppState[]>(pastSelector).pipe(map(p => p.length));
+    this.nbRedosAvailable = this.ngRedux.select<AppState[]>(futureSelector).pipe(map(p => p.length));
 
     this.isDrawerOpen = this.ngRedux.select(presentSelector(isLeftMenuOpenSelector));
     this.isLoading = this.ngRedux.select(presentSelector(isLoadingSelector));
 
-    this.allTransactionsCount = this.ngRedux.select(presentSelector(allTransactionsSelector)).map(trs => Object.keys(trs).length);
+    this.allTransactionsCount = this.ngRedux.select(presentSelector(allTransactionsSelector)).pipe(map(trs => Object.keys(trs).length));
 
     const tabs = this.ngRedux.select(presentSelector(tabsSelector));
     const allAccounts = this.ngRedux.select(presentSelector(allAccountsSelector));
     const allTransactions = this.ngRedux.select(presentSelector(allTransactionsSelector));
     const rootAccount = this.rootAccount.pipe(filter(r => r !== undefined)) as Observable<string>;
     
-    this.tabsConf = combineLatest(tabs, allAccounts, allTransactions, rootAccount)
-    .map(([tbs, acc, trs, root]) => {
+    this.tabsConf = combineLatest(tabs, allAccounts, allTransactions, rootAccount).pipe(
+    map(([tbs, acc, trs, root]) => {
       return Object.values(tbs).map<TabConfiguration>(tb => ({
         isClosable: tb.isClosable,
         tabId: tb.id,
         title: this.computeTabTitle(tb, acc, trs, root),
       }));
-    });
+    }));
   }
 
   trackByFn(index, item: TabConfiguration) {
@@ -146,8 +143,8 @@ export class AppComponent implements OnInit {
   uploadFileOnChange(files: FileList) {
     this.ngRedux.dispatch(AppStateActions.setIsLoading(true));
 
-    this.readAndParseTransactionsFromFile(files.item(0))
-      .zip(this.userWantsToClearOldTransactions())
+    this.readAndParseTransactionsFromFile(files.item(0)).pipe(
+      zip(this.userWantsToClearOldTransactions()))
       .subscribe(
       zip => {
         this.ngRedux.dispatch(AppStateActions.addTransactions(zip[0], zip[1]));
@@ -163,9 +160,9 @@ export class AppComponent implements OnInit {
   }
 
   userWantsToClearOldTransactions(): Observable<boolean> {
-    return this.ngRedux.select(presentSelector(allTransactionsSelector)).take(1)
-      .map( tr => Object.keys(tr).length)
-      .flatMap( count => {
+    return this.ngRedux.select(presentSelector(allTransactionsSelector)).pipe(take(1),
+      map( tr => Object.keys(tr).length),
+      mergeMap( count => {
         if (count > 0) {
           return new Observable( subscriber => {
             const dialogRef = this.dialog.open(DialogTwoOptionsDialogComponent, {
@@ -184,19 +181,19 @@ export class AppComponent implements OnInit {
             });
           });
         } else {
-          return Observable.of(false);
+          return observableOf(false);
         }
-      });
+      }),);
   }
 
   saveLedgerClicked() {
-    this.ngRedux.select(presentSelector(allTransactionsSelector))
-    .take(1)
-    .flatMap(tr => this._ledger.generateLedgerString(Object.values(tr)))
-    .do(ledger => {
+    this.ngRedux.select(presentSelector(allTransactionsSelector)).pipe(
+    take(1),
+    mergeMap(tr => this._ledger.generateLedgerString(Object.values(tr))),
+    tap(ledger => {
       const blob = new Blob([ledger], {type: 'text/plain;charset=utf-8'});
       fileSaver.saveAs(blob, 'accounts.ledger');
-    })
+    }),)
     .subscribe();
   }
 
@@ -217,16 +214,16 @@ export class AppComponent implements OnInit {
     const ext = exploded[exploded.length - 1];
 
     if (ext === 'ledger') {
-      return this.readFileObservable(file)
-      .flatMap(content => this._ledger.parseLedgerString(content));
+      return this.readFileObservable(file).pipe(
+      mergeMap(content => this._ledger.parseLedgerString(content)));
     } else if (ext === 'ofx') {
-      return this.readFileObservable(file)
-      .flatMap(content => this._ofx.parseOfxString(content));
+      return this.readFileObservable(file).pipe(
+      mergeMap(content => this._ofx.parseOfxString(content)));
     } else if (ext === 'gnucash') {
-      return this.readFileObservable(file)
-        .flatMap(content => this._gnucash.parseGnucashString(content));
+      return this.readFileObservable(file).pipe(
+        mergeMap(content => this._gnucash.parseGnucashString(content)));
     } else {
-      return Observable.throw('Cette extension n\'est pas autorisée');
+      return observableThrowError('Cette extension n\'est pas autorisée');
     }
   }
 

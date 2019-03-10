@@ -1,3 +1,7 @@
+
+import {merge as observableMerge,  Observable ,  Subject, from } from 'rxjs';
+
+import {tap, debounceTime, map,  filter, flatMap } from 'rxjs/operators';
 import { AppStateActions } from './../../shared/reducers/app-state-reducer';
 import { AppState } from './../../shared/models/app-state';
 import { NgRedux } from '@angular-redux/store';
@@ -6,21 +10,13 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import Decimal from 'decimal.js';
 import * as moment from 'moment';
-import { filter } from 'rxjs/operators';
-import 'rxjs/add/observable/concat';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../../shared/models/transaction';
 import { Posting } from '../../shared/models/posting';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/skipUntil';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/first';
-import 'rxjs/add/observable/merge';
+
+
+
+
+
 
 import {
   allTransactionsSelector,
@@ -99,17 +95,17 @@ export class TransactionRow {
     }
 
     get postings(): Observable<PostingRow[]> {
-      return this.selectedAccounts.map(sa => {
+      return this.selectedAccounts.pipe(map(sa => {
         return this.postingsToDisplay(sa).map(p => new PostingRow(p, this._handleAccountClicked));
-      });
+      }));
     }
 
     get isInvalid(): Observable<boolean> {
-      return this.invalidTransactions.map(trs => trs.includes(this.transaction.uuid));
+      return this.invalidTransactions.pipe(map(trs => trs.includes(this.transaction.uuid)));
     }
 
     get isSelected(): Observable<boolean> {
-      return this._selectedTransactionUUID.map(uuid => this.transaction.uuid === uuid);
+      return this._selectedTransactionUUID.pipe(map(uuid => this.transaction.uuid === uuid));
     }
 
     get headerTags(): string[] {
@@ -142,34 +138,34 @@ export class TransactionDataSource extends DataSource<TransactionRow> {
       const editedTransactionSel = editedTransactionSelector(this.tabId);
       const selectedAccountsSel = selectedAccountsSelector(this.tabId);
 
-      const sortChange = Observable.from<MatSort>(this._sort.sortChange)
-        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSel)));
+      const sortChange = from(this._sort.sortChange)
+        .pipe(flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSel))));
 
-      const pageChange = Observable.from<PageEvent>(this._paginator.page)
-        .flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSel)));
+      const pageChange = from(this._paginator.page)
+        .pipe(flatMap( d => this.ngRedux.select(presentSelector(selectedTransactionsSel))));
 
       const selectedTransactionsChanged = this.ngRedux.select(presentSelector(selectedTransactionsSel));
 
       const selectedUUID = this.ngRedux.select(presentSelector(editedTransactionSel))
-      .pipe(filter(t => isTransactionWithUUID(t)))
-      .map(t => (t as TransactionWithUUID).uuid);
+      .pipe(filter(t => isTransactionWithUUID(t))).pipe(
+      map(t => (t as TransactionWithUUID).uuid));
 
       const invalidTransactions = this.ngRedux.select(presentSelector(invalidTransactionsSelector));
       const selectedAccounts = this.ngRedux.select(presentSelector(selectedAccountsSel));
-      return Observable.merge(pageChange, sortChange, selectedTransactionsChanged)
-      .debounceTime(150)
-      .map( data => this.sortData(data))
-      .map( data => {
+      return observableMerge(pageChange, sortChange, selectedTransactionsChanged).pipe(
+      debounceTime(150),
+      map( data => this.sortData(data)),
+      map( data => {
         this._paginator.length = data.length;
         return this.paginateData(data);
-      })
-      .map( data => data.map( tr => new TransactionRow(
+      }),
+      map( data => data.map( tr => new TransactionRow(
         tr,
         selectedUUID,
         invalidTransactions,
         selectedAccounts,
         this.handleAccountClicked,
-      )));
+      ))),);
     }
 
     disconnect() {}
@@ -220,17 +216,17 @@ export class TransactionsComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(private ngRedux: NgRedux<UndoRedoState<AppState>>) {
-    this.transactions = ngRedux.select(presentSelector(allTransactionsSelector)).map(t => Object.values(t));
+    this.transactions = ngRedux.select(presentSelector(allTransactionsSelector)).pipe(map(t => Object.values(t)));
   }
 
   ngOnInit() {
     this.dataSource = new TransactionDataSource(this.ngRedux, this.tabId, this.paginator, this.sort);
-    this.noTransactionsToDisplay = this.ngRedux.select(presentSelector(selectedTransactionsSelector(this.tabId)))
-    .map(t => t.length === 0);
+    this.noTransactionsToDisplay = this.ngRedux.select(presentSelector(selectedTransactionsSelector(this.tabId))).pipe(
+    map(t => t.length === 0));
 
-    this.ngRedux.select(presentSelector(filtersSelector(this.tabId))).do(_ => {
+    this.ngRedux.select(presentSelector(filtersSelector(this.tabId))).pipe(tap(_ => {
       this.paginator.pageIndex = 0;
-    }).subscribe();
+    })).subscribe();
   }
 
   onTransactionClicked(row: TransactionRow) {
