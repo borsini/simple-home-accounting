@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { TreeDatasource, TreeDelegate, TreeItem } from '../tree/models';
-import { Observable ,  fromEvent } from 'rxjs';
+import { Observable ,  fromEvent, BehaviorSubject } from 'rxjs';
 import { NgRedux } from '@angular-redux/store';
 import { debounceTime, tap, flatMap } from 'rxjs/operators';
 import { UndoRedoState, presentSelector } from '../../shared/reducers/undo-redo-reducer';
-import { AppState } from '../../shared/models/app-state';
+import { AppState, AccountMap } from '../../shared/models/app-state';
 import { allAccountsSelector, accountsFiltered } from '../../shared/selectors/selectors';
 import { AppStateActions } from '../../shared/reducers/app-state-reducer';
 import { startWith, filter, map } from 'rxjs/operators';
@@ -35,20 +35,21 @@ export class AccountsComponent implements OnInit {
   }
 
   ngOnInit() {
-    const filterValue = fromEvent(this.filter.nativeElement, 'keyup')
-    .pipe(debounceTime(700))
-    .pipe(tap(console.log))
-    .pipe(startWith('fake'))
-    .pipe(map(_ => this.filter.nativeElement.value as string));
+    const filteredAccountsSubject = new BehaviorSubject({} as AccountMap);
 
-    const accounts = filterValue
-    .pipe(tap(_ => this.isInputDisabled = true))
-    .pipe(flatMap(f => this.ngRedux.select(presentSelector(accountsFiltered(f)))))
-    .pipe(tap(_ => this.isInputDisabled = false))
+    fromEvent(this.filter.nativeElement, 'keyup')
+    .pipe(
+      debounceTime(150),
+      map(_ => this.filter.nativeElement.value as string),
+      tap(_ => this.isInputDisabled = true),
+      startWith(""),
+      flatMap(f => this.ngRedux.select(presentSelector(accountsFiltered(f)))),
+      tap(_ => this.isInputDisabled = false)
+    ).subscribe(filteredAccountsSubject)
 
     this.treeDatasource = {
       getItemForId: (id: string): Observable<TreeItem | undefined> =>
-      accounts.pipe(map(filteredAccounts => {
+      filteredAccountsSubject.pipe(map(filteredAccounts => {
         const a = filteredAccounts[id];
         return a ? {
           id,
