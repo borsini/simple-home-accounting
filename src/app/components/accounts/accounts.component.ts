@@ -56,7 +56,7 @@ export class AccountsComponent implements OnInit {
           title: a.name.split(':').slice(-1)[0],
           subtitle: a.balance.toString(),
           isChecked: false,
-          childrenIds: [a.children, Object.keys(filteredAccounts)].reduce(intersectionReducer)
+          childrenIds: [a.children, Object.keys(filteredAccounts)].reduce(intersectionReducer).sort()
         } : undefined;
       }))
     };
