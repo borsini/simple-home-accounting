@@ -36,7 +36,9 @@ const tabSelector = (s: AppState, tab: string): Tab => {
   export const accountsFiltered = (filter: string ) => (s: AppState) => {
     const allAccounts = allAccountsSelector(s);
 
-    const matchingAccounts = Object.keys(allAccounts).filter(a => a === ROOT_ACCOUNT || a.includes(filter.trim()));
+    const matchingAccounts = Object
+      .keys(allAccounts)
+      .filter(a => a === ROOT_ACCOUNT || a.toLocaleLowerCase().includes(filter.trim().toLocaleLowerCase()));
 
     const matchingAccountsAndTheirAncestors = matchingAccounts.reduce( (prev, curr) => ([
       ...prev,
