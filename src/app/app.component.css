@@ -2,25 +2,21 @@ body {
     overflow: hidden;
   }
 
-.main {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+  .example-spacer {
+    flex: 1 1 auto;
+  }
 
-    min-height: 100vh;
+.main {
+  display: flex;
+  height: 100vh;
+  max-height: 100vh;
+  flex-direction: column;
 }
 
 mat-tab-group {
-  flex: 1;
-}
-
-mat-sidenav {
-  width: 400px;
-  padding:5px;
-}
-
-mat-toolbar {
-    flex: 0 0 auto;
+  flex-grow: 1;
+  height: 100px;
+  display:flex;
 }
 
 mat-progress-spinner {
@@ -31,12 +27,6 @@ mat-progress-spinner {
 #filename {
   display: flex;
   justify-content: center;
-}
-
-.content {
-    flex: 1 1 auto;
-    position: relative;/* need this to position inner content */
-    overflow-y: auto;
 }
 
 .footer {

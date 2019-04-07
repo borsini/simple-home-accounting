@@ -7,6 +7,10 @@ mat-cell {
     padding: 5px 0;
 }
 
+p {
+    margin: 0;
+}
+
 .invalid {
   background: repeating-linear-gradient(
     45deg,
@@ -28,6 +32,9 @@ mat-cell {
 
 .postings {
     padding-right: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
 }
 
 .posting {

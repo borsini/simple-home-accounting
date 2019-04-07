@@ -8,25 +8,19 @@
 
   <mat-table #table [dataSource]="dataSource" matSort [class.hidden]="noTransactionsToDisplay | async">
 
-  <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
-
-  <!-- ID Column -->
   <ng-container cdkColumnDef="title">
     <mat-header-cell *cdkHeaderCellDef mat-sort-header> Titre </mat-header-cell>
     <mat-cell *cdkCellDef="let row">
-      <p class="mat-body-2">{{row.title}}</p>
-      <app-tags [tags]="row.headerTags" [allowEditing]="false"></app-tags>
+      <p>{{row.title}}</p>
+      <app-tags [tags]="row.headerTags" [allowEditing]="false" *ngIf="row.headerTags"></app-tags>
     </mat-cell>
   </ng-container>
 
-  <!-- Progress Column -->
   <ng-container cdkColumnDef="date">
     <mat-header-cell *cdkHeaderCellDef mat-sort-header [ngClass]="'shrink_cell'"> Date </mat-header-cell>
     <mat-cell *cdkCellDef="let row" [ngClass]="'shrink_cell'"> {{row.date}} </mat-cell>
   </ng-container>
 
-  <!-- Name Column -->
   <ng-container cdkColumnDef="movements">
     <mat-header-cell *cdkHeaderCellDef [ngClass]="'grow_cell'"> Mouvements </mat-header-cell>
     <mat-cell *cdkCellDef="let row" [ngClass]="'grow_cell postings'" (click)="$event.stopPropagation()">
@@ -38,6 +32,7 @@
             [ngClass]="{positive:p.isPositive == true, negative:p.isPositive == false}">
               {{p.amount}}
           </span>
+
         </div>
 
         <div *ngIf="(row.postings | async).length > 2" class="posting">

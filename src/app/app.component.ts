@@ -3,7 +3,7 @@ import {throwError as observableThrowError, of as observableOf,  BehaviorSubject
 
 import {tap, take, map, zip,  filter, concatMap, mergeMap } from 'rxjs/operators';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav, MatTabGroup } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTabGroup } from '@angular/material';
 import * as fileSaver from 'file-saver';
 import { LedgerService } from './shared/services/ledger/ledger.service';
 import { OfxService } from './shared/services/ofx/ofx.service';
