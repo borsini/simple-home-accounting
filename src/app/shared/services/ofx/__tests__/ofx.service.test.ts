@@ -1,5 +1,5 @@
 import { inject, TestBed } from '@angular/core/testing';
-import { emptyFile, oneTransactionFile, simpleFile } from './fixtures';
+import { emptyFile, oneTransactionFile, simpleFile, invalidFile } from './fixtures';
 import { OfxService } from '../ofx.service';
 
 
@@ -21,5 +21,11 @@ describe('OfxService', () => {
     const service = new OfxService();
 
     return expect(service.parseOfxString(oneTransactionFile).toPromise()).resolves.toMatchSnapshot();
+  });
+
+  it('sends error if file is invalid', () => {
+    const service = new OfxService();
+
+    return expect(service.parseOfxString(invalidFile).toPromise()).rejects.toMatchSnapshot();
   });
 });

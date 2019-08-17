@@ -1,6 +1,16 @@
 export const emptyFile = '';
 
-export const simpleFile = `<OFX>
+export const simpleFile = `
+OFXHEADER:100
+DATA:OFXSGML
+VERSION:102
+SECURITY:NONE
+ENCODING:USASCII
+CHARSET:1252
+COMPRESSION:NONE
+OLDFILEUID:NONE
+NEWFILEUID:NONE
+<OFX>
 <SIGNONMSGSRSV1>
 <SONRS>
 <STATUS>
@@ -18,6 +28,15 @@ export const simpleFile = `<OFX>
 `;
 
 export const oneTransactionFile = `
+OFXHEADER:100
+DATA:OFXSGML
+VERSION:102
+SECURITY:NONE
+ENCODING:USASCII
+CHARSET:1252
+COMPRESSION:NONE
+OLDFILEUID:NONE
+NEWFILEUID:NONE
 <OFX>
 <SIGNONMSGSRSV1>
 <SONRS>
@@ -76,3 +95,5 @@ export const oneTransactionFile = `
 </BANKMSGSRSV1>
 </OFX>
 `;
+
+export const invalidFile = `AOUCH @^$ù`;
