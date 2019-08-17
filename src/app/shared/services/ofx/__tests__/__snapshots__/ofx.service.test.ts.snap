@@ -26,3 +26,5 @@ Array [
 `;
 
 exports[`OfxService parses simple file 1`] = `Array []`;
+
+exports[`OfxService sends error if file is invalid 1`] = `[TypeError: Cannot read property 'BANKMSGSRSV1' of undefined]`;

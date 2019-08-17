@@ -12,6 +12,15 @@ export class OfxService {
   parseOfxString(ofxString: string): Observable<Transaction[]> {
     return new Observable(obs => {
       const xmlOfx = ofxString
+        .replace(/OFXHEADER.*/, '')
+        .replace(/DATA.*/, '')
+        .replace(/VERSION.*/, '')
+        .replace(/SECURITY.*/, '')
+        .replace(/ENCODING.*/, '')
+        .replace(/CHARSET.*/, '')
+        .replace(/COMPRESSION.*/, '')
+        .replace(/OLDFILEUID.*/, '')
+        .replace(/NEWFILEUID.*/, '')
         // Remove empty spaces and line breaks between tags
         .replace(/>\s+</g, '><')
         // Remove empty spaces and line breaks before tags content
