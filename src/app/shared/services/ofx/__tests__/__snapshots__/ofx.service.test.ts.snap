@@ -2,6 +2,29 @@
 
 exports[`OfxService parses empty file 1`] = `[TypeError: Cannot read property 'BANKMSGSRSV1' of undefined]`;
 
+exports[`OfxService parses file with missing transactions somewhere 1`] = `
+Array [
+  Object {
+    "header": Object {
+      "date": 1503532800,
+      "isVerified": false,
+      "tags": Array [],
+      "title": "FNAC      23/08",
+    },
+    "postings": Array [
+      Object {
+        "account": "01234567890",
+        "amount": "-18.90",
+        "comment": "PAIEMENT PAR CARTE",
+        "currency": "EUR",
+        "tag": "",
+        "tags": Array [],
+      },
+    ],
+  },
+]
+`;
+
 exports[`OfxService parses file with one transaction 1`] = `
 Array [
   Object {

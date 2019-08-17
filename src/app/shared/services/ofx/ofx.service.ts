@@ -55,8 +55,10 @@ export class OfxService {
         const acc = response.BANKACCTFROM.ACCTID['#text'];
 
         let STMTTRN: any = response.BANKTRANLIST.STMTTRN;
-
-        if (!(STMTTRN instanceof Array)) {
+        
+        if (!STMTTRN) {
+          return;
+        }else if (!(STMTTRN instanceof Array)) {
           STMTTRN = [STMTTRN];
         }
 
