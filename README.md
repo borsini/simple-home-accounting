@@ -1,6 +1,8 @@
 # Simple Home Accounting
 
-[![Build Status](https://travis-ci.org/Benlenem/simple-home-accounting.svg?branch=develop)](https://travis-ci.org/Benlenem/simple-home-accounting)
+[![Build Status](https://travis-ci.org/borsini/simple-home-accounting.svg?branch=develop)](https://travis-ci.org/borsini/simple-home-accounting)
+
+
 
 > This project aims to simplify everyone's day-to-day accounting. It provides a simple web based serverless application.
 
