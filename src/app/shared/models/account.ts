@@ -25,4 +25,25 @@ export class Account {
         this.childrenCredits = new Decimal(0);
         this.children = [];
     }
+
+    plus(a: Account) {
+        if(a.name != this.name || a.parent != this.parent) {
+            throw "Can only add accounts with the exact same name and parent"
+        }
+
+        const acc = new Account(a.name)
+        acc.children = Array.from(new Set([...this.children, ...a.children]))
+        .sort((a, b) => a.localeCompare(b))
+        acc.balance = this.balance.plus(a.balance);
+        acc.childrenBalance = this.childrenBalance.plus(a.childrenBalance);
+        acc.nbTransactions += this.nbTransactions + a.nbTransactions;
+        acc.nbChildrenTransactions = this.nbChildrenTransactions + a.nbChildrenTransactions;
+        acc.debits = this.debits.plus(a.debits);
+        acc.credits = this.credits.plus(a.credits);
+        acc.childrenDebits = this.childrenDebits.plus(a.childrenDebits);
+        acc.childrenCredits = this.childrenCredits.plus(a.childrenCredits);
+        if(this.parent) acc.parent = this.parent
+        
+        return acc;
+    }
 }
