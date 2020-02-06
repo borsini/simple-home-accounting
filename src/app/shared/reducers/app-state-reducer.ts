@@ -1,7 +1,7 @@
 import {v4 as uuid } from 'uuid';
 import Decimal from 'decimal.js';
 
-import { AppState, TransactionMap, AccountMap, Tab, Tabs, Ui, Filters } from './../models/app-state';
+import { AppState, TransactionMap, AccountMap, Tab, Tabs, Ui, Filters, Entities, Computed } from './../models/app-state';
 import { Account } from '../models/account';
 import { Action, AnyAction } from 'redux';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../models/transaction';
@@ -277,13 +277,42 @@ const setEditedTransaction = (state: AppState, t: Transaction | TransactionWithU
 };
 
 const addTransactions = (state: AppState, transactions: Transaction[], clearOldTransactions: boolean): AppState => {
-  const transactionsWithUuid = transactions.map(t => ({
-    ...t,
-    uuid: uuid(),
-  }));
+  //Create Entities
+  const transactionsWithUuid = transactions.map(t => ({...t,uuid: uuid()})).map(t => addMissingAmount(t));
+  const newTransactions = addOrUpdateTransactions(state.entities.transactions, transactionsWithUuid, clearOldTransactions);
+  const entities: Entities = {transactions : newTransactions}
+  
+  //Create Computed
+  const newAccounts = addTransactionsToAccounts(clearOldTransactions ? [] : Object.values(state.computed.accounts),transactionsWithUuid)
+    .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
 
-  const tr = addOrUpdateTransactions(state.entities.transactions, transactionsWithUuid, clearOldTransactions);
-  return stateWithNewTransactions(state, tr);
+  const newInvalidTransactions = transactionsWithUuid.filter(t =>
+    t.header.title === undefined ||
+    t.postings.length < 2).map(t2 => t2.uuid);
+
+  const computed: Computed = {
+    accounts: newAccounts,
+    invalidTransactions: newInvalidTransactions
+  }
+
+  //Create Ui
+  const ui = updateUi(state.ui, Object.keys(newTransactions), Object.keys(newAccounts));
+
+  return {
+    entities,
+    computed,
+    ui
+  }
+};
+
+const addTransactionsToAccounts = (existingAccounts: Account[], transactions: Transaction[]): Account[] =>  {
+  const newAccounts = generateAccounts(transactions)
+
+  const allAccounts = newAccounts.concat(existingAccounts)
+
+  return [existingAccounts.map(a => a.name), newAccounts.map(a => a.name)]
+    .reduce(unionReducer)
+    .map(name => allAccounts.filter(a => a.name == name).reduce((prev, curr) => prev.plus(curr)))
 };
 
 const deleteTransaction = (state: AppState, id: string): AppState => {
