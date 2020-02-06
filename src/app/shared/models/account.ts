@@ -46,4 +46,24 @@ export class Account {
         
         return acc;
     }
+
+    minus(a: Account) {
+        if(a.name != this.name || a.parent != this.parent) {
+            throw "Can only substract accounts with the exact same name and parent"
+        }
+
+        const acc = new Account(a.name)
+        acc.children = this.children
+        acc.balance = this.balance.minus(a.balance);
+        acc.childrenBalance = this.childrenBalance.minus(a.childrenBalance);
+        acc.nbTransactions += this.nbTransactions - a.nbTransactions;
+        acc.nbChildrenTransactions = this.nbChildrenTransactions - a.nbChildrenTransactions;
+        acc.debits = this.debits.minus(a.debits);
+        acc.credits = this.credits.minus(a.credits);
+        acc.childrenDebits = this.childrenDebits.minus(a.childrenDebits);
+        acc.childrenCredits = this.childrenCredits.minus(a.childrenCredits);
+        if(this.parent) acc.parent = this.parent
+        
+        return acc;
+    }
 }
