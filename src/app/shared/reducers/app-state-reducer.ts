@@ -179,8 +179,10 @@ const addMissingAmount = (transaction: TransactionWithUUID): TransactionWithUUID
   };
 };
 
-const generateAccounts = (transactions: Transaction[]): AccountMap => {
+const generateAccounts = (transactions: Transaction[]): Account[] => {
   const accounts = createAccountsFromTransactions(transactions);
+  
+  //Create root account as parent of all top accounts
   const topAccounts = accounts.filter(a => a.parent === undefined);
   const root = new Account(ROOT_ACCOUNT);
   root.children = topAccounts.map(a => a.name);
@@ -192,7 +194,7 @@ const generateAccounts = (transactions: Transaction[]): AccountMap => {
   return [
     root,
     ...accounts,
-  ].reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
+  ];
 };
 
 const createAccountsFromTransactions = (transactions: Transaction[]): Account[] => {
@@ -426,7 +428,7 @@ const updateUi = (ui: Ui, newTransactions: string[], newAccounts: string[]): Ui 
 const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
   const transactions = Object.values(transactionMap);
   const newAccounts = generateAccounts(transactions);
-  const newAccountsKeys = Object.keys(newAccounts);
+  const newAccountsNames = newAccounts.map(a => a.name);
 
   // Check if transactions are valid
   const newInvalidTransactions = transactions.filter(t =>
@@ -434,7 +436,7 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
     t.postings.length < 2).map(t2 => t2.uuid);
 
   // Update ui
-  const ui = updateUi(state.ui, Object.keys(transactionMap), newAccountsKeys);
+  const ui = updateUi(state.ui, Object.keys(transactionMap), newAccountsNames);
 
   return {
     ...state,
@@ -442,7 +444,7 @@ const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMa
       transactions: transactionMap,
     },
     computed: {
-      accounts: newAccounts,
+      accounts: newAccounts.reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {}),
       invalidTransactions: newInvalidTransactions,
     },
     ui,
