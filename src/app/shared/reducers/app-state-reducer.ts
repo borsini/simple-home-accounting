@@ -179,9 +179,7 @@ const addMissingAmount = (transaction: TransactionWithUUID): TransactionWithUUID
   };
 };
 
-const generateAccounts = (transactions: Transaction[]): Account[] => {
-  const accounts = createAccountsFromTransactions(transactions);
-  
+const addRootToAccounts = (accounts: Account[]): Account[] => {
   //Create root account as parent of all top accounts
   const topAccounts = accounts.filter(a => a.parent === undefined);
   const root = new Account(ROOT_ACCOUNT);
@@ -306,7 +304,7 @@ const addTransactions = (state: AppState, transactions: Transaction[], clearOldT
 };
 
 const addTransactionsToAccounts = (existingAccounts: Account[], transactions: Transaction[]): Account[] =>  {
-  const newAccounts = generateAccounts(transactions)
+  const newAccounts = addRootToAccounts(createAccountsFromTransactions(transactions))
 
   const allAccounts = newAccounts.concat(existingAccounts)
 
@@ -456,7 +454,7 @@ const updateUi = (ui: Ui, newTransactions: string[], newAccounts: string[]): Ui 
 
 const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
   const transactions = Object.values(transactionMap);
-  const newAccounts = generateAccounts(transactions);
+  const newAccounts = addRootToAccounts(createAccountsFromTransactions(transactions))
   const newAccountsNames = newAccounts.map(a => a.name);
 
   // Check if transactions are valid
