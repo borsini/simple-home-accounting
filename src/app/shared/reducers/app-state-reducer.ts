@@ -314,11 +314,60 @@ const addTransactionsToAccounts = (existingAccounts: Account[], transactions: Tr
 };
 
 const deleteTransaction = (state: AppState, id: string): AppState => {
-  const tr = Object.assign({}, state.entities.transactions);
-  delete tr[id];
+  //Create Entities
+  const transactionDeleted = state.entities.transactions[id];
+  const newTransactions = Object.assign({}, state.entities.transactions);
+  delete newTransactions[id];
 
-  return stateWithNewTransactions(state, tr);
+  const entities: Entities = {transactions : newTransactions}
+  
+  //Create Computed
+  const newAccounts = deleteTransactionsFromAccounts(Object.values(state.computed.accounts), [transactionDeleted])
+    .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
+
+  const computed: Computed = {
+    ...state.computed,
+    accounts: newAccounts
+  }
+
+  //Create Ui
+  const ui = updateUi(state.ui, Object.keys(newTransactions), Object.keys(newAccounts));
+
+  return {
+    entities,
+    computed,
+    ui
+  }
 };
+
+const deleteTransactionsFromAccounts = (existingAccounts: Account[], transactions: Transaction[]): Account[] =>  {
+  const accountsToSubstract = addRootToAccounts(createAccountsFromTransactions(transactions))
+
+  const allAccounts = existingAccounts.concat(accountsToSubstract)
+
+  const allAccountsWithValuesUpdated = [existingAccounts.map(a => a.name), accountsToSubstract.map(a => a.name)]
+    .reduce(unionReducer)
+    .map(name => allAccounts.filter(a => a.name == name).reduce((prev, curr) => prev.minus(curr)))
+  
+    var accountsToDelete = allAccountsWithValuesUpdated.filter(isAccountEmpty).map(a => a.name)
+    var finalAccounts: Account[] = []
+    do {
+      finalAccounts = deleteAccounts(accountsToDelete, allAccountsWithValuesUpdated)
+      accountsToDelete = finalAccounts.filter(isAccountEmpty).map(a => a.name)
+    } while(accountsToDelete.length > 0)
+    
+    return finalAccounts;
+};
+
+const isAccountEmpty = (a :Account): Boolean => {
+  return a.name != "ROOT" && a.nbTransactions == 0 && a.nbChildrenTransactions == 0 && a.children.length == 0
+}
+
+const deleteAccounts = (names: string[], accounts: Account[]): Account[] => {
+  const remainingAccounts = accounts.filter(a => names.indexOf(a.name) <= -1)
+  remainingAccounts.forEach(a => { a.children = [a.children, names].reduce(differenceReducer) })
+  return remainingAccounts;
+}
 
 const updateTransaction = (state: AppState, transaction: TransactionWithUUID): AppState => {
   const tr = addOrUpdateTransactions(state.entities.transactions, [transaction], false);
