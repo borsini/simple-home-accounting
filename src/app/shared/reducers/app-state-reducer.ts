@@ -294,7 +294,7 @@ const addTransactions = (state: AppState, transactions: Transaction[], clearOldT
   }
 
   //Create Ui
-  const ui = updateUi(state.ui, Object.keys(newTransactions), Object.keys(newAccounts));
+  const ui = updateUi(state.ui, Object.keys(entities.transactions), Object.keys(newAccounts));
 
   return {
     entities,
