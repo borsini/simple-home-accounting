@@ -1,7 +1,7 @@
 import {v4 as uuid } from 'uuid';
 import Decimal from 'decimal.js';
 
-import { AppState, TransactionMap, AccountMap, Tab, Tabs, Ui, Filters } from './../models/app-state';
+import { AppState, TransactionMap, AccountMap, Tab, Tabs, Ui, Filters, Entities, Computed } from './../models/app-state';
 import { Account } from '../models/account';
 import { Action, AnyAction } from 'redux';
 import { Transaction, TransactionWithUUID, isTransactionWithUUID } from '../models/transaction';
@@ -179,8 +179,8 @@ const addMissingAmount = (transaction: TransactionWithUUID): TransactionWithUUID
   };
 };
 
-const generateAccounts = (transactions: Transaction[]): AccountMap => {
-  const accounts = createAccountsFromTransactions(transactions);
+const addRootToAccounts = (accounts: Account[]): Account[] => {
+  //Create root account as parent of all top accounts
   const topAccounts = accounts.filter(a => a.parent === undefined);
   const root = new Account(ROOT_ACCOUNT);
   root.children = topAccounts.map(a => a.name);
@@ -192,7 +192,7 @@ const generateAccounts = (transactions: Transaction[]): AccountMap => {
   return [
     root,
     ...accounts,
-  ].reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
+  ];
 };
 
 const createAccountsFromTransactions = (transactions: Transaction[]): Account[] => {
@@ -275,25 +275,128 @@ const setEditedTransaction = (state: AppState, t: Transaction | TransactionWithU
 };
 
 const addTransactions = (state: AppState, transactions: Transaction[], clearOldTransactions: boolean): AppState => {
-  const transactionsWithUuid = transactions.map(t => ({
-    ...t,
-    uuid: uuid(),
-  }));
+  //Create Entities
+  const transactionsWithUuid = transactions.map(t => ({...t,uuid: uuid()})).map(t => addMissingAmount(t));
+  const newTransactions = addOrUpdateTransactions(state.entities.transactions, transactionsWithUuid, clearOldTransactions);
+  const entities: Entities = {transactions : newTransactions}
+  
+  //Create Computed
+  const newAccounts = addTransactionsToAccounts(clearOldTransactions ? [] : Object.values(state.computed.accounts),transactionsWithUuid)
+    .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
 
-  const tr = addOrUpdateTransactions(state.entities.transactions, transactionsWithUuid, clearOldTransactions);
-  return stateWithNewTransactions(state, tr);
+  const newInvalidTransactions = transactionsWithUuid.filter(t =>
+    t.header.title === undefined ||
+    t.postings.length < 2).map(t2 => t2.uuid);
+
+  const computed: Computed = {
+    accounts: newAccounts,
+    invalidTransactions: newInvalidTransactions
+  }
+
+  //Create Ui
+  const ui = updateUi(state.ui, Object.keys(entities.transactions), Object.keys(newAccounts));
+
+  return {
+    entities,
+    computed,
+    ui
+  }
+};
+
+const addTransactionsToAccounts = (existingAccounts: Account[], transactions: Transaction[]): Account[] =>  {
+  const newAccounts = addRootToAccounts(createAccountsFromTransactions(transactions))
+
+  const allAccounts = newAccounts.concat(existingAccounts)
+
+  return [existingAccounts.map(a => a.name), newAccounts.map(a => a.name)]
+    .reduce(unionReducer)
+    .map(name => allAccounts.filter(a => a.name == name).reduce((prev, curr) => prev.plus(curr)))
 };
 
 const deleteTransaction = (state: AppState, id: string): AppState => {
-  const tr = Object.assign({}, state.entities.transactions);
-  delete tr[id];
+  //Create Entities
+  const transactionDeleted = state.entities.transactions[id];
+  const newTransactions = Object.assign({}, state.entities.transactions);
+  delete newTransactions[id];
 
-  return stateWithNewTransactions(state, tr);
+  const entities: Entities = {transactions : newTransactions}
+  
+  //Create Computed
+  const newAccounts = deleteTransactionsFromAccounts(Object.values(state.computed.accounts), [transactionDeleted])
+    .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
+
+  const computed: Computed = {
+    ...state.computed,
+    accounts: newAccounts
+  }
+
+  //Create Ui
+  const ui = updateUi(state.ui, Object.keys(newTransactions), Object.keys(newAccounts));
+
+  return {
+    entities,
+    computed,
+    ui
+  }
 };
 
-const updateTransaction = (state: AppState, transaction: TransactionWithUUID): AppState => {
-  const tr = addOrUpdateTransactions(state.entities.transactions, [transaction], false);
-  return stateWithNewTransactions(state, tr);
+const deleteTransactionsFromAccounts = (existingAccounts: Account[], transactions: Transaction[]): Account[] =>  {
+  const accountsToSubstract = addRootToAccounts(createAccountsFromTransactions(transactions))
+
+  const allAccounts = existingAccounts.concat(accountsToSubstract)
+
+  const allAccountsWithValuesUpdated = [existingAccounts.map(a => a.name), accountsToSubstract.map(a => a.name)]
+    .reduce(unionReducer)
+    .map(name => allAccounts.filter(a => a.name == name).reduce((prev, curr) => prev.minus(curr)))
+  
+    var accountsToDelete = allAccountsWithValuesUpdated.filter(isAccountEmpty).map(a => a.name)
+    var finalAccounts: Account[] = []
+    do {
+      finalAccounts = deleteAccounts(accountsToDelete, allAccountsWithValuesUpdated)
+      accountsToDelete = finalAccounts.filter(isAccountEmpty).map(a => a.name)
+    } while(accountsToDelete.length > 0)
+    
+    return finalAccounts;
+};
+
+const isAccountEmpty = (a :Account): Boolean => {
+  return a.name != "ROOT" && a.nbTransactions == 0 && a.nbChildrenTransactions == 0 && a.children.length == 0
+}
+
+const deleteAccounts = (names: string[], accounts: Account[]): Account[] => {
+  const remainingAccounts = accounts.filter(a => names.indexOf(a.name) <= -1)
+  remainingAccounts.forEach(a => { a.children = [a.children, names].reduce(differenceReducer) })
+  return remainingAccounts;
+}
+
+const updateTransactions = (state: AppState, transactions: [TransactionWithUUID]): AppState => {
+  //Create Entities
+  const transactionsWithUuid = transactions.map(t => addMissingAmount(t));
+  const newTransactions = addOrUpdateTransactions(state.entities.transactions, transactionsWithUuid, false);
+  const entities: Entities = {transactions : newTransactions}
+  
+  //Create Computed
+  const existingAccounts = Object.values(state.computed.accounts)
+  const newAccounts = addTransactionsToAccounts(deleteTransactionsFromAccounts(existingAccounts, transactionsWithUuid) ,transactionsWithUuid)
+    .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
+
+  const newInvalidTransactions = transactionsWithUuid.filter(t =>
+    t.header.title === undefined ||
+    t.postings.length < 2).map(t2 => t2.uuid);
+
+  const computed: Computed = {
+    accounts: newAccounts,
+    invalidTransactions: newInvalidTransactions
+  }
+
+  //Create Ui
+  const ui = updateUi(state.ui, Object.keys(entities.transactions), Object.keys(newAccounts));
+
+  return {
+    entities,
+    computed,
+    ui
+  }
 };
 
 const setIsLoading = (state: AppState, isLoading: boolean): AppState => {
@@ -423,32 +526,6 @@ const updateUi = (ui: Ui, newTransactions: string[], newAccounts: string[]): Ui 
   };
 };
 
-const stateWithNewTransactions = (state: AppState, transactionMap: TransactionMap): AppState => {
-  const transactions = Object.values(transactionMap);
-  const newAccounts = generateAccounts(transactions);
-  const newAccountsKeys = Object.keys(newAccounts);
-
-  // Check if transactions are valid
-  const newInvalidTransactions = transactions.filter(t =>
-    t.header.title === undefined ||
-    t.postings.length < 2).map(t2 => t2.uuid);
-
-  // Update ui
-  const ui = updateUi(state.ui, Object.keys(transactionMap), newAccountsKeys);
-
-  return {
-    ...state,
-    entities: {
-      transactions: transactionMap,
-    },
-    computed: {
-      accounts: newAccounts,
-      invalidTransactions: newInvalidTransactions,
-    },
-    ui,
-  };
-};
-
 export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyAction): AppState {
   switch (action.type) {
     case AppStateActions.SET_EDITED_TRANSACTION:
@@ -461,7 +538,7 @@ export function rootReducer(lastState: AppState= INITIAL_STATE, action: AnyActio
       return deleteTransaction(lastState, action.id);
 
     case AppStateActions.UPDATE_TRANSACTION:
-      return updateTransaction(lastState, action.transaction);
+      return updateTransactions(lastState, [action.transaction]);
 
     case AppStateActions.SET_IS_LOADING:
       return setIsLoading(lastState, action.isLoading);

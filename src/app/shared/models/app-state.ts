@@ -27,13 +27,17 @@ export interface Tab {
   isClosable: boolean;
 }
 
+export interface Computed {
+  accounts: AccountMap;
+  invalidTransactions: string[],
+}
+
+export interface Entities {
+  transactions: TransactionMap;
+}
+
 export interface AppState {
-  entities: {
-    transactions: TransactionMap;
-  };
-  computed: {
-    accounts: AccountMap;
-    invalidTransactions: string[],
-  };
+  entities: Entities;
+  computed: Computed;
   ui: Ui;
 }

@@ -164,9 +164,9 @@ Object {
         "balance": "0",
         "children": Array [
           "Bank",
-          "Job",
           "Cash",
           "Daily expenses",
+          "Job",
         ],
         "childrenBalance": "0",
         "childrenCredits": "0",
