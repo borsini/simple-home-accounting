@@ -162,16 +162,21 @@ describe(rootReducer.name, () => {
     expect(finalState).toMatchSnapshot();
   });
 
+  it('deletes transaction with nested accounts', () => {
+    const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactionWithNestedAccounts]));
+    const transactionId = Object.values(state1.entities.transactions)[0].uuid;
+
+    const finalState = rootReducer(state1, AppStateActions.deleteTransaction(transactionId));
+
+    expect(finalState).toMatchSnapshot();
+  });
+
   it('updates transaction', () => {
     const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
     const transaction = Object.values(state1.entities.transactions)[0];
     const modifiedTransaction = {
-      ...transaction,
-      header: {
-        ...transaction.header,
-        title: 'Updated!',
-        isVerified: true,
-      },
+      ...transactions[1],
+      uuid: transaction.uuid,
     };
 
     const finalState = rootReducer(state1, AppStateActions.updateTransaction(modifiedTransaction));

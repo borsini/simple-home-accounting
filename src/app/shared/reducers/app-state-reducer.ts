@@ -349,10 +349,10 @@ const deleteTransactionsFromAccounts = (existingAccounts: Account[], transaction
     .reduce(unionReducer)
     .map(name => allAccounts.filter(a => a.name == name).reduce((prev, curr) => prev.minus(curr)))
   
-    var accountsToDelete = allAccountsWithValuesUpdated.filter(isAccountEmpty).map(a => a.name)
-    var finalAccounts: Account[] = []
+    var finalAccounts = allAccountsWithValuesUpdated
+    var accountsToDelete = finalAccounts.filter(isAccountEmpty).map(a => a.name)
     do {
-      finalAccounts = deleteAccounts(accountsToDelete, allAccountsWithValuesUpdated)
+      finalAccounts = deleteAccounts(accountsToDelete, finalAccounts)
       accountsToDelete = finalAccounts.filter(isAccountEmpty).map(a => a.name)
     } while(accountsToDelete.length > 0)
     
@@ -371,13 +371,17 @@ const deleteAccounts = (names: string[], accounts: Account[]): Account[] => {
 
 const updateTransactions = (state: AppState, transactions: [TransactionWithUUID]): AppState => {
   //Create Entities
+  const oldTransactionsBeforeUpdate = transactions.map(tr => state.entities.transactions[tr.uuid])
   const transactionsWithUuid = transactions.map(t => addMissingAmount(t));
   const newTransactions = addOrUpdateTransactions(state.entities.transactions, transactionsWithUuid, false);
   const entities: Entities = {transactions : newTransactions}
   
   //Create Computed
   const existingAccounts = Object.values(state.computed.accounts)
-  const newAccounts = addTransactionsToAccounts(deleteTransactionsFromAccounts(existingAccounts, transactionsWithUuid) ,transactionsWithUuid)
+  const newAccounts = addTransactionsToAccounts(
+    deleteTransactionsFromAccounts(existingAccounts, oldTransactionsBeforeUpdate),
+    transactionsWithUuid
+    )
     .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
 
   const newInvalidTransactions = transactionsWithUuid.filter(t =>
