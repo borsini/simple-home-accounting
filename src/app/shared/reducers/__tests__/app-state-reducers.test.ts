@@ -166,12 +166,8 @@ describe(rootReducer.name, () => {
     const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
     const transaction = Object.values(state1.entities.transactions)[0];
     const modifiedTransaction = {
-      ...transaction,
-      header: {
-        ...transaction.header,
-        title: 'Updated!',
-        isVerified: true,
-      },
+      ...transactions[1],
+      uuid: transaction.uuid,
     };
 
     const finalState = rootReducer(state1, AppStateActions.updateTransaction(modifiedTransaction));

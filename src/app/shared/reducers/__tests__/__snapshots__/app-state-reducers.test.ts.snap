@@ -1924,27 +1924,27 @@ Object {
   "computed": Object {
     "accounts": Object {
       "Bank": Account {
-        "balance": "-3.05",
+        "balance": "500",
         "children": Array [],
         "childrenBalance": "0",
         "childrenCredits": "0",
         "childrenDebits": "0",
-        "credits": "0",
-        "debits": "-3.05",
+        "credits": "500",
+        "debits": "0",
         "name": "Bank",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
         "parent": "ROOT",
       },
-      "Expenses": Account {
-        "balance": "3.05",
+      "Job": Account {
+        "balance": "-500",
         "children": Array [],
         "childrenBalance": "0",
         "childrenCredits": "0",
         "childrenDebits": "0",
-        "credits": "3.05",
-        "debits": "0",
-        "name": "Expenses",
+        "credits": "0",
+        "debits": "-500",
+        "name": "Job",
         "nbChildrenTransactions": 0,
         "nbTransactions": 1,
         "parent": "ROOT",
@@ -1953,7 +1953,7 @@ Object {
         "balance": "0",
         "children": Array [
           "Bank",
-          "Expenses",
+          "Job",
         ],
         "childrenBalance": "0",
         "childrenCredits": "0",
@@ -1971,27 +1971,22 @@ Object {
     "transactions": Object {
       "uuid 0": Object {
         "header": Object {
-          "date": 1360281600,
+          "date": 1360454400,
           "isVerified": true,
           "tags": Array [],
-          "title": "Updated!",
+          "title": "Salary",
         },
         "postings": Array [
           Object {
             "account": "Bank",
-            "amount": "-3.05",
-            "comment": "Comment",
-            "currency": "$",
-            "tag": "!",
+            "amount": "500",
+            "currency": "€",
             "tags": Array [],
           },
           Object {
-            "account": "Expenses",
-            "amount": "3.05",
-            "tags": Array [
-              "HOLIDAYS",
-              "SUMMER",
-            ],
+            "account": "Job",
+            "amount": "-500",
+            "tags": Array [],
           },
         ],
         "uuid": "uuid 0",
