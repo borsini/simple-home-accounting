@@ -349,10 +349,10 @@ const deleteTransactionsFromAccounts = (existingAccounts: Account[], transaction
     .reduce(unionReducer)
     .map(name => allAccounts.filter(a => a.name == name).reduce((prev, curr) => prev.minus(curr)))
   
-    var accountsToDelete = allAccountsWithValuesUpdated.filter(isAccountEmpty).map(a => a.name)
-    var finalAccounts: Account[] = []
+    var finalAccounts = allAccountsWithValuesUpdated
+    var accountsToDelete = finalAccounts.filter(isAccountEmpty).map(a => a.name)
     do {
-      finalAccounts = deleteAccounts(accountsToDelete, allAccountsWithValuesUpdated)
+      finalAccounts = deleteAccounts(accountsToDelete, finalAccounts)
       accountsToDelete = finalAccounts.filter(isAccountEmpty).map(a => a.name)
     } while(accountsToDelete.length > 0)
     

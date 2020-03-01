@@ -775,6 +775,53 @@ Object {
 }
 `;
 
+exports[`rootReducer deletes transaction with nested accounts 1`] = `
+Object {
+  "computed": Object {
+    "accounts": Object {
+      "ROOT": Account {
+        "balance": "0",
+        "children": Array [],
+        "childrenBalance": "0",
+        "childrenCredits": "0",
+        "childrenDebits": "0",
+        "credits": "0",
+        "debits": "0",
+        "name": "ROOT",
+        "nbChildrenTransactions": 0,
+        "nbTransactions": 0,
+      },
+    },
+    "invalidTransactions": Array [],
+  },
+  "entities": Object {
+    "transactions": Object {},
+  },
+  "ui": Object {
+    "isLeftMenuOpen": false,
+    "isLoading": false,
+    "persistedAt": undefined,
+    "tabs": Object {
+      "ROOT": Object {
+        "editedTransaction": undefined,
+        "filters": Object {
+          "input": "",
+          "maxDate": undefined,
+          "minDate": undefined,
+          "showOnlyInvalid": false,
+          "tags": Array [],
+        },
+        "id": "ROOT",
+        "isClosable": false,
+        "selectedAccounts": Array [
+          "ROOT",
+        ],
+      },
+    },
+  },
+}
+`;
+
 exports[`rootReducer does not close an unknown tab 1`] = `
 Object {
   "computed": Object {
