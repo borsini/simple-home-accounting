@@ -26,4 +26,4 @@ If you're curious, you can check the [backlog](https://github.com/Benlenem/ledge
 
 ## Test it
 
-A running version of the app is hosted [here](https://ledger-ui.firebaseapp.com/). I personally use it to do my accounting.</br>You can use it too and any feedback would be kindly appreciated !
+A running version of the app is hosted [here](https://simple-home-accounting.web.app/). I personally use it to do my accounting.</br>You can use it too and any feedback would be kindly appreciated !
