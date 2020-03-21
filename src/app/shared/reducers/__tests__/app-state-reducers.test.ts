@@ -1,4 +1,4 @@
-import { transactionWithNestedAccounts, transactionsWithMissingAmounts } from './fixtures';
+import { transactionWithNestedAccounts, transactionsWithMissingAmounts, transactionWithoutPostings } from './fixtures';
 import { AnyAction } from 'redux';
 
 
@@ -172,7 +172,7 @@ describe(rootReducer.name, () => {
   });
 
   it('updates transaction', () => {
-    const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactions[0]]));
+    const state1 = rootReducer(undefined, AppStateActions.addTransactions([transactions[0], transactionWithoutPostings]));
     const transaction = Object.values(state1.entities.transactions)[0];
     const modifiedTransaction = {
       ...transactions[1],
@@ -185,15 +185,6 @@ describe(rootReducer.name, () => {
   });
 
   it('computes invalid transaction', () => {
-    const transactionWithoutPostings = {
-      header: {
-        date: 1520080726,
-        isVerified: false,
-        title: 'Titre',
-        tags: [],
-      },
-      postings: [],
-    };
     const finalState = rootReducer(undefined, AppStateActions.addTransactions([transactionWithoutPostings]));
 
     expect(finalState).toMatchSnapshot();

@@ -2012,7 +2012,9 @@ Object {
         "nbTransactions": 0,
       },
     },
-    "invalidTransactions": Array [],
+    "invalidTransactions": Array [
+      "uuid 1",
+    ],
   },
   "entities": Object {
     "transactions": Object {
@@ -2037,6 +2039,16 @@ Object {
           },
         ],
         "uuid": "uuid 0",
+      },
+      "uuid 1": Object {
+        "header": Object {
+          "date": 1520080726,
+          "isVerified": false,
+          "tags": Array [],
+          "title": "Titre",
+        },
+        "postings": Array [],
+        "uuid": "uuid 1",
       },
     },
   },

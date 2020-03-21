@@ -284,13 +284,14 @@ const addTransactions = (state: AppState, transactions: Transaction[], clearOldT
   const newAccounts = addTransactionsToAccounts(clearOldTransactions ? [] : Object.values(state.computed.accounts),transactionsWithUuid)
     .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
 
+  const oldInvalidTransaction = state.computed.invalidTransactions
   const newInvalidTransactions = transactionsWithUuid.filter(t =>
     t.header.title === undefined ||
     t.postings.length < 2).map(t2 => t2.uuid);
 
   const computed: Computed = {
     accounts: newAccounts,
-    invalidTransactions: newInvalidTransactions
+    invalidTransactions: [oldInvalidTransaction, newInvalidTransactions].reduce(unionReducer)
   }
 
   //Create Ui
@@ -384,13 +385,15 @@ const updateTransactions = (state: AppState, transactions: [TransactionWithUUID]
     )
     .reduce<AccountMap>( (prev, curr) => ({...prev, [curr.name]: curr}), {});
 
+  const oldInvalidTransaction = state.computed.invalidTransactions
+  const oldInvalidTransactionWithoutUpdatedOnes = [oldInvalidTransaction, transactions.map(t => t.uuid)].reduce(differenceReducer)
   const newInvalidTransactions = transactionsWithUuid.filter(t =>
     t.header.title === undefined ||
     t.postings.length < 2).map(t2 => t2.uuid);
 
   const computed: Computed = {
     accounts: newAccounts,
-    invalidTransactions: newInvalidTransactions
+    invalidTransactions: [oldInvalidTransactionWithoutUpdatedOnes, newInvalidTransactions].reduce(unionReducer)
   }
 
   //Create Ui
