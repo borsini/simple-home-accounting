@@ -117,3 +117,13 @@ export const transactionsWithMissingAmounts: Transaction[] = [
     ],
   },
 ];
+
+export const transactionWithoutPostings: Transaction = {
+  header: {
+    date: 1520080726,
+    isVerified: false,
+    title: 'Titre',
+    tags: [],
+  },
+  postings: [],
+}
